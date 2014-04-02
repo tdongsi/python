@@ -1,0 +1,117 @@
+***********************************************
+	Test Configuration
+***********************************************
+Test Name: C:/FinalWorkspace/main/qatest/SharedCache/CPP/Simple/Performance_LargeObject/win_x64/results_SharedCache_Predicate_LocalData_2000_2000.txt
+Objectivity Build: 		Unknown
+Objectivity Version String: 	11.2+SC
+Session Pool Cache Mode: 	Shared Cache
+Number of Containers: 		5
+Number of Objects: 		10000 (2000 per container)
+Max Concurrent Read Threads: 	5
+***********************************************
+Total Creation Time: 0.66200
+Thread: 1 Attempt: 1
+Time: 2.23700  Disk_reads: 361  Buffer_reads: 67961
+
+CPU usage: 16.1977 %
+
+Thread: 1 Attempt: 2
+Time: 1.87000  Disk_reads: 361  Buffer_reads: 67961
+
+CPU usage: 23.7351 %
+
+Thread: 1 Attempt: 3
+Time: 1.74500  Disk_reads: 361  Buffer_reads: 67961
+
+CPU usage: 21.429 %
+
+Thread: 2 Attempt: 1
+Time: 5.98000  Disk_reads: 113  Buffer_reads: 61716
+Time: 5.89800  Disk_reads: 250  Buffer_reads: 68065
+
+CPU usage: 36.5713 %
+
+Thread: 2 Attempt: 2
+Time: 5.72000  Disk_reads: 210  Buffer_reads: 61632
+Time: 5.92300  Disk_reads: 153  Buffer_reads: 68153
+
+CPU usage: 35.0026 %
+
+Thread: 2 Attempt: 3
+Time: 5.83800  Disk_reads: 164  Buffer_reads: 61682
+Time: 5.91700  Disk_reads: 199  Buffer_reads: 68097
+
+CPU usage: 31.2287 %
+
+Thread: 3 Attempt: 1
+Time: 6.76900  Disk_reads: 101  Buffer_reads: 61732
+Time: 6.67300  Disk_reads: 135  Buffer_reads: 68163
+Time: 6.75800  Disk_reads: 130  Buffer_reads: 61709
+
+CPU usage: 42.6253 %
+
+Thread: 3 Attempt: 2
+Time: 6.91800  Disk_reads: 89  Buffer_reads: 61747
+Time: 6.89300  Disk_reads: 183  Buffer_reads: 68122
+Time: 6.75800  Disk_reads: 92  Buffer_reads: 61741
+
+CPU usage: 47.5057 %
+
+Thread: 3 Attempt: 3
+Time: 7.11400  Disk_reads: 121  Buffer_reads: 68177
+Time: 7.04500  Disk_reads: 178  Buffer_reads: 61664
+Time: 7.08300  Disk_reads: 65  Buffer_reads: 61757
+
+CPU usage: 49.7045 %
+
+Thread: 4 Attempt: 1
+Time: 8.96300  Disk_reads: 123  Buffer_reads: 68183
+Time: 8.94400  Disk_reads: 102  Buffer_reads: 61729
+Time: 8.78300  Disk_reads: 80  Buffer_reads: 61747
+Time: 8.82200  Disk_reads: 61  Buffer_reads: 61769
+
+CPU usage: 52.6766 %
+
+Thread: 4 Attempt: 2
+Time: 9.09200  Disk_reads: 50  Buffer_reads: 61779
+Time: 9.03000  Disk_reads: 78  Buffer_reads: 68211
+Time: 8.72900  Disk_reads: 141  Buffer_reads: 61706
+Time: 9.06000  Disk_reads: 99  Buffer_reads: 61729
+
+CPU usage: 51.2489 %
+
+Thread: 4 Attempt: 3
+Time: 8.96400  Disk_reads: 89  Buffer_reads: 61745
+Time: 9.06500  Disk_reads: 65  Buffer_reads: 61761
+Time: 9.07200  Disk_reads: 66  Buffer_reads: 61765
+Time: 9.04200  Disk_reads: 146  Buffer_reads: 68158
+
+CPU usage: 51.7803 %
+
+Thread: 5 Attempt: 1
+Time: 12.90800  Disk_reads: 88  Buffer_reads: 61744
+Time: 13.21000  Disk_reads: 21  Buffer_reads: 61801
+Time: 13.10600  Disk_reads: 39  Buffer_reads: 61790
+Time: 12.88900  Disk_reads: 76  Buffer_reads: 61756
+Time: 12.81800  Disk_reads: 143  Buffer_reads: 68154
+
+CPU usage: 47.6422 %
+
+Thread: 5 Attempt: 2
+Time: 13.05800  Disk_reads: 58  Buffer_reads: 61777
+Time: 13.14700  Disk_reads: 68  Buffer_reads: 68232
+Time: 13.07700  Disk_reads: 225  Buffer_reads: 61604
+Time: 13.25800  Disk_reads: 10  Buffer_reads: 61822
+Time: 13.04700  Disk_reads: 7  Buffer_reads: 61813
+
+CPU usage: 48.6388 %
+
+Thread: 5 Attempt: 3
+Time: 13.32800  Disk_reads: 7  Buffer_reads: 61824
+Time: 13.58500  Disk_reads: 52  Buffer_reads: 68247
+Time: 13.52000  Disk_reads: 11  Buffer_reads: 61810
+Time: 13.29900  Disk_reads: 1  Buffer_reads: 61824
+Time: 13.20200  Disk_reads: 296  Buffer_reads: 61540
+
+CPU usage: 49.4558 %
+
