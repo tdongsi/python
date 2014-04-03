@@ -26,6 +26,7 @@ On Win64, please find installers here: http://www.lfd.uci.edu/~gohlke/pythonlibs
 '''
 import matplotlib.pyplot as plt
 import numpy as np
+import argparse
 
 # # global setting for font size
 # font = {'family' : 'normal',
@@ -101,26 +102,24 @@ def parseDataRange(filename, threadNums):
 
     return data
 
-from sys import argv
+
+parser = argparse.ArgumentParser(description='Plot data parsed from log files into a png file')
+parser.add_argument('-output', action='store', default='LogPlot.png', dest='pngFilename')
+parser.add_argument('fileList', metavar='file', nargs='*', help='log file to be plotted')
+args = parser.parse_args()
 
 # For testing and debugging
-lcFilename = r"..\data\results_firstrun_2000_2000.txt"
-scFilename = r"..\data\results_secondrun_2000_2000.txt"
+lcFilename = r"..\data\results_firstrun.txt"
+scFilename = r"..\data\results_secondrun.txt"
 r112Filename = r'..\data\results_baseline.txt'
     
-fileList = []
-pngFilename = ''
+fileList = args.fileList
+pngFilename = args.pngFilename
 
-if ( len(argv) < 2 ):
+if ( len(fileList) == 0 ):
     fileList = [lcFilename, scFilename, r112Filename]
-    pngFilename = "LogPlot.png"
-elif ( len(argv) == 2 ):
-    fileList = [lcFilename, scFilename, r112Filename]
-    pngFilename = argv[1]
-else:
-    pngFilename = argv[1]
-    # print argv[2:]
-    fileList = argv[2:]
+    
+print fileList
 
 threadNumList = range(1,6)
 # 3 subplots for average time, disk reads, and buffer reads
