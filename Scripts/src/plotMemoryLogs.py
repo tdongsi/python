@@ -4,17 +4,30 @@
 Created on Apr 1, 2014
 
 @author: cuongd
+
+USAGE: plotMemoryLogs.py -output plot.png -logFile1 file1.log -logFile2 file2.log
+NOTE: the plot file name must have png extension.
+
+TODO: We can extend to arbitrary list of log files. 
+However, given the current log structure, 2+ log files are not presentable.
+
+This script will plot memory usage parsed from log files into a png file.
+The png file name is specified by the first argument.
+The data files can be supplied as a list from the following arguments.
+NOTE: It assumes certain knowledge of structure and format of the log file.
+
+
+LOGGING: the script is ad-hoc, based on the log file
+Need to adjust logging to make the script for robust 
+Assume the memory log is at the end of the file.
+Setting threadNum to 4 and it will fail.
 '''
-# FIXEDBUG: the script is ad-hoc, based on the log file
-# Need to adjust logging to make the script for robust 
-# Assume the memory log is at the end of the file.
-# Setting threadNum to 4 and it will fail.
+
+
 
 import re
 import matplotlib.pyplot as plt
-
-lcFilename = r"..\data\PerfLog_feature_OFF.txt";
-scFilename = r"..\data\PerfLog_feature_ON.txt";
+import argparse
 
 def parseDataFile(filename, threadNum):
 
@@ -73,6 +86,13 @@ def parseDataFile(filename, threadNum):
                 
     return dataArray      
     
+parser = argparse.ArgumentParser(description='Plot memory usage from log files.')
+# The default values are for testing
+parser.add_argument('-output', dest = 'plotFilename', action='store', default = 'MemoryLogging.png', help = 'File name of the plot (must end with .png)')
+parser.add_argument('-logFile1', dest = 'lcFilename', default = r"..\data\PerfLog_feature_OFF.txt", help = 'First log file with pre-defined structure')
+parser.add_argument('-logFile2', dest = 'scFilename', default = r"..\data\PerfLog_feature_ON.txt", help = 'Second log file with pre-defined structure')
+args = parser.parse_args()
+
 
 threadNumList = range(2,6)
 figure, plots = plt.subplots(len(threadNumList), 1, True )
@@ -81,8 +101,8 @@ for num in threadNumList:
     idx = num - threadNumList[0]
     
     # Reading the data from file
-    lcData = parseDataFile(lcFilename, num)
-    scData = parseDataFile(scFilename, num)
+    lcData = parseDataFile(args.lcFilename, num)
+    scData = parseDataFile(args.scFilename, num)
     
     # Plotting local cache memory logging as red
     for row in lcData:
@@ -103,5 +123,5 @@ for num in threadNumList:
 plt.xlabel('Snapshots (per 1000 reads)')
 # plt.ylabel('Allocated memory (MB)')
 figure.text(0.05, 0.5, 'Allocated memory (MB)', ha='center', va='center', rotation='vertical')
-plt.savefig("MemoryLogging.png", dpi = 300 )
+plt.savefig( args.plotFilename, dpi = 300 )
 plt.show()

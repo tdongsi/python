@@ -5,7 +5,7 @@ Created on Apr 1, 2014
 
 @author: cuongd
 
-USAGE: scriptName plotName.png {list of log file paths}
+USAGE: plotPerformanceLogs.py -output plot.png {list of log file paths}
 NOTE: the plot file name must have png extension.
 
 This script will plot data parsed from log files into a png file.
@@ -63,7 +63,7 @@ def parseDataThread(filename, threadNum):
     for line in lines:
         # Ignore the first attempt because of outlier time numbers
         if line.startswith(searchThreadPhrase) and (line.find('Attempt: 1') < 0 ):
-            print line
+#             print line
             startFlag = True
             
         elif line.startswith(endingMemoryPhrase):
