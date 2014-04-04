@@ -119,7 +119,7 @@ pngFilename = args.pngFilename
 if ( len(fileList) == 0 ):
     fileList = [lcFilename, scFilename, r112Filename]
     
-print fileList
+print (fileList)
 
 threadNumList = range(1,6)
 # 3 subplots for average time, disk reads, and buffer reads

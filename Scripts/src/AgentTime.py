@@ -1,3 +1,4 @@
+#!/usr/buildtools/bin/python2.7
 
 '''
 Created on Feb 20, 2014
@@ -20,7 +21,7 @@ parser.add_argument('-inputfile', action='store', default='../data/sampleTime.tx
 args = parser.parse_args()
 
 
-print 'Processing file %s' % args.filename
+print ('Processing file %s' % args.filename)
 
 findTime = re.compile('\d{2}:\d{2}:\d{2}')
 startString = ''
@@ -45,7 +46,7 @@ try:
         endTime = datetime.strptime( endTimeString, '%H:%M:%S' )
         diff = endTime - startTime
         
-        print 'Agent time: %s %s diff: %d sec \n' % (startTimeString, endTimeString, diff.total_seconds())
+        print ( 'Agent time: %s %s diff: %d sec \n' % (startTimeString, endTimeString, diff.total_seconds()) )
         
 except IOError:
-    print 'Error opening file'
+    print ('Error opening file')
