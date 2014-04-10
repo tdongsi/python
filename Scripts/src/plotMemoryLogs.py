@@ -85,43 +85,46 @@ def parseDataFile(filename, threadNum):
     #                 print allocatedMemory
                 
     return dataArray      
-    
-parser = argparse.ArgumentParser(description='Plot memory usage from log files.')
-# The default values are for testing
-parser.add_argument('-output', dest = 'plotFilename', action='store', default = 'MemoryLogging.png', help = 'File name of the plot (must end with .png)')
-parser.add_argument('-logFile1', dest = 'lcFilename', default = r"..\data\PerfLog_feature_OFF.txt", help = 'First log file with pre-defined structure')
-parser.add_argument('-logFile2', dest = 'scFilename', default = r"..\data\PerfLog_feature_ON.txt", help = 'Second log file with pre-defined structure')
-args = parser.parse_args()
 
 
-threadNumList = range(2,6)
-figure, plots = plt.subplots(len(threadNumList), 1, True )
-for num in threadNumList:
+
+if __name__ == "__main__":    
+    parser = argparse.ArgumentParser(description='Plot memory usage from log files.')
+    # The default values are for testing
+    parser.add_argument('-output', dest = 'plotFilename', action='store', default = 'MemoryLogging.png', help = 'File name of the plot (must end with .png)')
+    parser.add_argument('-logFile1', dest = 'lcFilename', default = r"..\data\PerfLog_feature_OFF.txt", help = 'First log file with pre-defined structure')
+    parser.add_argument('-logFile2', dest = 'scFilename', default = r"..\data\PerfLog_feature_ON.txt", help = 'Second log file with pre-defined structure')
+    args = parser.parse_args()
     
-    idx = num - threadNumList[0]
     
-    # Reading the data from file
-    lcData = parseDataFile(args.lcFilename, num)
-    scData = parseDataFile(args.scFilename, num)
-    
-    # Plotting local cache memory logging as red
-    for row in lcData:
-        p1, = plots[idx].plot(row, 'r-')
-    
-    # Plotting shared cache memory logging as green
-    for row in scData:
-        p2, = plots[idx].plot(row, 'g-')
+    threadNumList = range(2,6)
+    figure, plots = plt.subplots(len(threadNumList), 1, True )
+    for num in threadNumList:
         
-    plots[0].legend( [p2, p1], ["Feature ON", "Feature OFF"], loc=9)
-#     if num == threadNumList[-1]:
-#         ax.xlabel('Snapshots (per 100 reads)')
+        idx = num - threadNumList[0]
         
-    plots[idx].grid(True)
-    plots[idx].set_ylabel( str(num) + ' threads')
-
- 
-plt.xlabel('Snapshots (per 1000 reads)')
-# plt.ylabel('Allocated memory (MB)')
-figure.text(0.05, 0.5, 'Allocated memory (MB)', ha='center', va='center', rotation='vertical')
-plt.savefig( args.plotFilename, dpi = 300 )
-plt.show()
+        # Reading the data from file
+        lcData = parseDataFile(args.lcFilename, num)
+        scData = parseDataFile(args.scFilename, num)
+        
+        # Plotting local cache memory logging as red
+        for row in lcData:
+            p1, = plots[idx].plot(row, 'r-')
+        
+        # Plotting shared cache memory logging as green
+        for row in scData:
+            p2, = plots[idx].plot(row, 'g-')
+            
+        plots[0].legend( [p2, p1], ["Feature ON", "Feature OFF"], loc=9)
+    #     if num == threadNumList[-1]:
+    #         ax.xlabel('Snapshots (per 100 reads)')
+            
+        plots[idx].grid(True)
+        plots[idx].set_ylabel( str(num) + ' threads')
+    
+     
+    plt.xlabel('Snapshots (per 1000 reads)')
+    # plt.ylabel('Allocated memory (MB)')
+    figure.text(0.05, 0.5, 'Allocated memory (MB)', ha='center', va='center', rotation='vertical')
+    plt.savefig( args.plotFilename, dpi = 300 )
+    plt.show()
