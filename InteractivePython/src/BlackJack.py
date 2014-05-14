@@ -4,179 +4,220 @@ Created on May 10, 2014
 @author: tdongsi
 '''
 
-n = 5
-for trial in range(12):
-    n *= 2
-    n -= 3
-    
-print n
+import simpleguitk as simplegui
+import random
 
-# n = 127834876
-# while n >= 0:
-#     n //= 2
+# load card sprite - 949x392 - source: jfitz.com
+CARD_SIZE = (73, 98)
+CARD_CENTER = (36.5, 49)
+card_images = simplegui.load_image("http://commondatastorage.googleapis.com/codeskulptor-assets/cards.jfitz.png")
 
-#########################################
-# Question 7
-n = 1000
-numbers = range(2,n)
+CARD_BACK_SIZE = (71, 96)
+CARD_BACK_CENTER = (35.5, 48)
+card_back = simplegui.load_image("http://commondatastorage.googleapis.com/codeskulptor-assets/card_back.png")    
 
-results = []
+# initialize some useful global variables
+in_play = False
+outcome = ""
+score = 0
 
-while ( len(numbers) > 0 ):
-    prime = numbers[0]
-    results.append(numbers[0])
-    numbers = [number for number in numbers if (number % prime != 0) ]
-    
-print "Length: %d" % len(results)
-#########################################
+# define globals for cards
+SUITS = ('C', 'S', 'H', 'D')
+RANKS = ('A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K')
+VALUES = {'A':1, '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, 'T':10, 'J':10, 'Q':10, 'K':10}
+MAX_VALUE = 21
+DEALER_MIN_VALUE = 17
 
-#########################################
-# Question 8
-fast = 1.0
-slow = 1000.0
-year = 1
 
-while fast < slow:
-    year += 1
-    fast *= 1.4
-    slow *= 1.2
-    
-print "Year: %d" % (year-1)
-#########################################
+# define card class
+class Card:
+    '''Class that represents individual cards in a deck'''
+    def __init__(self, suit, rank):
+        if (suit in SUITS) and (rank in RANKS):
+            self.suit = suit
+            self.rank = rank
+        else:
+            self.suit = None
+            self.rank = None
+            print "Invalid card: ", suit, rank
 
-print "%f %f" % (12*73 + 36.5, 3*98 + 49)
+    def __str__(self):
+        return self.suit + self.rank
 
-class Overload:
-    def __init__(self, value1):
-        pass
-    
+    def get_suit(self):
+        return self.suit
 
-class BankAccount:
-    def __init__(self, initial_balance):
-        """Creates an account with the given balance."""
-        self.balance = initial_balance
-        self.fee = 0
+    def get_rank(self):
+        return self.rank
+
+    def draw(self, canvas, pos):
+        '''Draw the graphic representation of the card's face'''
+        card_loc = (CARD_CENTER[0] + CARD_SIZE[0] * RANKS.index(self.rank), 
+                    CARD_CENTER[1] + CARD_SIZE[1] * SUITS.index(self.suit))
+        canvas.draw_image(card_images, card_loc, CARD_SIZE, [pos[0] + CARD_CENTER[0], pos[1] + CARD_CENTER[1]], CARD_SIZE)
         
-    def deposit(self, amount):
-        """Deposits the amount into the account."""
-        self.balance += amount
-    
-    def withdraw(self, amount):
-        """
-        Withdraws the amount from the account.  Each withdrawal resulting in a
-        negative balance also deducts a penalty fee of 5 dollars from the balance.
-        """
-        self.balance -= amount
-        if ( self.balance < 0):
-            self.balance -= 5
-            self.fee += 5
-    
-    def get_balance(self):
-        """Returns the current balance in the account."""
-        return self.balance
-    
-    def get_fees(self):
-        """Returns the total fees ever deducted from the account."""
-        return self.fee
-    
-my_account = BankAccount(10)
-my_account.withdraw(5)
-my_account.deposit(10)
-my_account.withdraw(5)
-my_account.withdraw(15)
-my_account.deposit(20)
-my_account.withdraw(5) 
-my_account.deposit(10)
-my_account.deposit(20)
-my_account.withdraw(15)
-my_account.deposit(30)
-my_account.withdraw(10)
-my_account.withdraw(15)
-my_account.deposit(10)
-my_account.withdraw(50) 
-my_account.deposit(30)
-my_account.withdraw(15)
-my_account.deposit(10)
-my_account.withdraw(5) 
-my_account.deposit(20)
-my_account.withdraw(15)
-my_account.deposit(10)
-my_account.deposit(30)
-my_account.withdraw(25) 
-my_account.withdraw(5)
-my_account.deposit(10)
-my_account.withdraw(15)
-my_account.deposit(10)
-my_account.withdraw(10) 
-my_account.withdraw(15)
-my_account.deposit(10)
-my_account.deposit(30)
-my_account.withdraw(25) 
-my_account.withdraw(10)
-my_account.deposit(20)
-my_account.deposit(10)
-my_account.withdraw(5) 
-my_account.withdraw(15)
-my_account.deposit(10)
-my_account.withdraw(5) 
-my_account.withdraw(15)
-my_account.deposit(10)
-my_account.withdraw(5) 
-print my_account.get_balance(), my_account.get_fees()
+    def draw_back(self, canvas, pos):
+        '''Draw the graphic representation of the card's back'''
+        canvas.draw_image(card_back, CARD_BACK_CENTER, CARD_BACK_SIZE, [pos[0] + CARD_BACK_CENTER[0], pos[1] + CARD_BACK_CENTER[1]], CARD_SIZE)
+        
+# define hand class
+class Hand:
+    def __init__(self):
+        self.cards = []
 
-account1 = BankAccount(20)
-account1.deposit(10)
-account2 = BankAccount(10)
-account2.deposit(10)
-account2.withdraw(50)
-account1.withdraw(15)
-account1.withdraw(10)
-account2.deposit(30)
-account2.withdraw(15)
-account1.deposit(5)
-account1.withdraw(10)
-account2.withdraw(10)
-account2.deposit(25)
-account2.withdraw(15)
-account1.deposit(10)
-account1.withdraw(50)
-account2.deposit(25)
-account2.deposit(25)
-account1.deposit(30)
-account2.deposit(10)
-account1.withdraw(15)
-account2.withdraw(10)
-account1.withdraw(10)
-account2.deposit(15)
-account2.deposit(10)
-account2.withdraw(15)
-account1.deposit(15)
-account1.withdraw(20)
-account2.withdraw(10)
-account2.deposit(5)
-account2.withdraw(10)
-account1.deposit(10)
-account1.deposit(20)
-account2.withdraw(10)
-account2.deposit(5)
-account1.withdraw(15)
-account1.withdraw(20)
-account1.deposit(5)
-account2.deposit(10)
-account2.deposit(15)
-account2.deposit(20)
-account1.withdraw(15)
-account2.deposit(10)
-account1.deposit(25)
-account1.deposit(15)
-account1.deposit(10)
-account1.withdraw(10)
-account1.deposit(10)
-account2.deposit(20)
-account2.withdraw(15)
-account1.withdraw(20)
-account1.deposit(5)
-account1.deposit(10)
-account2.withdraw(20)
-print account1.get_balance(), account1.get_fees(), account2.get_balance(), account2.get_fees()
+    def __str__(self):
+        return " ".join([str(card) for card in self.cards])
 
+    def add_card(self, card):
+        self.cards.append(card)
+
+
+    def get_value(self):
+        # compute the value of the hand, see Blackjack video
+        # count aces as 1, if the hand has an ace, then add 10 to hand value if it doesn't bust
+        value = 0
+        foundAce = False
+        for card in self.cards:
+            value += VALUES[card.get_rank()]
+            if card.get_rank() == 'A':
+                foundAce = True
+        
+        if foundAce:
+            if value + 10 > MAX_VALUE:
+                return value
+            else:
+                return value + 10
+        else:
+            return value
+    
+    def clear(self):
+        self.cards[:] = []
+   
+    def draw(self, canvas, pos):
+        i = 0
+        for card in self.cards:
+            card.draw(canvas, [pos[0]+ i*100, pos[1]])
+            i += 1
+ 
+        
+# define deck class 
+class Deck:
+    def __init__(self):
+        self.cards =[]
+        self.shuffle()
+
+    def shuffle(self):
+        for suit in SUITS:
+            for rank in RANKS:
+                card = Card(suit, rank)
+                self.cards.append(card)
+                
+        # shuffle the deck 
+        random.shuffle(self.cards)
+
+    def deal_card(self):
+        # deal a card object from the deck
+        # remove the card from the back of the deck
+        return self.cards.pop()
+    
+    def __str__(self):
+        # return a string representing the deck
+        # Shows the last 10 cards only (those will be dealt to players soon)
+        return " ".join([str(card) for card in self.cards[-10:]])
+
+
+deck = Deck()
+player = Hand()
+dealer = Hand()
+
+#define event handlers for buttons
+def deal():
+    global outcome, in_play
+    global deck, player, dealer
+
+    # your code goes here
+    in_play = True
+    
+    deck.shuffle()
+    print deck
+    player.clear()
+    dealer.clear()
+    
+    # Dealing cards    
+    player.add_card(deck.deal_card())
+    dealer.add_card(deck.deal_card())
+    player.add_card(deck.deal_card())
+    # TODO: mark this card as hole card
+    dealer.add_card(deck.deal_card())
+    
+    print "Player's hand:", player
+    print "Dealer's hand:", dealer
+    
+
+def hit():
+    global in_play, player, score
+    # if the hand is in play, hit the player
+    if in_play:
+        player.add_card(deck.deal_card())
+        
+        # DEBUG:
+        print "Player's hand:", player
+   
+        # if busted, assign a message to outcome, update in_play and score
+        if player.get_value() > MAX_VALUE:
+            print "Player busted: %d" % player.get_value()
+            in_play = False
+            score -= 1
+       
+def stand():
+    global in_play, player, dealer, score
+    
+    # if hand is in play, repeatedly hit dealer until his hand has value 17 or more
+    if in_play:
+        while dealer.get_value() < DEALER_MIN_VALUE:
+            dealer.add_card(deck.deal_card())
+            
+        # assign a message to outcome, update in_play and score
+        in_play = False
+        if dealer.get_value() > MAX_VALUE :
+            # Dealer busted
+            print "Dealer busted %d" % dealer.get_value()
+            score += 1
+        elif dealer.get_value() >= player.get_value():
+            print "Dealer won"
+            score -= 1
+        else:
+            print "Player won"
+            score += 1
+
+# draw handler    
+def draw(canvas):
+    # test to make sure that card.draw works, replace with your code below
+    canvas.draw_text("Black Jack", (50, 50), 25, 'Red')
+    canvas.draw_text("Score %d" % score, (300, 50), 25, 'Black')
+    
+    canvas.draw_text( "Dealer", (50, 150), 25, 'Black')
+    dealer.draw(canvas, [50,150])
+    
+    canvas.draw_text( "Player", (50, 350), 25, 'Black')
+    player.draw(canvas, [50, 350])
+    
+    global in_play
+    if not in_play:
+        canvas.draw_text( "Hit Deal to start a new game", (50, 550), 25, 'Yellow')
+    
+
+# initialization frame
+frame = simplegui.create_frame("Blackjack", 600, 600)
+frame.set_canvas_background("Green")
+
+#create buttons and canvas callback
+frame.add_button("Deal", deal, 200)
+frame.add_button("Hit",  hit, 200)
+frame.add_button("Stand", stand, 200)
+frame.set_draw_handler(draw)
+
+
+# get things rolling
+deal()
+frame.start()
