@@ -138,8 +138,11 @@ dealer = Hand()
 
 # define event handlers for buttons
 def deal():
-    global outcome, in_play
+    global outcome, in_play, score
     global deck, player, dealer
+    
+    if in_play :
+        score -= 1
 
     # your code goes here
     in_play = True
@@ -153,7 +156,6 @@ def deal():
     player.add_card(deck.deal_card())
     dealer.add_card(deck.deal_card())
     player.add_card(deck.deal_card())
-    # TODO: mark this card as hole card
     dealer.add_card(deck.deal_card())
     
     print "Player's hand:", player
