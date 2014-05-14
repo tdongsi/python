@@ -10,11 +10,11 @@ import random
 # load card sprite - 949x392 - source: jfitz.com
 CARD_SIZE = (73, 98)
 CARD_CENTER = (36.5, 49)
-card_images = simplegui.load_image("http://commondatastorage.googleapis.com/codeskulptor-assets/cards.jfitz.png")
+card_images = simplegui.load_image("https://dl.dropbox.com/s/wk2nzogl9ibbgbg/cards.jfitz.png")
 
 CARD_BACK_SIZE = (71, 96)
 CARD_BACK_CENTER = (35.5, 48)
-card_back = simplegui.load_image("http://commondatastorage.googleapis.com/codeskulptor-assets/card_back.png")    
+card_back = simplegui.load_image("https://dl.dropbox.com/s/lplyh9t900ap67c/card_back.png")    
 
 # initialize some useful global variables
 in_play = False
