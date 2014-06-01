@@ -13,7 +13,7 @@ import simpleguitk as simplegui
 ROCK_CENTER = [64, 64]
 ROCK_SIZE = [128, 128]
 ROCK_DIM = 64
-rock_image = simplegui.load_image("http://commondatastorage.googleapis.com/codeskulptor-assets/asteroid1.opengameart.warspawn.png")
+rock_image = simplegui.load_image("https://dl.dropbox.com/s/wnr4b2vfax81sy9/asteroid1.opengameart.warspawn.png")
 
 # global time for animation
 time = 0

@@ -13,7 +13,7 @@ import simpleguitk as simplegui
 EXPLOSION_CENTER = [50, 50]
 EXPLOSION_SIZE = [100, 100]
 EXPLOSION_DIM = [9, 9]
-explosion_image = simplegui.load_image("http://commondatastorage.googleapis.com/codeskulptor-assets/explosion.hasgraphics.png")
+explosion_image = simplegui.load_image("https://dl.dropbox.com/s/bsq9nz3q9nqoqsr/explosion.hasgraphics.png")
 
 # create timer that iterates current_sprite_center through sprite
 time = 0
