@@ -104,6 +104,7 @@ class Ship:
         self.thruster_sound = sound
         
         self.ANGLE_VEL_INCREMENT = 0.1
+        self.ANGLE_VEL_MAX = 0.3
         
     def set_thruster(self, status):
         self.thrust = status
@@ -115,9 +116,13 @@ class Ship:
         
     def increment_angle_vel(self):
         self.angle_vel += self.ANGLE_VEL_INCREMENT
+        if self.angle_vel > self.ANGLE_VEL_MAX:
+            self.angle_vel = self.ANGLE_VEL_MAX
         
     def decrement_angle_vel(self):
         self.angle_vel -= self.ANGLE_VEL_INCREMENT
+        if self.angle_vel < -self.ANGLE_VEL_MAX:
+            self.angle_vel = -self.ANGLE_VEL_MAX
         
     def shoot(self):
         global a_missile
@@ -178,7 +183,11 @@ class Ship:
 
         
 def keyup(key):
-    if (key == simplegui.KEY_MAP['up']):
+    if (key == simplegui.KEY_MAP['left']):
+        my_ship.increment_angle_vel()
+    elif (key == simplegui.KEY_MAP['right']):
+        my_ship.decrement_angle_vel()
+    elif (key == simplegui.KEY_MAP['up']):
         my_ship.set_thruster(False)
 
 def keydown(key):
