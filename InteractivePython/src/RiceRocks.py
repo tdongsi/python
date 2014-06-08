@@ -15,6 +15,7 @@ HEIGHT = 600
 score = 0
 lives = 3
 time = 0.5
+started = False
 
 class ImageInfo:
     def __init__(self, center, size, radius = 0, lifespan = None, animated = False):
@@ -200,7 +201,17 @@ def keydown(key):
         my_ship.set_thruster(True)
     elif (key == simplegui.KEY_MAP['space']):
         my_ship.shoot()
-    
+
+# mouseclick handlers that reset UI and conditions whether splash image is drawn
+def click(pos):
+    global started
+    center = [WIDTH / 2, HEIGHT / 2]
+    size = splash_info.get_size()
+    inwidth = (center[0] - size[0] / 2) < pos[0] < (center[0] + size[0] / 2)
+    inheight = (center[1] - size[1] / 2) < pos[1] < (center[1] + size[1] / 2)
+    if (not started) and inwidth and inheight:
+        started = True
+            
 # Sprite class
 class Sprite:
     def __init__(self, pos, vel, ang, ang_vel, image, info, sound = None):
@@ -236,7 +247,7 @@ class Sprite:
         self.angle += self.angle_vel
            
 def draw(canvas):
-    global time
+    global time, started
     
     # animiate background
     time += 1
@@ -260,6 +271,12 @@ def draw(canvas):
     my_ship.update()
     a_rock.update()
     a_missile.update()
+    
+    # draw splash screen if not started
+    if not started:
+        canvas.draw_image(splash_image, splash_info.get_center(), 
+                          splash_info.get_size(), [WIDTH / 2, HEIGHT / 2], 
+                          splash_info.get_size())
             
 # timer handler that spawns a rock    
 def rock_spawner():
@@ -289,6 +306,7 @@ a_missile = Sprite([2 * WIDTH / 3, 2 * HEIGHT / 3], [-1,1], 0, 0, missile_image,
 frame.set_draw_handler(draw)
 frame.set_keyup_handler(keyup)
 frame.set_keydown_handler(keydown)
+frame.set_mouseclick_handler(click)
 
 timer = simplegui.create_timer(1000.0, rock_spawner)
 
