@@ -137,7 +137,7 @@ class Ship:
             self.angle_vel = -self.ANGLE_VEL_MAX
         
     def shoot(self):
-        global a_missile
+        global missile_group
         
         CANNON_DISPLACEMENT = 35
         cannon_pos = angle_to_vector(self.angle)
@@ -155,6 +155,7 @@ class Ship:
         
         a_missile = Sprite(cannon_pos, missile_vel, self.angle, 0, 
                            missile_image, missile_info, missile_sound)
+        missile_group.add(a_missile)
         
     def draw(self,canvas):
         # There is a small displacement of the ship's center in the image 
@@ -234,6 +235,12 @@ class Sprite:
         # Update angle
         self.angle += self.angle_vel
         
+        self.age += 1
+        if self.age < self.lifespan:
+            return False
+        else:
+            return True
+        
     def collide(self, other_object):
         distance = dist( self.get_position(), other_object.get_position())
         radius_sum = self.get_radius() + other_object.get_radius()
@@ -276,7 +283,8 @@ def process_sprite_group(canvas, sprite_set):
     # rock_spawner() maybe activated during iteration
     for sprite in list(sprite_set):
         sprite.draw(canvas)
-        sprite.update()
+        if sprite.update():
+            sprite_set.remove(sprite)
 
 def group_collide(sprite_set, other_object):
     for sprite in list(sprite_set):
@@ -304,17 +312,17 @@ def draw(canvas):
     if group_collide(rock_group, my_ship):
         lives -= 1
     
+    # Process missiles
+    process_sprite_group(canvas, missile_group)
+    
     # draw text
     canvas.draw_text( 'Lives: %d'%lives, (50, 50), 20, 'White')
     canvas.draw_text( 'Score: %d'%score, (WIDTH-150, 50), 20, 'White')
 
-    # draw ship and sprites
+    # draw ship
     my_ship.draw(canvas)
-    a_missile.draw(canvas)
-    
-    # update ship and sprites
+    # update ship
     my_ship.update()
-    a_missile.update()
     
     # draw splash screen if not started
     if not started:
@@ -349,7 +357,8 @@ my_ship = Ship([WIDTH / 2, HEIGHT / 2], [0, 3], 0, ship_image, ship_info, ship_t
 # a_rock = Sprite([WIDTH / 3, HEIGHT / 3], [1, 1], 0, 0.2, asteroid_image, asteroid_info)
 rock_group = set([])
 
-a_missile = Sprite([2 * WIDTH / 3, 2 * HEIGHT / 3], [-1,1], 0, 0, missile_image, missile_info, missile_sound)
+# a_missile = Sprite([2 * WIDTH / 3, 2 * HEIGHT / 3], [-1,1], 0, 0, missile_image, missile_info, missile_sound)
+missile_group = set([])
 
 # register handlers
 frame.set_draw_handler(draw)
