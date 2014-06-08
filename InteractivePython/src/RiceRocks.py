@@ -52,7 +52,7 @@ class ImageInfo:
 # debris images - debris1_brown.png, debris2_brown.png, debris3_brown.png, debris4_brown.png
 #                 debris1_blue.png, debris2_blue.png, debris3_blue.png, debris4_blue.png, debris_blend.png
 debris_info = ImageInfo([320, 240], [640, 480])
-debris_image_url = {'local' : "E:\Dropbox\Photos\spaceship\debris2_blue.png",
+debris_image_url = {'local' : "E:\MyDropbox\Photos\spaceship\debris2_blue.png",
                     'web' : "https://dl.dropbox.com/s/ltii3ztqgesc8kk/debris2_blue.png"}
 debris_image = simplegui.load_image(debris_image_url[mode])
 
@@ -111,6 +111,12 @@ class Ship:
         
         self.ANGLE_VEL_INCREMENT = 0.1
         self.ANGLE_VEL_MAX = 0.3
+    
+    def get_radius(self):
+        return self.radius
+    
+    def get_position(self):
+        return self.pos
         
     def set_thruster(self, status):
         self.thrust = status
@@ -186,7 +192,8 @@ class Ship:
         FRICTION = 0.99
         self.vel[0] *= FRICTION
         self.vel[1] *= FRICTION
-            
+        
+        
 # Sprite class
 class Sprite:
     def __init__(self, pos, vel, ang, ang_vel, image, info, sound = None):
@@ -204,7 +211,13 @@ class Sprite:
         if sound:
             sound.rewind()
             sound.play()
-   
+    
+    def get_radius(self):
+        return self.radius
+    
+    def get_position(self):
+        return self.pos
+       
     def draw(self, canvas):
         canvas.draw_image(self.image, self.image_center, self.image_size, 
                           self.pos, self.image_size, self.angle)
@@ -220,7 +233,14 @@ class Sprite:
         
         # Update angle
         self.angle += self.angle_vel
-
+        
+    def collide(self, other_object):
+        distance = dist( self.get_position(), other_object.get_position())
+        radius_sum = self.get_radius() + other_object.get_radius()
+        if distance > radius_sum:
+            return False
+        else:
+            return True
         
 def keyup(key):
     if (key == simplegui.KEY_MAP['left']):
@@ -257,9 +277,18 @@ def process_sprite_group(canvas, sprite_set):
     for sprite in list(sprite_set):
         sprite.draw(canvas)
         sprite.update()
+
+def group_collide(sprite_set, other_object):
+    for sprite in list(sprite_set):
+        if sprite.collide(other_object):
+            sprite_set.remove(sprite)
+            return True
+    
+    # No collision here
+    return False
            
 def draw(canvas):
-    global time, started
+    global time, started, lives
     
     # animiate background
     time += 1
@@ -270,9 +299,12 @@ def draw(canvas):
     canvas.draw_image(debris_image, center, size, (wtime - WIDTH / 2, HEIGHT / 2), (WIDTH, HEIGHT))
     canvas.draw_image(debris_image, center, size, (wtime + WIDTH / 2, HEIGHT / 2), (WIDTH, HEIGHT))
     
-    # draw text
+    # Process rocks
     process_sprite_group(canvas, rock_group)
+    if group_collide(rock_group, my_ship):
+        lives -= 1
     
+    # draw text
     canvas.draw_text( 'Lives: %d'%lives, (50, 50), 20, 'White')
     canvas.draw_text( 'Score: %d'%score, (WIDTH-150, 50), 20, 'White')
 
