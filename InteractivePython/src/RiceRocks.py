@@ -12,10 +12,13 @@ import random
 # globals for user interface
 WIDTH = 800
 HEIGHT = 600
+
+MAX_ROCK_NUMBER = 12
 score = 0
 lives = 3
 time = 0.5
 started = False
+mode = 'web' # 'local' or 'web'
 
 class ImageInfo:
     def __init__(self, center, size, radius = 0, lifespan = None, animated = False):
@@ -49,7 +52,9 @@ class ImageInfo:
 # debris images - debris1_brown.png, debris2_brown.png, debris3_brown.png, debris4_brown.png
 #                 debris1_blue.png, debris2_blue.png, debris3_blue.png, debris4_blue.png, debris_blend.png
 debris_info = ImageInfo([320, 240], [640, 480])
-debris_image = simplegui.load_image("https://dl.dropbox.com/s/ltii3ztqgesc8kk/debris2_blue.png")
+debris_image_url = {'local' : "E:\Dropbox\Photos\spaceship\debris2_blue.png",
+                    'web' : "https://dl.dropbox.com/s/ltii3ztqgesc8kk/debris2_blue.png"}
+debris_image = simplegui.load_image(debris_image_url[mode])
 
 # nebula images - nebula_brown.png, nebula_blue.png
 nebula_info = ImageInfo([400, 300], [800, 600])
@@ -181,36 +186,6 @@ class Ship:
         FRICTION = 0.99
         self.vel[0] *= FRICTION
         self.vel[1] *= FRICTION
-
-        
-def keyup(key):
-    if (key == simplegui.KEY_MAP['left']):
-        my_ship.increment_angle_vel()
-    elif (key == simplegui.KEY_MAP['right']):
-        my_ship.decrement_angle_vel()
-    elif (key == simplegui.KEY_MAP['up']):
-        my_ship.set_thruster(False)
-
-def keydown(key):
-    global my_ship
-    if (key == simplegui.KEY_MAP['right']):
-        my_ship.increment_angle_vel()
-    elif (key == simplegui.KEY_MAP['left']):
-        my_ship.decrement_angle_vel()
-    elif (key == simplegui.KEY_MAP['up']):
-        my_ship.set_thruster(True)
-    elif (key == simplegui.KEY_MAP['space']):
-        my_ship.shoot()
-
-# mouseclick handlers that reset UI and conditions whether splash image is drawn
-def click(pos):
-    global started
-    center = [WIDTH / 2, HEIGHT / 2]
-    size = splash_info.get_size()
-    inwidth = (center[0] - size[0] / 2) < pos[0] < (center[0] + size[0] / 2)
-    inheight = (center[1] - size[1] / 2) < pos[1] < (center[1] + size[1] / 2)
-    if (not started) and inwidth and inheight:
-        started = True
             
 # Sprite class
 class Sprite:
@@ -245,6 +220,43 @@ class Sprite:
         
         # Update angle
         self.angle += self.angle_vel
+
+        
+def keyup(key):
+    if (key == simplegui.KEY_MAP['left']):
+        my_ship.increment_angle_vel()
+    elif (key == simplegui.KEY_MAP['right']):
+        my_ship.decrement_angle_vel()
+    elif (key == simplegui.KEY_MAP['up']):
+        my_ship.set_thruster(False)
+
+def keydown(key):
+    global my_ship
+    if (key == simplegui.KEY_MAP['right']):
+        my_ship.increment_angle_vel()
+    elif (key == simplegui.KEY_MAP['left']):
+        my_ship.decrement_angle_vel()
+    elif (key == simplegui.KEY_MAP['up']):
+        my_ship.set_thruster(True)
+    elif (key == simplegui.KEY_MAP['space']):
+        my_ship.shoot()
+
+# mouseclick handlers that reset UI and conditions whether splash image is drawn
+def click(pos):
+    global started
+    center = [WIDTH / 2, HEIGHT / 2]
+    size = splash_info.get_size()
+    inwidth = (center[0] - size[0] / 2) < pos[0] < (center[0] + size[0] / 2)
+    inheight = (center[1] - size[1] / 2) < pos[1] < (center[1] + size[1] / 2)
+    if (not started) and inwidth and inheight:
+        started = True
+
+def process_sprite_group(canvas, sprite_set):
+    # Create a copy to avoid "RuntimeError: Set changed size during iteration"
+    # rock_spawner() maybe activated during iteration
+    for sprite in list(sprite_set):
+        sprite.draw(canvas)
+        sprite.update()
            
 def draw(canvas):
     global time, started
@@ -259,17 +271,17 @@ def draw(canvas):
     canvas.draw_image(debris_image, center, size, (wtime + WIDTH / 2, HEIGHT / 2), (WIDTH, HEIGHT))
     
     # draw text
+    process_sprite_group(canvas, rock_group)
+    
     canvas.draw_text( 'Lives: %d'%lives, (50, 50), 20, 'White')
     canvas.draw_text( 'Score: %d'%score, (WIDTH-150, 50), 20, 'White')
 
     # draw ship and sprites
     my_ship.draw(canvas)
-    a_rock.draw(canvas)
     a_missile.draw(canvas)
     
     # update ship and sprites
     my_ship.update()
-    a_rock.update()
     a_missile.update()
     
     # draw splash screen if not started
@@ -280,7 +292,7 @@ def draw(canvas):
             
 # timer handler that spawns a rock    
 def rock_spawner():
-    global a_rock
+    global rock_group
     # Random velocity
     MAX_VEL = 2
     RANGE_VEL = 2*MAX_VEL
@@ -290,7 +302,9 @@ def rock_spawner():
     MAX_ANG_VEL = 0.2
     RANGE_ANG_VEL = 2*MAX_ANG_VEL
     
-    a_rock = Sprite([random.randrange(WIDTH), random.randrange(HEIGHT)], [vx, vy], random.random(), RANGE_ANG_VEL*random.random() - MAX_ANG_VEL, asteroid_image, asteroid_info)
+    if len(rock_group) < MAX_ROCK_NUMBER:
+        a_rock = Sprite([random.randrange(WIDTH), random.randrange(HEIGHT)], [vx, vy], random.random(), RANGE_ANG_VEL*random.random() - MAX_ANG_VEL, asteroid_image, asteroid_info)
+        rock_group.add(a_rock)
     
 # initialize frame
 frame = simplegui.create_frame("Asteroids", WIDTH, HEIGHT)
@@ -298,8 +312,11 @@ frame = simplegui.create_frame("Asteroids", WIDTH, HEIGHT)
 # initialize ship and two sprites
 my_ship = Ship([WIDTH / 2, HEIGHT / 2], [0, 3], 0, ship_image, ship_info, ship_thrust_sound)
 # my_ship = Ship([WIDTH / 2, HEIGHT / 2], [3, 0], 1, ship_image, ship_info, ship_thrust_sound)
+
 # a_rock = Sprite([WIDTH / 3, HEIGHT / 3], [1, 1], 0, 0, asteroid_image, asteroid_info)
-a_rock = Sprite([WIDTH / 3, HEIGHT / 3], [1, 1], 0, 0.2, asteroid_image, asteroid_info)
+# a_rock = Sprite([WIDTH / 3, HEIGHT / 3], [1, 1], 0, 0.2, asteroid_image, asteroid_info)
+rock_group = set([])
+
 a_missile = Sprite([2 * WIDTH / 3, 2 * HEIGHT / 3], [-1,1], 0, 0, missile_image, missile_info, missile_sound)
 
 # register handlers
