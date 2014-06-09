@@ -146,7 +146,7 @@ class Ship:
         cannon_pos[0] += self.pos[0]
         cannon_pos[1] += self.pos[1]
         
-        MISSILE_SPEED = 10
+        MISSILE_SPEED = 20
         missile_vel = angle_to_vector(self.angle)
         missile_vel[0] *=  MISSILE_SPEED
         missile_vel[1] *=  MISSILE_SPEED
@@ -306,13 +306,13 @@ def group_collide(sprite_set, other_object):
  
 
 def group_group_collide( group_one, group_two):
-    sum = 0
+    my_sum = 0
     for one in list(group_one):
         if (group_collide(group_two, one)):
-            sum += 1
+            my_sum += 1
             group_one.remove(one)
     
-    return sum
+    return my_sum
         
 def draw(canvas):
     global time, started, lives, score
@@ -360,7 +360,7 @@ def draw(canvas):
 def rock_spawner():
     global rock_group, my_ship
     if started and len(rock_group) < MAX_ROCK_NUMBER:
-         # Random velocity
+        # Random velocity
         MAX_VEL = 2
         RANGE_VEL = 2*MAX_VEL
         vx = RANGE_VEL*random.random() - MAX_VEL
@@ -377,15 +377,9 @@ def rock_spawner():
 # initialize frame
 frame = simplegui.create_frame("Asteroids", WIDTH, HEIGHT)
 
-# initialize ship and two sprites
-my_ship = Ship([WIDTH / 2, HEIGHT / 2], [0, 3], 0, ship_image, ship_info, ship_thrust_sound)
-# my_ship = Ship([WIDTH / 2, HEIGHT / 2], [3, 0], 1, ship_image, ship_info, ship_thrust_sound)
-
-# a_rock = Sprite([WIDTH / 3, HEIGHT / 3], [1, 1], 0, 0, asteroid_image, asteroid_info)
-# a_rock = Sprite([WIDTH / 3, HEIGHT / 3], [1, 1], 0, 0.2, asteroid_image, asteroid_info)
+# initialize ship and two sprite groups
+my_ship = Ship([WIDTH / 2, HEIGHT / 2], [0, 0], 0, ship_image, ship_info, ship_thrust_sound)
 rock_group = set([])
-
-# a_missile = Sprite([2 * WIDTH / 3, 2 * HEIGHT / 3], [-1,1], 0, 0, missile_image, missile_info, missile_sound)
 missile_group = set([])
 
 # register handlers
