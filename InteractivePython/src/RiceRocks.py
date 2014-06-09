@@ -80,7 +80,7 @@ asteroid_image = simplegui.load_image("https://dl.dropbox.com/s/rrbr4nx1g5nsmrh/
 explosion_info = ImageInfo([64, 64], [128, 128], 17, 24, True)
 explosion_image = simplegui.load_image("https://dl.dropbox.com/s/77tmkiovimuukvl/explosion_alpha.png")
 
-# # sound assets purchased from sounddogs.com, please do not redistribute
+# sound assets purchased from sounddogs.com, please do not redistribute
 # soundtrack = simplegui.load_sound("https://dl.dropbox.com/s/pb3gk4umf2gw0p6/soundtrack.mp3")
 missile_sound = simplegui.load_sound("https://www.dropbox.com/s/qy740p7a25vujhp/missile.mp3")
 missile_sound.set_volume(.5)
@@ -270,13 +270,22 @@ def keydown(key):
 
 # mouseclick handlers that reset UI and conditions whether splash image is drawn
 def click(pos):
-    global started
+    global started, score, lives
+#     global soundtrack
     center = [WIDTH / 2, HEIGHT / 2]
     size = splash_info.get_size()
     inwidth = (center[0] - size[0] / 2) < pos[0] < (center[0] + size[0] / 2)
     inheight = (center[1] - size[1] / 2) < pos[1] < (center[1] + size[1] / 2)
+    
     if (not started) and inwidth and inheight:
         started = True
+        score = 0
+        lives = 3
+#         soundtrack.rewind()
+    
+    if started:
+        pass
+#         soundtrack.play()    
 
 def process_sprite_group(canvas, sprite_set):
     # Create a copy to avoid "RuntimeError: Set changed size during iteration"
@@ -294,9 +303,20 @@ def group_collide(sprite_set, other_object):
     
     # No collision here
     return False
-           
+ 
+
+def group_group_collide( group_one, group_two):
+    sum = 0
+    for one in list(group_one):
+        if (group_collide(group_two, one)):
+            sum += 1
+            group_one.remove(one)
+    
+    return sum
+        
 def draw(canvas):
-    global time, started, lives
+    global time, started, lives, score
+    global rock_group
     
     # animiate background
     time += 1
@@ -314,6 +334,7 @@ def draw(canvas):
     
     # Process missiles
     process_sprite_group(canvas, missile_group)
+    score += group_group_collide(missile_group, rock_group)
     
     # draw text
     canvas.draw_text( 'Lives: %d'%lives, (50, 50), 20, 'White')
@@ -324,6 +345,11 @@ def draw(canvas):
     # update ship
     my_ship.update()
     
+    # Check game status
+    if started and lives == 0:
+        started = False
+        rock_group = set([])
+        
     # draw splash screen if not started
     if not started:
         canvas.draw_image(splash_image, splash_info.get_center(), 
@@ -332,19 +358,21 @@ def draw(canvas):
             
 # timer handler that spawns a rock    
 def rock_spawner():
-    global rock_group
-    # Random velocity
-    MAX_VEL = 2
-    RANGE_VEL = 2*MAX_VEL
-    vx = RANGE_VEL*random.random() - MAX_VEL
-    vy = RANGE_VEL*random.random() - MAX_VEL
-    # Random angular velocity
-    MAX_ANG_VEL = 0.2
-    RANGE_ANG_VEL = 2*MAX_ANG_VEL
+    global rock_group, my_ship
+    if started and len(rock_group) < MAX_ROCK_NUMBER:
+         # Random velocity
+        MAX_VEL = 2
+        RANGE_VEL = 2*MAX_VEL
+        vx = RANGE_VEL*random.random() - MAX_VEL
+        vy = RANGE_VEL*random.random() - MAX_VEL
+        # Random angular velocity
+        MAX_ANG_VEL = 0.2
+        RANGE_ANG_VEL = 2*MAX_ANG_VEL
     
-    if len(rock_group) < MAX_ROCK_NUMBER:
         a_rock = Sprite([random.randrange(WIDTH), random.randrange(HEIGHT)], [vx, vy], random.random(), RANGE_ANG_VEL*random.random() - MAX_ANG_VEL, asteroid_image, asteroid_info)
-        rock_group.add(a_rock)
+        # Make sure the rock is some distance away from the ship
+        if dist( my_ship.get_position(), a_rock.get_position() ) > 4 * my_ship.get_radius():
+            rock_group.add(a_rock)
     
 # initialize frame
 frame = simplegui.create_frame("Asteroids", WIDTH, HEIGHT)
