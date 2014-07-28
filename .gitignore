@@ -1,1 +1,3 @@
 .metadata/
+*.pyc
+Scripts/src/installCheck.mylog
