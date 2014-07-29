@@ -6,13 +6,48 @@ Created on Jul 28, 2014
 
 import argparse
 
-import MyLogger
 import logging
 import os
 import time
 
+import logging
+import subprocess
+import inspect
+
+# set up logging to file
+# Extension *.mylog to avoid being deleted by setupEdgeIngest.py
+LOG_FILENAME = 'installCheck.mylog'
+# Additional logging info: %(asctime)s %(name)-12s 
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s {%(name)-12s} %(levelname)-8s %(message)s',
+                    datefmt='%m-%d %H:%M',
+                    filename=LOG_FILENAME,
+                    filemode='w')
+
+# define a Handler which writes INFO messages or higher to the sys.stderr
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+# set a format which is simpler for console use
+formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
+# tell the handler to use this format
+console.setFormatter(formatter)
+# add the handler to the root logger
+logging.getLogger('').addHandler(console)
+
 # create logger
-myLogger = logging.getLogger('IgInstaller')
+myLogger = logging.getLogger('Installer')
+
+
+def runCommand(cmdStr, logger):
+    # Print out the caller module and its line number
+    logger.debug( 'Calling from %s' % str(inspect.stack()[1][1:3]))
+    logger.debug(cmdStr)
+    try:
+        output = subprocess.check_output( cmdStr, stderr=subprocess.STDOUT )
+        logger.debug(output)
+    except subprocess.CalledProcessError as e:
+        logger.error( "Error code: %d" % e.returncode)
+        logger.error(e.output)
 
 # Common global variables
 
@@ -94,7 +129,7 @@ def uninstallLocal( installDir ):
         myLogger.error( "Uninstaller %s file not found", UNINSTALLER )
         return
     
-    MyLogger.runCommand([UNINSTALLER, '--mode', 'unattended'],
+    runCommand([UNINSTALLER, '--mode', 'unattended'],
                         myLogger)
 
 
@@ -102,7 +137,7 @@ def installLocal( installer, installDir ):
     '''Perform installation for the localhost'''
     myLogger.info( "Installing %s to %s", installer, installDir )
     
-    MyLogger.runCommand([installer, '--mode', 'unattended', 
+    runCommand([installer, '--mode', 'unattended', 
                          '--prefix', installDir,
                          '--installenv', '1'], myLogger)
     
@@ -174,7 +209,11 @@ if __name__ == "__main__":
     1. if environment variables CLASSPATH and PYTHONPATH are properly updated 
     during installation and uninstallation of the product.
     
-    Run this script with 0 to print out paths
+    Example usage: in the current command-line windows:
+    python thisScript -installer installer -installDir C:\installDir -repeat 4 -osString win
+    
+    After this, open another command-line windows (to refresh ENV) and run: 
+    python thisScript -installer installer -installDir C:\installDir -repeat 0 -osString win
     '''
     out = main()
     print out
