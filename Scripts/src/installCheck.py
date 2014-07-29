@@ -30,6 +30,7 @@ OOCHECKQS = ''
 
 CLASS_PATH_ADD = ''
 PYTHON_PATH_ADD = ''
+PATH_SEPARATOR = ''
 
 def setup(installDir, osString):
     '''
@@ -40,7 +41,7 @@ def setup(installDir, osString):
     global INSTALLATION_DIR, INSTALL_LOG_DIR, UNINSTALLER, LICENSE_LOCATION
     global INSTALL_LOG_DIR
     global OOCHECKAMS, OOCHECKLS, OOCHECKQS
-    global CLASS_PATH_ADD, PYTHON_PATH_ADD
+    global CLASS_PATH_ADD, PYTHON_PATH_ADD, PATH_SEPARATOR
     
     INSTALLATION_DIR = installDir
     INSTALL_LOG_DIR = installDir
@@ -49,24 +50,27 @@ def setup(installDir, osString):
     OOCHECKLS = '%s/bin/oocheckls' % installDir
     OOCHECKQS = '%s/bin/ooqueryserver -check' % installDir
     
-    CLASS_PATH_ADD = '%s/lib/oojava.jar' % installDir
-    PYTHON_PATH_ADD = '%s/bin' % installDir
+    CLASS_PATH_ADD = os.path.normpath('%s/lib/oojava.jar' % installDir)
+    PYTHON_PATH_ADD = os.path.normpath('%s/bin' % installDir)
     
     if (osString == 'win_x64' or osString == 'intelnt' or osString == 'win' ):
         INSTALLER_APP_EXT = '.exe'
         UNINSTALLER = '%s/uninstall%s' %(installDir, INSTALLER_APP_EXT)
         LICENSE_LOCATION = 'C:/windows/oolicense.txt'
+        PATH_SEPARATOR = ';'
         
     elif (osString == 'mac86_64' or osString == 'mac' ):
         INSTALLER_APP_EXT = '.app'
         UNINSTALLER = "%s/uninstall%s/Contents/MacOS/installbuilder.sh"%(installDir, INSTALLER_APP_EXT)
         LICENSE_LOCATION = '~oqa/oolicense.txt'
+        PATH_SEPARATOR = ':'
         
     else:
         '''Linux and Unix distributions'''
         INSTALLER_APP_EXT = '.run'
         UNINSTALLER = '%s/uninstall' %(installDir)
         LICENSE_LOCATION = '~oqa/oolicense.txt'
+        PATH_SEPARATOR = ':'
 
     # Logging all the setup variables     
     myLogger.debug( 'INSTALLATION_DIR: %s', INSTALLATION_DIR)
@@ -99,13 +103,20 @@ def installLocal( installer, installDir ):
     myLogger.info( "Installing %s to %s", installer, installDir )
     
     MyLogger.runCommand([installer, '--mode', 'unattended', 
-                         '--prefix', installDir], 
-                        myLogger)
+                         '--prefix', installDir,
+                         '--installenv', '1'], myLogger)
     
 
 def countEnvironmentPath(path, pathList):
-    myLogger.debug(path)
-    myLogger.debug(pathList)
+    myLogger.debug('Target path: %s', path)
+    myLogger.debug('Path list: %s', pathList)
+    count = 0
+    
+    for p in pathList.split(PATH_SEPARATOR):
+        if (path == p):
+            count += 1
+    
+    return count
 
 
 def main():

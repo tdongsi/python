@@ -33,11 +33,11 @@ set SCRIPT=installCheck.py
 
 ::python %SCRIPT% -installer installer-11.2.3-vc10x64-19983.exe
 
-python %SCRIPT% -installer installer-11.2.3-vc10x64-19983.exe -installDir C:\objy -repeat 1 -osString win
+::python %SCRIPT% -installer installer-11.2.3-vc10x64-19983.exe -installDir C:\objy -repeat 1 -osString win
+
+::python %SCRIPT% -installer "C:\Users\cuongd\Downloads\temp\installer-11.2.3-vc10x64-19983.exe" -installDir C:\objy -repeat 0 -osString win
 
 python %SCRIPT% -installer "C:\Users\cuongd\Downloads\temp\installer-11.2.3-vc10x64-19983.exe" -installDir C:\objy -repeat 0 -osString win
-
-python %SCRIPT% -installer "C:\Users\cuongd\Downloads\temp\installer-11.2.3-vc10x64-19983.exe" -installDir C:\objy -repeat 2 -osString win
 
 ::pause
 ::############################################################
