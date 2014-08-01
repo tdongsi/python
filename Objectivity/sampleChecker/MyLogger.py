@@ -31,7 +31,7 @@ logging.getLogger('').addHandler(console)
 def runCommand(cmdStr, logger):
     # Print out the caller module and its line number
     logger.debug( 'Calling from %s' % str(inspect.stack()[1][1:3]))
-    logger.info( '> %s', str(cmdStr))
+    logger.info( '> %s', ' '.join(cmdStr))
     try:
         output = subprocess.check_output( cmdStr, stderr=subprocess.STDOUT )
         logger.debug(output)
