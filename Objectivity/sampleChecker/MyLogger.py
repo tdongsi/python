@@ -28,7 +28,7 @@ console.setFormatter(formatter)
 logging.getLogger('').addHandler(console)
 
 
-def runCommand(cmdStr, logger):
+def runCommand(logger, cmdStr):
     # Print out the caller module and its line number
     logger.debug( 'Calling from %s' % str(inspect.stack()[1][1:3]))
     logger.info( '> %s', ' '.join(cmdStr))
