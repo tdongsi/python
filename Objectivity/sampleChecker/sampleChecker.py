@@ -12,6 +12,21 @@ import os
 # create logger
 myLogger = logging.getLogger('Samples')
 
+def storageCleanup(resetExec, dirs):
+    '''Clean up the sample'''
+    myLogger.info( 'Cleaning up storage location tutorial')
+    
+    MyLogger.runCommand(myLogger, [resetExec, '-clean'])
+    
+    dirCommand = ['rm', '-r']
+    dirCommand.extend(dirs)
+    MyLogger.runCommand(myLogger, dirCommand)
+    
+    dirCommand = ['mkdir', '-p']
+    dirCommand.extend(dirs)
+    MyLogger.runCommand(myLogger, dirCommand)
+    return
+
 
 def storageExample1(resetExec, populatorExec, dirs, names, bootfile):
     MyLogger.runCommand(myLogger, [resetExec])
@@ -72,6 +87,8 @@ def runStorageLocationTutorial(installDir, osString):
         
         # Example 3
         
+        # Clean up
+        storageCleanup(resetExec, dirs)
         
     finally:
         # Reset the current directory
