@@ -20,6 +20,33 @@ import glob
 # create logger
 myLogger = logging.getLogger('Samples')
 
+
+def runPythonSamples(installDir, osString):
+    '''Run Python samples in samples/python'''
+    
+    myLogger.info('PYTHON SAMPLES')
+    samplePath1 = 'samples/python/helloWorld'
+    samplePath2 = 'samples/python/tutorial'
+    
+    curPath = os.getcwd()
+    
+    try:
+        # Move to the sample folder
+        os.chdir(os.path.join(installDir, samplePath1))
+        myLogger.debug( 'Current path: %s', os.getcwd())
+        MyLogger.runCommand(myLogger, ['python', 'main.py'])
+        
+        os.chdir(os.path.join(installDir, samplePath2))
+        myLogger.debug( 'Current path: %s', os.getcwd())
+        MyLogger.runCommand(myLogger, ['python', 'tutorial.py'])
+        
+    finally:
+        # Reset the current directory
+        os.chdir(curPath)
+    
+    return
+
+
 def storageCleanup(resetExec, dirs):
     '''Clean up the sample'''
     myLogger.info( 'Cleaning up storage location tutorial')
@@ -216,9 +243,12 @@ def main():
     
     # Java samples
     runJavaSamples(args.installDir, args.osString)
-    
+     
     # Placement tutorial: storage locations
     runStorageLocationTutorial(args.installDir, args.osString)
+    
+    # Python samples
+    runPythonSamples(args.installDir, args.osString)
     
 
 if __name__ == "__main__":
