@@ -8,6 +8,7 @@ import logging
 import MyLogger
 import argparse
 import os
+import glob
 
 # create logger
 myLogger = logging.getLogger('Samples')
@@ -27,6 +28,32 @@ def storageCleanup(resetExec, dirs):
     MyLogger.runCommand(myLogger, dirCommand)
     return
 
+def checkDbFiles ():
+    '''List all DB files in current directory and all sub-directories'''
+    
+#     MyLogger.runCommand(myLogger, ['ls', '*.DB'])
+#     MyLogger.runCommand(myLogger, ['ls', '*/*.DB'])
+    
+    # More portable version
+    fileList = glob.glob('*.DB')
+    fileList.extend(glob.glob('*/*.DB'))
+    myLogger.debug('\n'.join(fileList))
+    return
+
+
+def storageExample2(resetExec, populatorExec, dirs, names, bootfile):
+    ''' Example 2 of the Storage Location tutorial '''
+    
+    MyLogger.runCommand(myLogger, [resetExec, '-Msg'])
+    MyLogger.runCommand(myLogger, ['objy', 'ImportPlacement', 
+                         '-inFile', 'VehicleRR.pmd', 
+                         '-bootfile', bootfile])
+    MyLogger.runCommand(myLogger, [populatorExec])
+    
+    checkDbFiles()
+    myLogger.debug("Verify: Default* DB file and 5 Vehicles* DB files among 4 storage locations\n")
+    
+    return
 
 def storageExample1(resetExec, populatorExec, dirs, names, bootfile):
     MyLogger.runCommand(myLogger, [resetExec])
@@ -42,6 +69,7 @@ def storageExample1(resetExec, populatorExec, dirs, names, bootfile):
     MyLogger.runCommand(myLogger, [populatorExec])
     MyLogger.runCommand(myLogger, ['objy', 'ListStorage',
                                    '-bootfile', bootfile])
+    return
 
 
 def runStorageLocationTutorial(installDir, osString):
@@ -82,8 +110,8 @@ def runStorageLocationTutorial(installDir, osString):
         # Example 1
         storageExample1(resetExec, populatorExec, dirs, names, bootfile)
         
-        
         # Example 2
+        storageExample2(resetExec, populatorExec, dirs, names, bootfile)
         
         # Example 3
         
