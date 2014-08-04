@@ -1,6 +1,13 @@
 '''
 Created on Aug 1, 2014
 
+This script is to check many (not all) samples in Objectivity/DB product.
+
+Usage:
+    
+NOTE: Make sure that the following tools/executables are in the PATH:
+Objy tools, javac, java
+
 @author: cuongd
 '''
 
@@ -41,6 +48,37 @@ def checkDbFiles ():
     return
 
 
+def storageExample4(resetExec, populatorExec, dirs, names, bootfile):
+    ''' Example 4 of the Storage Location tutorial '''
+    MyLogger.runCommand(myLogger, [resetExec, '-MSG'])
+    MyLogger.runCommand(myLogger, ['objy', 'ImportPlacement', 
+                         '-inFile', 'Customers.pmd', 
+                         '-bootfile', bootfile])
+    MyLogger.runCommand(myLogger, ['objy', 'AddStorageLocation', 
+                         '-name', 'LocB', 
+                         '-dbPlacerGroup', 'Customers',
+                         '-bootfile', bootfile])
+    MyLogger.runCommand(myLogger, [populatorExec])
+    
+    checkDbFiles()
+    myLogger.debug("Verify: Default_1.RentalComapnyData.DB created in LocationA")
+    myLogger.debug("Verify: Customers_1.RentalComapnyData.DB created in LocationB")
+    
+    return
+
+
+def storageExample3(resetExec, populatorExec, dirs, names, bootfile):
+    ''' Example 3 of the Storage Location tutorial '''
+    MyLogger.runCommand(myLogger, [resetExec, '-msg'])
+    MyLogger.runCommand(myLogger, [populatorExec, 
+                           '-loadConfiguration', 'App1Prefs.config'])
+    
+    checkDbFiles()
+    myLogger.debug("Verify: Default_1.RentalComapnyData.DB file created in LocationC")
+    
+    return
+
+
 def storageExample2(resetExec, populatorExec, dirs, names, bootfile):
     ''' Example 2 of the Storage Location tutorial '''
     
@@ -51,7 +89,7 @@ def storageExample2(resetExec, populatorExec, dirs, names, bootfile):
     MyLogger.runCommand(myLogger, [populatorExec])
     
     checkDbFiles()
-    myLogger.debug("Verify: Default* DB file and 5 Vehicles* DB files among 4 storage locations\n")
+    myLogger.debug("Verify: Default* DB file and 5 Vehicles* DB files among 4 storage locations")
     
     return
 
@@ -114,6 +152,10 @@ def runStorageLocationTutorial(installDir, osString):
         storageExample2(resetExec, populatorExec, dirs, names, bootfile)
         
         # Example 3
+        storageExample3(resetExec, populatorExec, dirs, names, bootfile)
+        
+        # Example 4
+        storageExample4(resetExec, populatorExec, dirs, names, bootfile)
         
         # Clean up
         storageCleanup(resetExec, dirs)
@@ -181,11 +223,7 @@ def main():
 
 if __name__ == "__main__":
     '''
-    Usage:
-    
-    NOTE: Make sure that the following tools/executables are in the PATH:
-    Objy tools, javac, java
-    
+    See the top comment for usage.    
     '''
     out = main()
     
