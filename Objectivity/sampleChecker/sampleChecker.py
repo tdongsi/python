@@ -4,6 +4,8 @@ Created on Aug 1, 2014
 This script is to check many (not all) samples in Objectivity/DB product.
 
 Usage:
+python sampleChecker.py -installDir C:\objy -osString win
+python sampleChecker.py -installDir /space/usr/objy -osString mac
     
 NOTE: Make sure that the following tools/executables are in the PATH:
 Objy tools, javac, java
@@ -16,6 +18,50 @@ import MyLogger
 import argparse
 import os
 import glob
+
+
+###########################################################################
+# Logger configuration
+# From MyLogger module to make the script contained in one file.
+###########################################################################
+import subprocess
+import inspect
+
+# set up logging to file
+LOG_FILENAME = 'ObjySample.log'
+# Additional logging info: %(asctime)s %(name)-12s 
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s {%(name)-12s} %(levelname)-8s %(message)s',
+                    datefmt='%m-%d %H:%M',
+                    filename=LOG_FILENAME,
+                    filemode='w')
+
+# define a Handler which writes INFO messages or higher to the sys.stderr
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+# set a format which is simpler for console use
+formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
+# tell the handler to use this format
+console.setFormatter(formatter)
+# add the handler to the root logger
+logging.getLogger('').addHandler(console)
+
+
+def runCommand(logger, cmdStr, envMap = None):
+    # Print out the caller module and its line number
+    logger.debug( 'Calling from %s' % str(inspect.stack()[1][1:3]))
+    logger.info( '> %s', ' '.join(cmdStr))
+    try:
+        output = subprocess.check_output( cmdStr, stderr=subprocess.STDOUT,
+                  env = envMap )
+        logger.debug(output)
+    except subprocess.CalledProcessError as e:
+        logger.error( "Error code: %d" % e.returncode)
+        logger.error(e.output)
+    return
+
+###########################################################################
+###########################################################################
 
 # create logger
 myLogger = logging.getLogger('Samples')
