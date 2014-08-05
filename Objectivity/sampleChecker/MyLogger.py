@@ -28,17 +28,19 @@ console.setFormatter(formatter)
 logging.getLogger('').addHandler(console)
 
 
-def runCommand(logger, cmdStr):
+def runCommand(logger, cmdStr, envMap = None):
     # Print out the caller module and its line number
     logger.debug( 'Calling from %s' % str(inspect.stack()[1][1:3]))
     logger.info( '> %s', ' '.join(cmdStr))
     try:
-        output = subprocess.check_output( cmdStr, stderr=subprocess.STDOUT )
+        output = subprocess.check_output( cmdStr, stderr=subprocess.STDOUT,
+                  env = envMap )
         logger.debug(output)
     except subprocess.CalledProcessError as e:
         logger.error( "Error code: %d" % e.returncode)
         logger.error(e.output)
-        
+    return
+
         
 if __name__ == "__main__":
     print "My configured logging module."

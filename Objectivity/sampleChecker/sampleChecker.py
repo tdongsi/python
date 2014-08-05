@@ -28,17 +28,23 @@ def runPythonSamples(installDir, osString):
     samplePath1 = 'samples/python/helloWorld'
     samplePath2 = 'samples/python/tutorial'
     
+    envMap = dict(os.environ)
+    if osString == 'win':
+        envMap[ 'PYTHONPATH' ] = '.;%s' % str(os.path.join(installDir, 'bin'))
+    else:
+        envMap[ 'PYTHONPATH' ] = '.:%s' % str(os.path.join(installDir, 'bin'))
+    
     curPath = os.getcwd()
     
     try:
         # Move to the sample folder
         os.chdir(os.path.join(installDir, samplePath1))
         myLogger.debug( 'Current path: %s', os.getcwd())
-        MyLogger.runCommand(myLogger, ['python', 'main.py'])
+        MyLogger.runCommand(myLogger, ['python', 'main.py'], envMap)
         
         os.chdir(os.path.join(installDir, samplePath2))
         myLogger.debug( 'Current path: %s', os.getcwd())
-        MyLogger.runCommand(myLogger, ['python', 'tutorial.py'])
+        MyLogger.runCommand(myLogger, ['python', 'tutorial.py'], envMap)
         
     finally:
         # Reset the current directory
@@ -233,8 +239,8 @@ def main():
     parser.add_argument('-osString', action='store', dest='osString', 
                         required=True,
                         help='String that represents the current OS. '\
-                        'Windows: win, win_x64, intelnt. '\
-                        'Mac: mac, mac86_64. '\
+                        'Windows: win. '\
+                        'Mac: mac. '\
                         'Unix/Linux: linux86_64, solaris86_64, and others. ')
     
     args = parser.parse_args()
@@ -243,7 +249,7 @@ def main():
     
     # Java samples
     runJavaSamples(args.installDir, args.osString)
-     
+      
     # Placement tutorial: storage locations
     runStorageLocationTutorial(args.installDir, args.osString)
     
