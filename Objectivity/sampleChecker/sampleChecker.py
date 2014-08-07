@@ -65,6 +65,34 @@ def runCommand(logger, cmdStr, envMap = None):
 # create logger
 myLogger = logging.getLogger('Samples')
 
+def runCppSamples(installDir, osString):
+    '''Run C++ samples in samples/cxx/helloWorld'''
+    
+    myLogger.info('C++ SAMPLES')
+    samplePath = 'samples/python/helloWorld'
+    
+    if osString == 'win':
+        myLogger.info('In Windows, C++ samples must be run with Visual Studio.')
+        return
+    else:
+        curPath = os.getcwd()
+        
+        try:
+            # Move to the sample folder
+            os.chdir(os.path.join(installDir, samplePath))
+            myLogger.debug( 'Current path: %s', os.getcwd())
+            
+            myLogger.info('Compiling sample')
+            runCommand(myLogger, ['make', '-e'])
+            myLogger.info('Compiling sample')
+            runCommand(myLogger, ['./helloWorld', 'data/helloWorld.boot'])
+            
+        finally:
+            # Reset the current directory
+            os.chdir(curPath)
+    
+    return
+
 
 def runPythonSamples(installDir, osString):
     '''Run Python samples in samples/python'''
@@ -300,6 +328,10 @@ def main():
     
     # Python samples
     runPythonSamples(args.installDir, args.osString)
+    
+    # C++ samples. Linux/Mac only
+    # In Windows, use Visual Studio to run the sample
+    runCppSamples(args.installDir, args.osString)
     
 
 if __name__ == "__main__":
