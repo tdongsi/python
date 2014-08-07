@@ -14,7 +14,6 @@ Objy tools, javac, java
 '''
 
 import logging
-import MyLogger
 import argparse
 import os
 import glob
@@ -26,7 +25,7 @@ import glob
 ###########################################################################
 import subprocess
 import inspect
-
+ 
 # set up logging to file
 LOG_FILENAME = 'ObjySample.log'
 # Additional logging info: %(asctime)s %(name)-12s 
@@ -35,7 +34,7 @@ logging.basicConfig(level=logging.DEBUG,
                     datefmt='%m-%d %H:%M',
                     filename=LOG_FILENAME,
                     filemode='w')
-
+ 
 # define a Handler which writes INFO messages or higher to the sys.stderr
 console = logging.StreamHandler()
 console.setLevel(logging.INFO)
@@ -45,8 +44,8 @@ formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
 console.setFormatter(formatter)
 # add the handler to the root logger
 logging.getLogger('').addHandler(console)
-
-
+ 
+ 
 def runCommand(logger, cmdStr, envMap = None):
     # Print out the caller module and its line number
     logger.debug( 'Calling from %s' % str(inspect.stack()[1][1:3]))
@@ -59,7 +58,7 @@ def runCommand(logger, cmdStr, envMap = None):
         logger.error( "Error code: %d" % e.returncode)
         logger.error(e.output)
     return
-
+ 
 ###########################################################################
 ###########################################################################
 
@@ -86,11 +85,11 @@ def runPythonSamples(installDir, osString):
         # Move to the sample folder
         os.chdir(os.path.join(installDir, samplePath1))
         myLogger.debug( 'Current path: %s', os.getcwd())
-        MyLogger.runCommand(myLogger, ['python', 'main.py'], envMap)
+        runCommand(myLogger, ['python', 'main.py'], envMap)
         
         os.chdir(os.path.join(installDir, samplePath2))
         myLogger.debug( 'Current path: %s', os.getcwd())
-        MyLogger.runCommand(myLogger, ['python', 'tutorial.py'], envMap)
+        runCommand(myLogger, ['python', 'tutorial.py'], envMap)
         
     finally:
         # Reset the current directory
@@ -103,22 +102,22 @@ def storageCleanup(resetExec, dirs):
     '''Clean up the sample'''
     myLogger.info( 'Cleaning up storage location tutorial')
     
-    MyLogger.runCommand(myLogger, [resetExec, '-clean'])
+    runCommand(myLogger, [resetExec, '-clean'])
     
     dirCommand = ['rm', '-r']
     dirCommand.extend(dirs)
-    MyLogger.runCommand(myLogger, dirCommand)
+    runCommand(myLogger, dirCommand)
     
     dirCommand = ['mkdir', '-p']
     dirCommand.extend(dirs)
-    MyLogger.runCommand(myLogger, dirCommand)
+    runCommand(myLogger, dirCommand)
     return
 
 def checkDbFiles ():
     '''List all DB files in current directory and all sub-directories'''
     
-#     MyLogger.runCommand(myLogger, ['ls', '*.DB'])
-#     MyLogger.runCommand(myLogger, ['ls', '*/*.DB'])
+#     runCommand(myLogger, ['ls', '*.DB'])
+#     runCommand(myLogger, ['ls', '*/*.DB'])
     
     # More portable version
     fileList = glob.glob('*.DB')
@@ -129,15 +128,15 @@ def checkDbFiles ():
 
 def storageExample4(resetExec, populatorExec, dirs, names, bootfile):
     ''' Example 4 of the Storage Location tutorial '''
-    MyLogger.runCommand(myLogger, [resetExec, '-MSG'])
-    MyLogger.runCommand(myLogger, ['objy', 'ImportPlacement', 
+    runCommand(myLogger, [resetExec, '-MSG'])
+    runCommand(myLogger, ['objy', 'ImportPlacement', 
                          '-inFile', 'Customers.pmd', 
                          '-bootfile', bootfile])
-    MyLogger.runCommand(myLogger, ['objy', 'AddStorageLocation', 
+    runCommand(myLogger, ['objy', 'AddStorageLocation', 
                          '-name', 'LocB', 
                          '-dbPlacerGroup', 'Customers',
                          '-bootfile', bootfile])
-    MyLogger.runCommand(myLogger, [populatorExec])
+    runCommand(myLogger, [populatorExec])
     
     checkDbFiles()
     myLogger.debug("Verify: Default_1.RentalComapnyData.DB created in LocationA")
@@ -148,8 +147,8 @@ def storageExample4(resetExec, populatorExec, dirs, names, bootfile):
 
 def storageExample3(resetExec, populatorExec, dirs, names, bootfile):
     ''' Example 3 of the Storage Location tutorial '''
-    MyLogger.runCommand(myLogger, [resetExec, '-msg'])
-    MyLogger.runCommand(myLogger, [populatorExec, 
+    runCommand(myLogger, [resetExec, '-msg'])
+    runCommand(myLogger, [populatorExec, 
                            '-loadConfiguration', 'App1Prefs.config'])
     
     checkDbFiles()
@@ -161,11 +160,11 @@ def storageExample3(resetExec, populatorExec, dirs, names, bootfile):
 def storageExample2(resetExec, populatorExec, dirs, names, bootfile):
     ''' Example 2 of the Storage Location tutorial '''
     
-    MyLogger.runCommand(myLogger, [resetExec, '-Msg'])
-    MyLogger.runCommand(myLogger, ['objy', 'ImportPlacement', 
+    runCommand(myLogger, [resetExec, '-Msg'])
+    runCommand(myLogger, ['objy', 'ImportPlacement', 
                          '-inFile', 'VehicleRR.pmd', 
                          '-bootfile', bootfile])
-    MyLogger.runCommand(myLogger, [populatorExec])
+    runCommand(myLogger, [populatorExec])
     
     checkDbFiles()
     myLogger.debug("Verify: Default* DB file and 5 Vehicles* DB files among 4 storage locations")
@@ -173,18 +172,18 @@ def storageExample2(resetExec, populatorExec, dirs, names, bootfile):
     return
 
 def storageExample1(resetExec, populatorExec, dirs, names, bootfile):
-    MyLogger.runCommand(myLogger, [resetExec])
-    MyLogger.runCommand(myLogger, ['objy', 'AddStorageLocation', 
+    runCommand(myLogger, [resetExec])
+    runCommand(myLogger, ['objy', 'AddStorageLocation', 
                          '-name', names[0], 
                          '-storageLocation', './%s' % dirs[0],
                          '-bootfile', bootfile])
-    MyLogger.runCommand(myLogger, ['objy', 'AddStorageLocation',
+    runCommand(myLogger, ['objy', 'AddStorageLocation',
                        '-storageLocation', './%s' % dirs[1],
                        '-storageLocation', './%s' % dirs[2],
                        '-storageLocation', './%s' % dirs[3],
                        '-bootfile', bootfile])
-    MyLogger.runCommand(myLogger, [populatorExec])
-    MyLogger.runCommand(myLogger, ['objy', 'ListStorage',
+    runCommand(myLogger, [populatorExec])
+    runCommand(myLogger, ['objy', 'ListStorage',
                                    '-bootfile', bootfile])
     return
 
@@ -221,7 +220,7 @@ def runStorageLocationTutorial(installDir, osString):
         # Setup
         mkdir = ['mkdir', '-p']
         mkdir.extend(dirs)
-        MyLogger.runCommand(myLogger, mkdir)
+        runCommand(myLogger, mkdir)
         
         # Starting tutorial
         # Example 1
@@ -256,17 +255,17 @@ def runJavaSamples(installDir, osString):
         os.chdir(os.path.join(installDir, samplePath, 'data'))
         myLogger.debug( 'Current path: %s', os.getcwd())
         
-        MyLogger.runCommand(myLogger, ['objy', 'CreateFd', '-fdname', 'HelloWorld'])
+        runCommand(myLogger, ['objy', 'CreateFd', '-fdname', 'HelloWorld'])
         
         os.chdir(os.path.join(installDir, samplePath, 'src'))
         myLogger.debug( 'Current path: %s', os.getcwd())
         
-        MyLogger.runCommand(myLogger, ['javac', '*.java'])
-        MyLogger.runCommand(myLogger, ['java', 'Main', '../data/HelloWorld.boot'])
+        runCommand(myLogger, ['javac', '*.java'])
+        runCommand(myLogger, ['java', 'Main', '../data/HelloWorld.boot'])
         
         os.chdir(os.path.join(installDir, samplePath, 'data'))
         myLogger.debug( 'Current path: %s', os.getcwd())
-        MyLogger.runCommand(myLogger, ['objy', 'DeleteFd', '-boot', 'HelloWorld.boot'])
+        runCommand(myLogger, ['objy', 'DeleteFd', '-boot', 'HelloWorld.boot'])
         
     finally:
         # Reset the current directory
