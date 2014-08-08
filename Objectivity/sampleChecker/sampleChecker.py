@@ -65,239 +65,261 @@ def runCommand(logger, cmdStr, envMap = None):
 # create logger
 myLogger = logging.getLogger('Samples')
 
-def runCppSamples(installDir, osString):
-    '''Run C++ samples in samples/cxx/helloWorld'''
+class SampleChecker:
     
-    myLogger.info('C++ SAMPLES')
-    samplePath = 'samples/python/helloWorld'
-    
-    if osString == 'win':
-        myLogger.info('In Windows, C++ samples must be run with Visual Studio.')
+    def __init__(self, install_dir, os_string):
+        _installDir = install_dir
+        _osString = os_string
+        
+    def runSamples(self):
+        ''' Run all the samples '''
+        # Java samples
+        self.runJavaSamples()
+          
+        # Placement tutorial: storage locations
+        self.runStorageLocationTutorial()
+        
+        # Python samples
+        self.runPythonSamples()
+        
+        # C++ samples. Linux/Mac only
+        # In Windows, use Visual Studio to run the sample
+        self.runCppSamples()
+        
+
+    def runCppSamples(self):
+        '''Run C++ samples in samples/cxx/helloWorld'''
+        
+        myLogger.info('C++ SAMPLES')
+        samplePath = 'samples/python/helloWorld'
+        
+        if self._osString == 'win':
+            myLogger.info('In Windows, C++ samples must be run with Visual Studio.')
+            return
+        else:
+            curPath = os.getcwd()
+            
+            try:
+                # Move to the sample folder
+                os.chdir(os.path.join(self._installDir, samplePath))
+                myLogger.debug( 'Current path: %s', os.getcwd())
+                
+                myLogger.info('Compiling sample')
+                runCommand(myLogger, ['make', '-e'])
+                myLogger.info('Compiling sample')
+                runCommand(myLogger, ['./helloWorld', 'data/helloWorld.boot'])
+                
+            finally:
+                # Reset the current directory
+                os.chdir(curPath)
+        
         return
-    else:
+    
+    
+    def runPythonSamples(self):
+        '''Run Python samples in samples/python'''
+        
+        myLogger.info('PYTHON SAMPLES')
+        samplePath1 = 'samples/python/helloWorld'
+        samplePath2 = 'samples/python/tutorial'
+        
+        envMap = dict(os.environ)
+        if self._osString == 'win':
+            envMap[ 'PYTHONPATH' ] = '.;%s' % str(os.path.join(self._installDir, 'bin'))
+        else:
+            envMap[ 'PYTHONPATH' ] = '.:%s' % str(os.path.join(self._installDir, 'bin'))
+        
         curPath = os.getcwd()
         
         try:
             # Move to the sample folder
-            os.chdir(os.path.join(installDir, samplePath))
+            os.chdir(os.path.join(self._installDir, samplePath1))
+            myLogger.debug( 'Current path: %s', os.getcwd())
+            runCommand(myLogger, ['python', 'main.py'], envMap)
+            
+            os.chdir(os.path.join(self._installDir, samplePath2))
+            myLogger.debug( 'Current path: %s', os.getcwd())
+            runCommand(myLogger, ['python', 'tutorial.py'], envMap)
+            
+        finally:
+            # Reset the current directory
+            os.chdir(curPath)
+        
+        return
+    
+    
+    def storageCleanup(self, resetExec, dirs):
+        '''Clean up the sample'''
+        myLogger.info( 'Cleaning up storage location tutorial')
+        
+        runCommand(myLogger, [resetExec, '-clean'])
+        
+        dirCommand = ['rm', '-r']
+        dirCommand.extend(dirs)
+        runCommand(myLogger, dirCommand)
+        
+        dirCommand = ['mkdir', '-p']
+        dirCommand.extend(dirs)
+        runCommand(myLogger, dirCommand)
+        return
+    
+    def checkDbFiles(self):
+        '''List all DB files in current directory and all sub-directories'''
+        
+    #     runCommand(myLogger, ['ls', '*.DB'])
+    #     runCommand(myLogger, ['ls', '*/*.DB'])
+        
+        # More portable version
+        fileList = glob.glob('*.DB')
+        fileList.extend(glob.glob('*/*.DB'))
+        myLogger.debug('\n'.join(fileList))
+        return
+    
+    
+    def storageExample4(self, resetExec, populatorExec, dirs, names, bootfile):
+        ''' Example 4 of the Storage Location tutorial '''
+        runCommand(myLogger, [resetExec, '-MSG'])
+        runCommand(myLogger, ['objy', 'ImportPlacement', 
+                             '-inFile', 'Customers.pmd', 
+                             '-bootfile', bootfile])
+        runCommand(myLogger, ['objy', 'AddStorageLocation', 
+                             '-name', 'LocB', 
+                             '-dbPlacerGroup', 'Customers',
+                             '-bootfile', bootfile])
+        runCommand(myLogger, [populatorExec])
+        
+        self.checkDbFiles()
+        myLogger.debug("Verify: Default_1.RentalComapnyData.DB created in LocationA")
+        myLogger.debug("Verify: Customers_1.RentalComapnyData.DB created in LocationB")
+        
+        return
+    
+    
+    def storageExample3(self, resetExec, populatorExec, dirs, names, bootfile):
+        ''' Example 3 of the Storage Location tutorial '''
+        runCommand(myLogger, [resetExec, '-msg'])
+        runCommand(myLogger, [populatorExec, 
+                               '-loadConfiguration', 'App1Prefs.config'])
+        
+        self.checkDbFiles()
+        myLogger.debug("Verify: Default_1.RentalComapnyData.DB file created in LocationC")
+        
+        return
+    
+    
+    def storageExample2(self, resetExec, populatorExec, dirs, names, bootfile):
+        ''' Example 2 of the Storage Location tutorial '''
+        
+        runCommand(myLogger, [resetExec, '-Msg'])
+        runCommand(myLogger, ['objy', 'ImportPlacement', 
+                             '-inFile', 'VehicleRR.pmd', 
+                             '-bootfile', bootfile])
+        runCommand(myLogger, [populatorExec])
+        
+        self.checkDbFiles()
+        myLogger.debug("Verify: Default* DB file and 5 Vehicles* DB files among 4 storage locations")
+        
+        return
+    
+    def storageExample1(self, resetExec, populatorExec, dirs, names, bootfile):
+        runCommand(myLogger, [resetExec])
+        runCommand(myLogger, ['objy', 'AddStorageLocation', 
+                             '-name', names[0], 
+                             '-storageLocation', './%s' % dirs[0],
+                             '-bootfile', bootfile])
+        runCommand(myLogger, ['objy', 'AddStorageLocation',
+                           '-storageLocation', './%s' % dirs[1],
+                           '-storageLocation', './%s' % dirs[2],
+                           '-storageLocation', './%s' % dirs[3],
+                           '-bootfile', bootfile])
+        runCommand(myLogger, [populatorExec])
+        runCommand(myLogger, ['objy', 'ListStorage',
+                                       '-bootfile', bootfile])
+        return
+    
+    
+    def runStorageLocationTutorial(self):
+        '''
+        This script is to verify the tutorial 3: Specifying File Storage
+        Run the samples in samples/placementTutorial/storageTasks
+        '''
+        
+        myLogger.info('PLACEMENT TUTORIAL SAMPLES')
+        samplePath = 'samples/placementTutorial/storageTasks'
+        bootfile = 'RentalCompanyData.boot'
+        
+        resetExec = 'reset'
+        populatorExec = 'populate'
+        if self._osString == 'win':
+            resetExec = 'reset.exe'
+            populatorExec = 'populate.exe'
+        else:
+            resetExec = './reset'
+            populatorExec = './populate'
+            
+        dirs = ['LocationA', 'LocationB', 'LocationC', 'LocationD']
+        names = ['LocA', 'LocB', 'LocC', 'LocD']
+        
+        curPath = os.getcwd()
+        
+        try:
+            # Move to the sample folder
+            os.chdir(os.path.join(self._installDir, samplePath))
             myLogger.debug( 'Current path: %s', os.getcwd())
             
-            myLogger.info('Compiling sample')
-            runCommand(myLogger, ['make', '-e'])
-            myLogger.info('Compiling sample')
-            runCommand(myLogger, ['./helloWorld', 'data/helloWorld.boot'])
+            # Setup
+            mkdir = ['mkdir', '-p']
+            mkdir.extend(dirs)
+            runCommand(myLogger, mkdir)
+            
+            # Starting tutorial
+            # Example 1
+            self.storageExample1(resetExec, populatorExec, dirs, names, bootfile)
+            
+            # Example 2
+            self.storageExample2(resetExec, populatorExec, dirs, names, bootfile)
+            
+            # Example 3
+            self.storageExample3(resetExec, populatorExec, dirs, names, bootfile)
+            
+            # Example 4
+            self.storageExample4(resetExec, populatorExec, dirs, names, bootfile)
+            
+            # Clean up
+            self.storageCleanup(resetExec, dirs)
             
         finally:
             # Reset the current directory
             os.chdir(curPath)
     
-    return
-
-
-def runPythonSamples(installDir, osString):
-    '''Run Python samples in samples/python'''
-    
-    myLogger.info('PYTHON SAMPLES')
-    samplePath1 = 'samples/python/helloWorld'
-    samplePath2 = 'samples/python/tutorial'
-    
-    envMap = dict(os.environ)
-    if osString == 'win':
-        envMap[ 'PYTHONPATH' ] = '.;%s' % str(os.path.join(installDir, 'bin'))
-    else:
-        envMap[ 'PYTHONPATH' ] = '.:%s' % str(os.path.join(installDir, 'bin'))
-    
-    curPath = os.getcwd()
-    
-    try:
-        # Move to the sample folder
-        os.chdir(os.path.join(installDir, samplePath1))
-        myLogger.debug( 'Current path: %s', os.getcwd())
-        runCommand(myLogger, ['python', 'main.py'], envMap)
+    def runJavaSamples(self):
+        '''Run Java samples in samples/java/helloWorld'''
         
-        os.chdir(os.path.join(installDir, samplePath2))
-        myLogger.debug( 'Current path: %s', os.getcwd())
-        runCommand(myLogger, ['python', 'tutorial.py'], envMap)
+        myLogger.info('JAVA SAMPLES')
+        samplePath = 'samples/java/helloWorld'
         
-    finally:
-        # Reset the current directory
-        os.chdir(curPath)
-    
-    return
-
-
-def storageCleanup(resetExec, dirs):
-    '''Clean up the sample'''
-    myLogger.info( 'Cleaning up storage location tutorial')
-    
-    runCommand(myLogger, [resetExec, '-clean'])
-    
-    dirCommand = ['rm', '-r']
-    dirCommand.extend(dirs)
-    runCommand(myLogger, dirCommand)
-    
-    dirCommand = ['mkdir', '-p']
-    dirCommand.extend(dirs)
-    runCommand(myLogger, dirCommand)
-    return
-
-def checkDbFiles ():
-    '''List all DB files in current directory and all sub-directories'''
-    
-#     runCommand(myLogger, ['ls', '*.DB'])
-#     runCommand(myLogger, ['ls', '*/*.DB'])
-    
-    # More portable version
-    fileList = glob.glob('*.DB')
-    fileList.extend(glob.glob('*/*.DB'))
-    myLogger.debug('\n'.join(fileList))
-    return
-
-
-def storageExample4(resetExec, populatorExec, dirs, names, bootfile):
-    ''' Example 4 of the Storage Location tutorial '''
-    runCommand(myLogger, [resetExec, '-MSG'])
-    runCommand(myLogger, ['objy', 'ImportPlacement', 
-                         '-inFile', 'Customers.pmd', 
-                         '-bootfile', bootfile])
-    runCommand(myLogger, ['objy', 'AddStorageLocation', 
-                         '-name', 'LocB', 
-                         '-dbPlacerGroup', 'Customers',
-                         '-bootfile', bootfile])
-    runCommand(myLogger, [populatorExec])
-    
-    checkDbFiles()
-    myLogger.debug("Verify: Default_1.RentalComapnyData.DB created in LocationA")
-    myLogger.debug("Verify: Customers_1.RentalComapnyData.DB created in LocationB")
-    
-    return
-
-
-def storageExample3(resetExec, populatorExec, dirs, names, bootfile):
-    ''' Example 3 of the Storage Location tutorial '''
-    runCommand(myLogger, [resetExec, '-msg'])
-    runCommand(myLogger, [populatorExec, 
-                           '-loadConfiguration', 'App1Prefs.config'])
-    
-    checkDbFiles()
-    myLogger.debug("Verify: Default_1.RentalComapnyData.DB file created in LocationC")
-    
-    return
-
-
-def storageExample2(resetExec, populatorExec, dirs, names, bootfile):
-    ''' Example 2 of the Storage Location tutorial '''
-    
-    runCommand(myLogger, [resetExec, '-Msg'])
-    runCommand(myLogger, ['objy', 'ImportPlacement', 
-                         '-inFile', 'VehicleRR.pmd', 
-                         '-bootfile', bootfile])
-    runCommand(myLogger, [populatorExec])
-    
-    checkDbFiles()
-    myLogger.debug("Verify: Default* DB file and 5 Vehicles* DB files among 4 storage locations")
-    
-    return
-
-def storageExample1(resetExec, populatorExec, dirs, names, bootfile):
-    runCommand(myLogger, [resetExec])
-    runCommand(myLogger, ['objy', 'AddStorageLocation', 
-                         '-name', names[0], 
-                         '-storageLocation', './%s' % dirs[0],
-                         '-bootfile', bootfile])
-    runCommand(myLogger, ['objy', 'AddStorageLocation',
-                       '-storageLocation', './%s' % dirs[1],
-                       '-storageLocation', './%s' % dirs[2],
-                       '-storageLocation', './%s' % dirs[3],
-                       '-bootfile', bootfile])
-    runCommand(myLogger, [populatorExec])
-    runCommand(myLogger, ['objy', 'ListStorage',
-                                   '-bootfile', bootfile])
-    return
-
-
-def runStorageLocationTutorial(installDir, osString):
-    '''
-    This script is to verify the tutorial 3: Specifying File Storage
-    Run the samples in samples/placementTutorial/storageTasks
-    '''
-    
-    myLogger.info('PLACEMENT TUTORIAL SAMPLES')
-    samplePath = 'samples/placementTutorial/storageTasks'
-    bootfile = 'RentalCompanyData.boot'
-    
-    resetExec = 'reset'
-    populatorExec = 'populate'
-    if osString == 'win':
-        resetExec = 'reset.exe'
-        populatorExec = 'populate.exe'
-    else:
-        resetExec = './reset'
-        populatorExec = './populate'
+        curPath = os.getcwd()
         
-    dirs = ['LocationA', 'LocationB', 'LocationC', 'LocationD']
-    names = ['LocA', 'LocB', 'LocC', 'LocD']
-    
-    curPath = os.getcwd()
-    
-    try:
-        # Move to the sample folder
-        os.chdir(os.path.join(installDir, samplePath))
-        myLogger.debug( 'Current path: %s', os.getcwd())
-        
-        # Setup
-        mkdir = ['mkdir', '-p']
-        mkdir.extend(dirs)
-        runCommand(myLogger, mkdir)
-        
-        # Starting tutorial
-        # Example 1
-        storageExample1(resetExec, populatorExec, dirs, names, bootfile)
-        
-        # Example 2
-        storageExample2(resetExec, populatorExec, dirs, names, bootfile)
-        
-        # Example 3
-        storageExample3(resetExec, populatorExec, dirs, names, bootfile)
-        
-        # Example 4
-        storageExample4(resetExec, populatorExec, dirs, names, bootfile)
-        
-        # Clean up
-        storageCleanup(resetExec, dirs)
-        
-    finally:
-        # Reset the current directory
-        os.chdir(curPath)
-
-def runJavaSamples(installDir, osString):
-    '''Run Java samples in samples/java/helloWorld'''
-    
-    myLogger.info('JAVA SAMPLES')
-    samplePath = 'samples/java/helloWorld'
-    
-    curPath = os.getcwd()
-    
-    try:
-        # Move to the sample folder
-        os.chdir(os.path.join(installDir, samplePath, 'data'))
-        myLogger.debug( 'Current path: %s', os.getcwd())
-        
-        runCommand(myLogger, ['objy', 'CreateFd', '-fdname', 'HelloWorld'])
-        
-        os.chdir(os.path.join(installDir, samplePath, 'src'))
-        myLogger.debug( 'Current path: %s', os.getcwd())
-        
-        runCommand(myLogger, ['javac', '*.java'])
-        runCommand(myLogger, ['java', 'Main', '../data/HelloWorld.boot'])
-        
-        os.chdir(os.path.join(installDir, samplePath, 'data'))
-        myLogger.debug( 'Current path: %s', os.getcwd())
-        runCommand(myLogger, ['objy', 'DeleteFd', '-boot', 'HelloWorld.boot'])
-        
-    finally:
-        # Reset the current directory
-        os.chdir(curPath)
+        try:
+            # Move to the sample folder
+            os.chdir(os.path.join(self._installDir, samplePath, 'data'))
+            myLogger.debug( 'Current path: %s', os.getcwd())
+            
+            runCommand(myLogger, ['objy', 'CreateFd', '-fdname', 'HelloWorld'])
+            
+            os.chdir(os.path.join(self._installDir, samplePath, 'src'))
+            myLogger.debug( 'Current path: %s', os.getcwd())
+            
+            runCommand(myLogger, ['javac', '*.java'])
+            runCommand(myLogger, ['java', 'Main', '../data/HelloWorld.boot'])
+            
+            os.chdir(os.path.join(self._installDir, samplePath, 'data'))
+            myLogger.debug( 'Current path: %s', os.getcwd())
+            runCommand(myLogger, ['objy', 'DeleteFd', '-boot', 'HelloWorld.boot'])
+            
+        finally:
+            # Reset the current directory
+            os.chdir(curPath)
     
 
 def main():
@@ -320,18 +342,8 @@ def main():
     myLogger.debug( "Installation directory: %s", args.installDir )
     myLogger.debug( "Operating system: %s", args.osString )
     
-    # Java samples
-    runJavaSamples(args.installDir, args.osString)
-      
-    # Placement tutorial: storage locations
-    runStorageLocationTutorial(args.installDir, args.osString)
-    
-    # Python samples
-    runPythonSamples(args.installDir, args.osString)
-    
-    # C++ samples. Linux/Mac only
-    # In Windows, use Visual Studio to run the sample
-    runCppSamples(args.installDir, args.osString)
+    checker = SampleChecker(args.installDir, args.osString)
+    checker.runSamples()
     
 
 if __name__ == "__main__":
