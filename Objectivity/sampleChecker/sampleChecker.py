@@ -8,7 +8,7 @@ python sampleChecker.py -installDir C:\objy -osString win
 python sampleChecker.py -installDir /space/usr/objy -osString mac
     
 NOTE: Make sure that the following tools/executables are in the PATH:
-Objy tools, javac, java
+Objy tools, javac, java.
 
 @author: cuongd
 '''
@@ -58,7 +58,13 @@ def runCommand(logger, cmdStr, envMap = None):
         logger.error( "Error code: %d" % e.returncode)
         logger.error(e.output)
     return
- 
+
+
+def searchAndReplace( filename, oldString, newString):
+    ''' Open a file, search for oldString (regex) and replace with a new string'''
+    # TODO
+    pass 
+
 ###########################################################################
 ###########################################################################
 
@@ -67,9 +73,9 @@ myLogger = logging.getLogger('Samples')
 
 class SampleChecker:
     
-    def __init__(self, install_dir, os_string):
-        _installDir = install_dir
-        _osString = os_string
+    def __init__(self, installDir, osString):
+        self._installDir = installDir
+        self._osString = osString
         
     def runSamples(self):
         ''' Run all the samples '''
