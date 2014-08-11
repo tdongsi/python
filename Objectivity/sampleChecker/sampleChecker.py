@@ -19,6 +19,7 @@ import os
 import glob
 import shutil
 import re
+import socket
 
 
 ###########################################################################
@@ -163,14 +164,47 @@ class SampleChecker:
                 
                 myLogger.debug( 'Check for "FC: no differences encountered"')
             except Error as err:
-                myLogger.error( 'Error running SQL sample on Windows' )
+                myLogger.error( 'Error running SQL sample in Windows' )
                 myLogger.error(err)                
             finally:
                 # Reset the current directory
                 os.chdir(curPath)
 
         else:
-            pass
+            curPath = os.getcwd()
+            
+            try:
+                # Move to the sample folder
+                os.chdir(os.path.join(self._installDir, samplePath))
+                myLogger.debug( 'Current path: %s', os.getcwd())
+                
+                myLogger.info('Editing Makefile ...')
+                searchAndReplace('Makefile', r'INSTALL_DIR\s+=.+', 
+                                 'INSTALL_DIR = %s' % self._installDir)
+                searchAndReplace('Makefile', r'LS_HOST\s+=.+', 
+                                 'LS_HOST = %s' % socket.gethostname())
+                searchAndReplace('Makefile', r'FDID\s+=.+', 'FDID = 1234')
+                
+                # This portion of Makefile will be fixed.
+                # Temporary workaround
+                searchAndReplace('Makefile', r'LDFLAGS\s+=.+', 
+                     r'LDFLAGS = -L$(OBJY_LIB_DIR) -loo.11.2 -lrpcsvc -lnsl -lpthread -ldl')
+                searchAndReplace('Makefile', r'\$\(OBJY_LIB_DIR\)\/liboo\.a', ' ')
+                
+                
+                myLogger.info('Editing demo.sh ...')
+                searchAndReplace('demo.sh', r'passwd=.+', 'passwd=sql4eran')
+                
+                runCommand( myLogger, ['make'])
+                runCommand( myLogger, ['./demo.sh'])
+                
+                myLogger.debug( 'Check for "FC: no differences encountered"')
+            except Error as err:
+                myLogger.error( 'Error running SQL sample in Linux/Unix' )
+                myLogger.error(err)                
+            finally:
+                # Reset the current directory
+                os.chdir(curPath)
         
         return
     

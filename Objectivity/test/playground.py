@@ -41,4 +41,6 @@ if __name__ == "__main__":
     Test functions
     '''
     installDir = 'C:/objydev'
-    out = searchAndReplace('test.txt', r'INSTALL_DIR\s+=.+', 'INSTALL_DIR = %s' % installDir)
+#     out = searchAndReplace('test.txt', r'INSTALL_DIR\s+=.+', 'INSTALL_DIR = %s' % installDir)
+    
+    out = searchAndReplace('test.txt', r'\$\(OBJY_LIB_DIR\)\/liboo\.a', ' ')
