@@ -17,6 +17,8 @@ import logging
 import argparse
 import os
 import glob
+import shutil
+import re
 
 
 ###########################################################################
@@ -25,6 +27,7 @@ import glob
 ###########################################################################
 import subprocess
 import inspect
+from shutil import Error
  
 # set up logging to file
 LOG_FILENAME = 'ObjySample.log'
@@ -61,9 +64,31 @@ def runCommand(logger, cmdStr, envMap = None):
 
 
 def searchAndReplace( filename, oldString, newString):
-    ''' Open a file, search for oldString (regex) and replace with a new string'''
-    # TODO
-    pass 
+    '''
+    Open a file, search for oldString (regex) and replace with a new string.
+    Raw string is recommended for oldString input.
+    '''
+    
+    try:
+        with open(filename, 'r') as f:
+            lines = f.readlines()
+            f.close()
+            
+        # Create a backup copy
+        try:
+            shutil.copyfile(filename, '%s.bak' % filename)
+        except Error:
+            print 'Error backing up file %s' % filename
+        
+        with open(filename, 'w') as f:
+            for line in lines:
+                nline = re.sub(oldString, newString, line)
+                f.write(nline)
+            f.close()
+    except IOError:
+        print 'Error opening file %s' % filename
+
+    return
 
 ###########################################################################
 ###########################################################################
@@ -92,7 +117,64 @@ class SampleChecker:
         # In Windows, use Visual Studio to run the sample
         self.runCppSamples()
         
+        # SQL++ samples
+        self.runSqlSamples()
+        
 
+    def runSqlSamples(self):
+        '''Run Objy/SQL++ samples in samples/sql/ooisql'''
+        
+        myLogger.info('SQL++ SAMPLES')
+        samplePath = 'samples/sql/ooisql'
+        
+        try:
+            if os.path.exists(os.path.join(self._installDir, samplePath + 'bak')):
+                shutil.rmtree(os.path.join(self._installDir, samplePath + 'bak'), True)
+            shutil.copytree(os.path.join(self._installDir, samplePath), 
+                         os.path.join(self._installDir, samplePath + 'bak'))
+        except Error as e:
+            myLogger.error( 'Fail to backup %s', samplePath)
+            myLogger.error(e)
+        
+        if self._osString == 'win':
+            
+            curPath = os.getcwd()
+            
+            try:
+                # Copy Makefile
+                myLogger.debug( '> cp %s/etc/sql/usr_proc/Makefile %s/%s/Makefile',
+                            self._installDir, self._installDir, samplePath)
+                shutil.copy(os.path.join(self._installDir, 'etc', 'sql', 'usr_proc', 'Makefile' ), 
+                        os.path.join(self._installDir, samplePath, 'Makefile'))
+            
+                # Move to the sample folder
+                os.chdir(os.path.join(self._installDir, samplePath))
+                myLogger.debug( 'Current path: %s', os.getcwd())
+                
+                myLogger.info('Editing Makefile ...')
+                searchAndReplace('Makefile', r'INSTALL_DIR\s+=.+', 
+                                 'INSTALL_DIR = %s' % self._installDir)
+                
+                myLogger.info('Editing demo.bat ...')
+                searchAndReplace('demo.bat', r'dummy', 'sql4eran')
+                
+                runCommand( myLogger, ['nmake', 'all'])
+                runCommand( myLogger, ['demo.bat'])
+                
+                myLogger.debug( 'Check for "FC: no differences encountered"')
+            except Error as err:
+                myLogger.error( 'Error running SQL sample on Windows' )
+                myLogger.error(err)                
+            finally:
+                # Reset the current directory
+                os.chdir(curPath)
+
+        else:
+            pass
+        
+        return
+    
+    
     def runCppSamples(self):
         '''Run C++ samples in samples/cxx/helloWorld'''
         
@@ -350,6 +432,9 @@ def main():
     
     checker = SampleChecker(args.installDir, args.osString)
     checker.runSamples()
+    
+#     # Check individual sample run
+#     checker.runSqlSamples() 
     
 
 if __name__ == "__main__":
