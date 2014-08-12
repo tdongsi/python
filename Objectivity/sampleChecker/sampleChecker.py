@@ -211,30 +211,30 @@ class SampleChecker:
     
     def runCppSamples(self):
         '''Run C++ samples in samples/cxx/helloWorld'''
-        
+
         myLogger.info('C++ SAMPLES')
-        samplePath = 'samples/python/helloWorld'
-        
+        samplePath = 'samples/cxx/helloWorld'
+
         if self._osString == 'win':
             myLogger.info('In Windows, C++ samples must be run with Visual Studio.')
             return
         else:
             curPath = os.getcwd()
-            
+
             try:
                 # Move to the sample folder
                 os.chdir(os.path.join(self._installDir, samplePath))
                 myLogger.debug( 'Current path: %s', os.getcwd())
-                
+
                 myLogger.info('Compiling sample')
                 runCommand(myLogger, ['make', '-e'])
                 myLogger.info('Compiling sample')
-                runCommand(myLogger, ['./helloWorld', 'data/helloWorld.boot'])
-                
+                runCommand(myLogger, ['./helloWorld', 'data/HelloWorld.boot'])
+
             finally:
                 # Reset the current directory
                 os.chdir(curPath)
-        
+
         return
     
     
