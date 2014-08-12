@@ -249,7 +249,7 @@ class SampleChecker:
         if self._osString == 'win':
             envMap[ 'PYTHONPATH' ] = '.;%s' % str(os.path.join(self._installDir, 'bin'))
         else:
-            envMap[ 'PYTHONPATH' ] = '.:%s' % str(os.path.join(self._installDir, 'bin'))
+            envMap[ 'PYTHONPATH' ] = '.:%s' % str(os.path.join(self._installDir, 'lib'))
         
         curPath = os.getcwd()
         
@@ -421,6 +421,12 @@ class SampleChecker:
         samplePath = 'samples/java/helloWorld'
         
         curPath = os.getcwd()
+        classPathList = ['.', str(os.path.join(self._installDir, 'lib', 'oojava.jar'))]
+        if self._osString == 'win':
+            separator = ';'
+        else:
+            separator = ':'
+        classPathString = separator.join(classPathList)
         
         try:
             # Move to the sample folder
@@ -432,8 +438,10 @@ class SampleChecker:
             os.chdir(os.path.join(self._installDir, samplePath, 'src'))
             myLogger.debug( 'Current path: %s', os.getcwd())
             
-            runCommand(myLogger, ['javac', '*.java'])
-            runCommand(myLogger, ['java', 'Main', '../data/HelloWorld.boot'])
+            runCommand(myLogger, ['javac', '-cp', classPathString, 
+                                  'HelloObject.java', 'Main.java'])
+            runCommand(myLogger, ['java', '-cp', classPathString, 
+                                  'Main', '../data/HelloWorld.boot'])
             
             os.chdir(os.path.join(self._installDir, samplePath, 'data'))
             myLogger.debug( 'Current path: %s', os.getcwd())
