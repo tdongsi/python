@@ -128,6 +128,10 @@ class SampleChecker:
         myLogger.info('SQL++ SAMPLES')
         samplePath = 'samples/sql/ooisql'
         
+        if self._osString == 'mac':
+            myLogger.info('SQL samples are not available in Mac.')
+            return
+        
         try:
             if os.path.exists(os.path.join(self._installDir, samplePath + 'bak')):
                 shutil.rmtree(os.path.join(self._installDir, samplePath + 'bak'), True)
@@ -169,7 +173,7 @@ class SampleChecker:
             finally:
                 # Reset the current directory
                 os.chdir(curPath)
-
+        
         else:
             curPath = os.getcwd()
             
