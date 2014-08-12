@@ -3,12 +3,22 @@ Created on Aug 1, 2014
 
 This script is to check many (not all) samples in Objectivity/DB product.
 
+In Windows, the method runSqlSamples() uses nmake to compile the sample.
+Therefore, the main script sampleChecker.py should be run in Visual Studio 
+Command Prompt (instead of standard Command Prompt).
+
 Usage:
+
+0. Start the lock server by using the tool oolockserver.
+
+1. Specify the install directory and OS string from command line:
 python sampleChecker.py -installDir C:\objy -osString win
 python sampleChecker.py -installDir /space/usr/objy -osString mac
+
+2. Verify the sample output from ObjySample.log
     
 NOTE: Make sure that the following tools/executables are in the PATH:
-Objy tools, javac, java.
+Objy tools, javac, java, nmake/make.
 
 @author: cuongd
 '''
@@ -123,7 +133,11 @@ class SampleChecker:
         
 
     def runSqlSamples(self):
-        '''Run Objy/SQL++ samples in samples/sql/ooisql'''
+        '''
+        Run Objy/SQL++ samples in samples/sql/ooisql
+        In Windows, make sure the script is running in VS Command Prompt where
+        nmake tool is available.
+        '''
         
         myLogger.info('SQL++ SAMPLES')
         samplePath = 'samples/sql/ooisql'
