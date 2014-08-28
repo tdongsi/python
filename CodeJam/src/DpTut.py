@@ -6,6 +6,8 @@ Some Dynamic Programming exercises and solutions.
 @author: cuongd
 '''
 
+import math
+
 class MinNumOfCoin:
     '''
     Given a list of N coins, their values (V1, V2, ... , VN), and the total sum S. 
@@ -21,7 +23,21 @@ class MinNumOfCoin:
         Return:
         0 indicates it's impossible to select coins. Otherwise, returns >= 1.
         '''
-           
         
-        return 0
+        # Largest number of coins to get that sum 
+        _maxCount = math.ceil(totalValue/min(coinValues))
+        _big = _maxCount + 10
+        _min = [_big]*(totalValue+1)
+        _min[0] = 0
+        
+        for _sum in range(1, totalValue+1):
+            minCount = _big;
+            for val in coinValues:
+                if ( _sum - val >= 0 and _min[_sum-val]+1 < minCount):
+                    minCount = _min[_sum-val]+1
+                    
+            _min[_sum] = minCount
     
+        if (_min[totalValue] == _big):
+            return 0
+        return _min[totalValue]

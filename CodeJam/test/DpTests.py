@@ -22,11 +22,14 @@ class MinNumOfCoinTest(unittest.TestCase):
                     (11, 3)
                    )
 
-    def test_minNumOfCoin(self):
+    def test_minNumOfCoin_knownValues(self):
         for input, expected in self.knownInputOutput:
             output = MinNumOfCoin.minNumOfCoin(input, self.coinValues)
             self.assertEqual(expected, output)
 
+    def test_minNumOfCoin_invalid(self):
+        self.assertEqual(0, MinNumOfCoin.minNumOfCoin(5, [3]))
+        self.assertEqual(0, MinNumOfCoin.minNumOfCoin(5, [6]))
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
