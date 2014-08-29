@@ -52,6 +52,7 @@ class ZigZagTest(unittest.TestCase):
     
     def test_longestZigZag_knownValues(self):
         for input, expected in self.knownInputOutput:
+#             print input
             output = ZigZag.longestZigZag(input)
             self.assertEqual(expected, output)
 

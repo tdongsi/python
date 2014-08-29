@@ -65,11 +65,43 @@ class ZigZag:
     '''
     
     @staticmethod
-    def longestZigZag(iSequence):
+    def longestZigZag(input):
         '''
         Parameters: a sequence of integers
         Returns: integer: length of the longest subsequence of sequence that is 
         a zig-zag sequence.
         '''
-        return 0
+        
+        length = len(input)
+        if ( length == 1 ):
+            return 1
+        elif (length == 2 ):
+            return 2
+        
+        diff = [0]*(length-1)
+        for idx in range(len(diff)):
+            if ( input[idx+1] - input[idx] != 0 ):
+                diff[idx] = math.copysign(1, input[idx+1] - input[idx])
+            
+        maxLength = [0]*len(diff)
+        maxLength[0] = 1;
+        
+        for idx in range(1, len(maxLength)):
+            maxLength[idx] = maxLength[idx-1]
+            
+            for j in range(idx):
+                temp = 0
+                if ( diff[idx] != 0 and diff[j] == -diff[idx]):
+                    temp = maxLength[j]+1
+                
+                if ( temp > maxLength[idx] ):
+                    maxLength[idx] = temp
+         
+        return (maxLength[-1] + 1)   
+
+if __name__ == "__main__":
+    # Check
+    ZigZag.longestZigZag([1, 7, 4, 9, 2, 5])
+    ZigZag.longestZigZag([1, 17, 5, 10, 13, 15, 10, 5, 16, 8])
+    
     
