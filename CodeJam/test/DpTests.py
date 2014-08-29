@@ -55,6 +55,29 @@ class ZigZagTest(unittest.TestCase):
 #             print input
             output = ZigZag.longestZigZag(input)
             self.assertEqual(expected, output)
+            
+            
+class BadNeighborTest(unittest.TestCase):
+    '''
+    Unit tests for Bad Neighbors problem
+    http://mattcb.blogspot.com/2013/03/bad-neighbors.html
+    '''
+    
+    def test_maxDonations(self):
+        self.assertEqual(11, BadNeighbors.maxDonations([11]))
+        self.assertEqual(15, BadNeighbors.maxDonations([11, 15]))
+        self.assertEqual(19, BadNeighbors.maxDonations([19, 11, 15]))
+        
+        self.assertEqual(44, BadNeighbors.maxDonations([19, 29, 13, 14, 15]))
+        self.assertEqual(8, BadNeighbors.maxDonations([1, 2, 3, 4, 5]))
+        self.assertEqual(19, BadNeighbors.maxDonations([10, 3, 2, 5, 7, 8]))
+        self.assertEqual(21, BadNeighbors.maxDonations([7, 7, 7, 7, 7, 7, 7]))
+        self.assertEqual(16, BadNeighbors.maxDonations([1, 2, 3, 4, 5, 1, 2, 3, 4, 5]))
+        self.assertEqual(2926, BadNeighbors.maxDonations([94, 40, 49, 65, 21, 21, 
+                  106, 80, 92, 81, 679, 4, 61,  
+                  6, 237, 12, 72, 74, 29, 95, 265, 35, 47, 1, 61, 397,
+                  52, 72, 37, 51, 1, 81, 45, 435, 7, 36, 57, 86, 81, 72]))
+    
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

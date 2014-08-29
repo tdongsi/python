@@ -98,7 +98,27 @@ class ZigZag:
                 if ( temp > maxLength[i] ):
                     maxLength[i] = temp
          
-        return (maxLength[-1] + 1)   
+        return (maxLength[-1] + 1)
+    
+    
+class BadNeighbors:
+    '''
+    Each of the town's residents is willing to donate a certain amount, as 
+    specified in the int[] donations, which is listed in clockwise order around 
+    the well. However, nobody is willing to contribute to a fund to which his 
+    neighbor has also contributed. Next-door neighbors are always listed 
+    consecutively in donations, except that the first and last entries in 
+    donations are also for next-door neighbors. You must calculate and return 
+    the maximum amount of donations that can be collected.
+    '''
+    
+    @staticmethod
+    def maxDonations( donations ):
+        '''
+        Parameters: list of donations by each neighbor
+        Returns: integer for max donations
+        '''
+        return 0
 
 if __name__ == "__main__":
     # Check
