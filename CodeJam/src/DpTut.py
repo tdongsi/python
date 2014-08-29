@@ -78,24 +78,25 @@ class ZigZag:
         elif (length == 2 ):
             return 2
         
+        # For zigzag sequence, we only care about signum of differences
         diff = [0]*(length-1)
-        for idx in range(len(diff)):
-            if ( input[idx+1] - input[idx] != 0 ):
-                diff[idx] = math.copysign(1, input[idx+1] - input[idx])
+        for i in range(len(diff)):
+            if ( input[i+1] - input[i] != 0 ):
+                diff[i] = math.copysign(1, input[i+1] - input[i])
             
         maxLength = [0]*len(diff)
         maxLength[0] = 1;
         
-        for idx in range(1, len(maxLength)):
-            maxLength[idx] = maxLength[idx-1]
+        for i in range(1, len(maxLength)):
+            maxLength[i] = maxLength[i-1]
             
-            for j in range(idx):
+            for j in range(i):
                 temp = 0
-                if ( diff[idx] != 0 and diff[j] == -diff[idx]):
+                if ( diff[i] != 0 and diff[j] == -diff[i]):
                     temp = maxLength[j]+1
                 
-                if ( temp > maxLength[idx] ):
-                    maxLength[idx] = temp
+                if ( temp > maxLength[i] ):
+                    maxLength[i] = temp
          
         return (maxLength[-1] + 1)   
 
