@@ -101,6 +101,7 @@ class ZigZag:
         return (maxLength[-1] + 1)
     
     
+
 class BadNeighbors:
     '''
     Each of the town's residents is willing to donate a certain amount, as 
@@ -112,17 +113,51 @@ class BadNeighbors:
     the maximum amount of donations that can be collected.
     '''
     
-    @staticmethod
-    def maxDonations( donations ):
+    def maxDonations( self, donations ):
         '''
         Parameters: list of donations by each neighbor
         Returns: integer for max donations
         '''
-        return 0
+        if (len(donations) == 1):
+            return sum(donations)
+        elif (len(donations) == 2):
+            return max(donations)
+        
+        # Consider two possibilities:
+        # 1) the first is in, the second and the last cannot be in
+        # 2) the first is NOT in, the second and the last may be in
+        return max( self.maxSum(donations[:-1]), self.maxSum(donations[1:]) )
+    
+    def maxSum( self, inputList ):
+        '''
+        Return the largest sum on the condition that two adjacent elements could 
+        not counted together 
+        '''
+        maxSum = [0]*len(inputList)
+        maxSum[0] = inputList[0]
+        maxSum[1] = max(inputList[:2]) # larger of the two adjacent elements
+        
+        for i in range(2,len(inputList)):
+            cur = inputList[i]
+            
+            # if the neighbor [i-1] contributes into maxSum[i-1], 
+            # you cannot add the current element
+            # if the neighbor [i-1] does not contribute into maxSum[i-1],
+            # maxSum[i-1] is equal to maxSum[i-2]. 
+            # maxSum[i] will be updated if cur + maxSum[i-2] is the best
+            maxSum[i] = maxSum[i-1]
+            
+            for j in range(i-1):
+                temp = maxSum[j] + cur
+                
+                if ( temp > maxSum[i]):
+                    maxSum[i] = temp
+                
+#         print "maxSum call: %s" % str(maxSum)
+        return maxSum[-1]
 
 if __name__ == "__main__":
     # Check
-    ZigZag.longestZigZag([1, 7, 4, 9, 2, 5])
-    ZigZag.longestZigZag([1, 17, 5, 10, 13, 15, 10, 5, 16, 8])
+    BadNeighbors().maxDonations([10, 3, 2, 5, 7, 8])
     
     
