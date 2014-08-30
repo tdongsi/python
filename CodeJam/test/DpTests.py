@@ -78,7 +78,54 @@ class BadNeighborTest(unittest.TestCase):
                   6, 237, 12, 72, 74, 29, 95, 265, 35, 47, 1, 61, 397,
                   52, 72, 37, 51, 1, 81, 45, 435, 7, 36, 57, 86, 81, 72]))
     
-
+class FlowerGardenTest(unittest.TestCase):
+    '''
+    Unit tests for Flower Garden problem
+    http://community.topcoder.com/stat?c=problem_statement&pm=1918&rd=5006
+    '''
+    
+    def test_getOrdering(self):
+        '''
+        These flowers all bloom on January 1st and wilt on December 31st. 
+        Since they all may block each other, you must order them from shortest to tallest
+        '''
+        self.assertListEqual([1, 2, 3, 4, 5],
+                              FlowerGarden().getOrdering([5,4,3,2,1], 
+                                                         [1,1,1,1,1], 
+                                                         [365,365,365,365,365])
+                             )
+        
+        self.assertListEqual([5,  4,  3,  2,  1],
+                              FlowerGarden().getOrdering([5,4,3,2,1], 
+                                                         [1,5,10,15,20], 
+                                                         [4,9,14,19,24])
+                             )
+        
+        self.assertListEqual([1, 2, 3, 4, 5],
+                              FlowerGarden().getOrdering([5,4,3,2,1], 
+                                                         [1,5,10,15,20], 
+                                                         [5,10,15,20,25])
+                             )
+        
+        self.assertListEqual([3,  4,  5,  1,  2],
+                              FlowerGarden().getOrdering([5,4,3,2,1], 
+                                                         [1,5,10,15,20], 
+                                                         [5,10,14,20,25])
+                             )
+        
+        self.assertListEqual([2,  4,  6,  1,  3,  5],
+                              FlowerGarden().getOrdering([1,2,3,4,5,6], 
+                                                         [1,3,1,3,1,3], 
+                                                         [2,4,2,4,2,4])
+                             )
+        
+        
+        self.assertListEqual([4,  5,  2,  3],
+                              FlowerGarden().getOrdering([3,2,5,4], 
+                                                         [1,2,11,10], 
+                                                         [4,3,12,13])
+                             )
+    
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
