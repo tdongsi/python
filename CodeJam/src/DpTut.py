@@ -155,8 +155,20 @@ class BadNeighbors:
                 
 #         print "maxSum call: %s" % str(maxSum)
         return maxSum[-1]
-    
-class FlowerGarden():
+
+class Flower:
+        
+    def __init__(self, height, bloom, wilt):
+        self.height = height
+        self.bloom = bloom
+        self.wilt = wilt
+        assert self.bloom < self.wilt
+        
+    def __repr__(self):
+        return '(H: %d, B: %d, W: %d)' % (self.height, self.bloom, self.wilt)
+        
+
+class FlowerGarden:
     '''
     http://community.topcoder.com/stat?c=problem_statement&pm=1918&rd=5006
     
@@ -187,11 +199,49 @@ class FlowerGarden():
         Parameters:    int[], int[], int[]
         Returns:    int[]
         '''
+        length = len(height)
+        assert len(bloom) == length
+        assert len(wilt) == length
         
-        return height
+        flowers = []
+        
+        for i in range(length):
+            flowers.append( Flower(height[i], bloom[i], wilt[i]) )
+            
+        print flowers
+        flowers.sort(cmp = self.compare )  
+        print flowers          
+        ordering = [flower.height for flower in flowers]
+        
+        return ordering
+            
+    def block(self, flower1, flower2):
+        '''
+        Return true if first Flower's bloom overlaps the second Flower's bloom
+        '''
+        if (flower2.bloom > flower1.wilt or flower2.wilt < flower1.bloom):
+            return False
+        else:
+            return True
+        
+    def compare(self, flower1, flower2):
+        if ( self.block(flower1,flower2) ):
+            return (flower1.height - flower2.height)
+        else:
+            return (flower2.height - flower1.height)
 
 if __name__ == "__main__":
     # Check
-    BadNeighbors().maxDonations([10, 3, 2, 5, 7, 8])
+#     ordering = FlowerGarden().getOrdering([5,4,3,2,1], 
+#                              [1,1,1,1,1], 
+#                              [365,365,365,365,365])
+#     
+#     print ordering
+    
+    ordering = FlowerGarden().getOrdering([1,2,3,4,5,6], 
+                             [1,3,1,3,1,3], 
+                             [2,4,2,4,2,4])
+    print ordering
+    
     
     
