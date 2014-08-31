@@ -205,15 +205,45 @@ class FlowerGarden:
         
         flowers = []
         
+        # Initialize the list of given flowers
         for i in range(length):
             flowers.append( Flower(height[i], bloom[i], wilt[i]) )
+        
+        orderedFlowers = []
+        orderedFlowers.append(flowers[0])
+        
+        for i in range(1,length):
+            print orderedFlowers
+            check = [False]*len(orderedFlowers)
             
-        print flowers
-        flowers.sort(cmp = self.compare )  
-        print flowers          
-        ordering = [flower.height for flower in flowers]
+            # For each new flower, check with all the current flowers in orderedFlowers
+            # If check returns False, new flower should be right/after to that flower
+            # If check returns True, new flower should be left/before to that flower
+            for j in range(len(orderedFlowers)):
+                check[j] = self.tallerXorBlock(orderedFlowers[j], flowers[i])
+            
+            
+            newOrder = [orderedFlowers[k] for k, val in enumerate(check) if val]
+            newOrder.append(flowers[i])
+            newOrder.extend([orderedFlowers[k] for k, val in enumerate(check) if not val])
+            orderedFlowers = newOrder
+                
+        # Return the height of the flowers only                    
+        ordering = [flower.height for flower in orderedFlowers]
         
         return ordering
+    
+    def tallerXorBlock(self, flower1, flower2):
+        '''
+        XOR of taller and block check
+        
+        Return true if flower1 should be left to flower 2
+        Return false if flower 1 should be right to flower 2
+        '''
+        return self.block(flower1, flower2) != self.taller(flower1, flower2)
+    
+    def taller(self, flower1, flower2):
+        return flower1.height > flower2.height
             
     def block(self, flower1, flower2):
         '''
@@ -225,10 +255,12 @@ class FlowerGarden:
             return True
         
     def compare(self, flower1, flower2):
+        if (flower1.height == flower2.height):
+            return 0 # never happen
         if ( self.block(flower1,flower2) ):
-            return (flower1.height - flower2.height)
+            return int(math.copysign(1, flower1.height - flower2.height))
         else:
-            return (flower2.height - flower1.height)
+            return int(math.copysign(1, flower2.height - flower1.height))
 
 if __name__ == "__main__":
     # Check
@@ -238,9 +270,9 @@ if __name__ == "__main__":
 #     
 #     print ordering
     
-    ordering = FlowerGarden().getOrdering([1,2,3,4,5,6], 
-                             [1,3,1,3,1,3], 
-                             [2,4,2,4,2,4])
+    ordering = FlowerGarden().getOrdering([5,4,3,2,1], 
+                                                         [1,5,10,15,20], 
+                                                         [5,10,15,20,25])
     print ordering
     
     

@@ -92,9 +92,8 @@ class FlowerGardenTest(unittest.TestCase):
         self.assertEqual( 1, FlowerGarden().compare(Flower(1,1,5), Flower(2,6,10)) )
         
         self.assertEqual( -1, FlowerGarden().compare(Flower(6,3,4), Flower(5,1,2)) )
-        self.assertEqual( 2, FlowerGarden().compare(Flower(6,3,4), Flower(4,3,4)) )
+        self.assertEqual( 1, FlowerGarden().compare(Flower(6,3,4), Flower(4,3,4)) )
     
-    @unittest.skip("Temp")
     def test_getOrdering(self):
         '''
         These flowers all bloom on January 1st and wilt on December 31st. 
