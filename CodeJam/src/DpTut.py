@@ -209,47 +209,37 @@ class FlowerGarden:
         for i in range(length):
             flowers.append( Flower(height[i], bloom[i], wilt[i]) )
         
-        orderedFlowers = []
-        orderedFlowers.append(flowers[0])
+        arranged_flowers = []
+        arranged_flowers.append(flowers[0])
         
+        # For each new incoming flower
         for i in range(1,length):
-#             print orderedFlowers
+#             print arranged_flowers
             
             offset = 0
+            # Find the best position (offset) to put it in
             for j in range(i):
-                if ( self.block(orderedFlowers[j], flowers[i])):
-                    if ( orderedFlowers[j].height > flowers[i].height):
+                if ( self.block(arranged_flowers[j], flowers[i])):
+                    if ( arranged_flowers[j].height > flowers[i].height):
                         offset = j
                         break
                     else:
                         offset = j+1;
                 else:
-                    if ( orderedFlowers[j].height > flowers[i].height ):
+                    if ( arranged_flowers[j].height > flowers[i].height ):
                         offset = j + 1
                     else:
                         # keep offset the same as offset is smaller than j
                         pass
                     
-            orderedFlowers.insert(offset, flowers[i])
+            arranged_flowers.insert(offset, flowers[i])
             
                 
         # Return the height of the flowers only                    
-        ordering = [flower.height for flower in orderedFlowers]
+        ordering = [flower.height for flower in arranged_flowers]
         
         return ordering
     
-    
-    def tallerXorBlock(self, flower1, flower2):
-        '''
-        XOR of taller and block check
-        
-        Return true if flower1 should be left to flower 2
-        Return false if flower 1 should be right to flower 2
-        '''
-        return self.block(flower1, flower2) != self.taller(flower1, flower2)
-    
-    def taller(self, flower1, flower2):
-        return flower1.height > flower2.height
             
     def block(self, flower1, flower2):
         '''
