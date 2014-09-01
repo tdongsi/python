@@ -258,6 +258,43 @@ class FlowerGarden:
         else:
             return int(math.copysign(1, flower2.height - flower1.height))
 
+
+class AvoidRoads:
+    '''
+    http://topcoder.bgcoder.com/print.php?id=382
+    
+    You are standing at the corner with coordinates 0,0. Your destination is at 
+    corner width,height. You will return the number of distinct paths that lead 
+    to your destination. Each path must use exactly width+height blocks. In 
+    addition, the city has declared certain street blocks untraversable. These 
+    blocks may not be a part of any path. You will be given a String[] bad 
+    describing which blocks are bad. If (quotes for clarity) "a b c d" is an 
+    element of bad, it means the block from corner a,b to corner c,d is untraversable. 
+    
+    For example, let's say
+    width  = 6
+    length = 6
+    bad = {"0 0 0 1","6 6 5 6"}
+    
+    Each element of the bad will be in the format "a b c d" where,
+    a,b,c,d are integers with no extra leading zeros,
+    a and c are between 0 and width inclusive,
+    b and d are between 0 and height inclusive,
+    and a,b is one block away from c,d.
+    '''
+    
+    def numWays(self, width, height, bad):
+        '''
+        Parameters: int, int, String[]
+        Returns: int for number of ways to traverse
+        '''
+        return 0
+    
+    pass
+
+
+
+
 if __name__ == "__main__":
     # Check
 #     ordering = FlowerGarden().getOrdering([5,4,3,2,1], 
