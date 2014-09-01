@@ -213,25 +213,31 @@ class FlowerGarden:
         orderedFlowers.append(flowers[0])
         
         for i in range(1,length):
-            print orderedFlowers
-            check = [False]*len(orderedFlowers)
+#             print orderedFlowers
             
-            # For each new flower, check with all the current flowers in orderedFlowers
-            # If check returns False, new flower should be right/after to that flower
-            # If check returns True, new flower should be left/before to that flower
-            for j in range(len(orderedFlowers)):
-                check[j] = self.tallerXorBlock(orderedFlowers[j], flowers[i])
+            offset = 0
+            for j in range(i):
+                if ( self.block(orderedFlowers[j], flowers[i])):
+                    if ( orderedFlowers[j].height > flowers[i].height):
+                        offset = j
+                        break
+                    else:
+                        offset = j+1;
+                else:
+                    if ( orderedFlowers[j].height > flowers[i].height ):
+                        offset = j + 1
+                    else:
+                        # keep offset the same as offset is smaller than j
+                        pass
+                    
+            orderedFlowers.insert(offset, flowers[i])
             
-            
-            newOrder = [orderedFlowers[k] for k, val in enumerate(check) if val]
-            newOrder.append(flowers[i])
-            newOrder.extend([orderedFlowers[k] for k, val in enumerate(check) if not val])
-            orderedFlowers = newOrder
                 
         # Return the height of the flowers only                    
         ordering = [flower.height for flower in orderedFlowers]
         
         return ordering
+    
     
     def tallerXorBlock(self, flower1, flower2):
         '''
@@ -270,10 +276,14 @@ if __name__ == "__main__":
 #     
 #     print ordering
     
+    # [1,2,3,4,5]
     ordering = FlowerGarden().getOrdering([5,4,3,2,1], 
                                                          [1,5,10,15,20], 
                                                          [5,10,15,20,25])
     print ordering
     
-    
+    ordering = FlowerGarden().getOrdering([1,2,3,4,5,6], 
+                         [1,3,1,3,1,3], 
+                         [2,4,2,4,2,4])
+    print ordering
     
