@@ -287,6 +287,13 @@ class AvoidRoads:
         '''
         Parameters: int, int, String[]
         Returns: int for number of ways to traverse
+        
+        Analysis:
+        Each path must use exactly width+height blocks, meaning that at each point,
+        either go right or up.
+        
+        This solution has the time and space complexity of O(N^2).
+        Space complexity can be reduced to O(N) by maintaining just two rows.
         '''
         
         _width = width + 1
@@ -302,6 +309,9 @@ class AvoidRoads:
                 
                 if w == 0 and h == 0:
                     continue
+                elif (check1 and check2):
+                    # Both ways are blocked
+                    continue                
                 elif (w == 0 and not check1) or check2:
                     states[h][w] = states[h-1][w]
                 elif (h == 0 and not check2) or check1:
