@@ -136,7 +136,6 @@ class FlowerGardenTest(unittest.TestCase):
                                                          [4,3,12,13])
                              )
 
-
 class AvoidRoadTest(unittest.TestCase):
     '''
     Unit tests for AvoidRoads problem
@@ -148,6 +147,19 @@ class AvoidRoadTest(unittest.TestCase):
         self.assertEqual(6406484391866534976, AvoidRoads().numWays(35, 31, ()) )
         self.assertEqual(0, AvoidRoads().numWays(2, 2, ("0 0 1 0", "1 2 2 2", "1 1 2 1")) )
     
+
+class ChessMetricsTest(unittest.TestCase):
+    '''
+    Unit tests for ChessMetrics problem
+    '''
+    
+    def test_numWays(self):
+        self.assertEqual(1, ChessMetric().howMany(3, (0,0), (1,0), 1) )
+        self.assertEqual(1, ChessMetric().howMany(3, (0,0), (1,2), 1) )
+        self.assertEqual(0, ChessMetric().howMany(3, (0,0), (2,2), 1) )
+        self.assertEqual(5, ChessMetric().howMany(3, (0,0), (0,0), 2) )
+        self.assertEqual(243097320072600, ChessMetric().howMany(100, (0,0), (0,99), 50) )
+
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
