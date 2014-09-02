@@ -288,10 +288,51 @@ class AvoidRoads:
         Parameters: int, int, String[]
         Returns: int for number of ways to traverse
         '''
-        return 0
-    
-    pass
+        
+        _width = width + 1
+        _height = height + 1
+        
+        states = [[0]* _width for j in range(_height)]
+        states[0][0] = 1
+        
+        for w in range(_width):
+            for h in range(_height):
+                check1 = self.isBlock(h, w, h-1, w, bad)
+                check2 = self.isBlock(h, w, h, w-1, bad)
+                
+                if w == 0 and h == 0:
+                    continue
+                elif (w == 0 and not check1) or check2:
+                    states[h][w] = states[h-1][w]
+                elif (h == 0 and not check2) or check1:
+                    states[h][w] = states[h][w-1]
+                else:
+                    states[h][w] = states[h-1][w] + states[h][w-1]
+        
+        return states[height][width]
 
+    def isBlock(self, a, b, c, d, bad):
+        '''
+        Return True if it is blocked from (a,b) to (c,d), based on input bad[].
+        '''
+        edgeString = self.edgeString(a, b, c, d)
+        if (len(edgeString & set(bad)) > 0):
+            return True
+        else:
+            return False
+        
+    def edgeString(self, a, b, c, d):
+        '''
+        Return the strings that represent the edge from (a,b) to (c,d).
+        Could be either "a b c d" or "c d a b".
+        '''
+        edgeString = []
+        indexes = [str(i) for i in [a, b, c, d]]
+        edgeString.append(" ".join(indexes))
+        indexes = [str(i) for i in [c, d, a, b]]
+        edgeString.append(" ".join(indexes))
+        return set(edgeString)
+        
 
 
 
