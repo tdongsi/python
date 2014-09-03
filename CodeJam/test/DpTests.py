@@ -154,11 +154,11 @@ class ChessMetricsTest(unittest.TestCase):
     '''
     
     def test_numWays(self):
-        self.assertEqual(1, ChessMetric().howMany(3, (0,0), (1,0), 1) )
-        self.assertEqual(1, ChessMetric().howMany(3, (0,0), (1,2), 1) )
-        self.assertEqual(0, ChessMetric().howMany(3, (0,0), (2,2), 1) )
-        self.assertEqual(5, ChessMetric().howMany(3, (0,0), (0,0), 2) )
-        self.assertEqual(243097320072600, ChessMetric().howMany(100, (0,0), (0,99), 50) )
+        self.assertEqual(1, ChessMetric.howMany(3, (0,0), (1,0), 1) )
+        self.assertEqual(1, ChessMetric.howMany(3, (0,0), (1,2), 1) )
+        self.assertEqual(0, ChessMetric.howMany(3, (0,0), (2,2), 1) )
+        self.assertEqual(5, ChessMetric.howMany(3, (0,0), (0,0), 2) )
+        self.assertEqual(243097320072600, ChessMetric.howMany(100, (0,0), (0,99), 50) )
 
         
 if __name__ == "__main__":

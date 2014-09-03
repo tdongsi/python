@@ -367,16 +367,93 @@ class ChessMetric:
     from start to finish.
     '''
     
-    def howMany(self, size, start, end, numMoves):
+    def __init__(self, size):
+        self._size = size
+        self._board = [0] * (size*size)
+        
+    def printBoard(self):
+        print
+        for r in range(self._size):
+            print self._board[r*self._size:(r+1)*self._size]
+
+    def affectedSquares(self, idx):
+        '''
+        Return the indexes of the affected squares by the king-knight, given the
+        current position (r,c)
+        '''
+        indexList = []
+        
+        # Top L's
+        indexList.append(idx - 2*self._size - 1)
+        indexList.append(idx - 2*self._size + 1)
+        
+        # Bottom L's
+        indexList.append(idx + 2*self._size - 1)
+        indexList.append(idx + 2*self._size + 1)
+        
+        # Same-row X's
+        indexList.append(idx - 1)
+        indexList.append(idx + 1)
+        
+        # The rest
+        for c in range(-2, 3):
+            indexList.append(idx + self._size + c)
+            indexList.append(idx - self._size + c)
+        
+        return indexList
+    
+    def toIndex(self, r, c):
+        return (self._size*r + c)
+    
+    def filledSquares(self):
+        '''
+        Return the indexes of the filled squares on the board.
+        '''
+        index = [i for i, value in enumerate(self._board) if value != 0 ]
+        return index
+        
+    def numWays(self, start, end, numMoves):
+        # First move
+        idx = self.affectedSquares(self.toIndex(start[0], start[1]))
+        for i in idx:
+            self._board[i] = 1
+        
+        self.printBoard()
+            
+        for move in range(numMoves-1):
+            self.printBoard()
+            
+            idx = self.filledSquares()
+            
+            for i in idx:
+                jdx = self.affectedSquares(i)
+                
+                for j in jdx:
+                    self._board[j] += 1        
+        
+        return self._board[self.toIndex(end[0], end[1])]
+    
+    @staticmethod
+    def howMany( size, start, end, numMoves):
         '''
         Parameters:    int, int[], int[], int
         Returns: int for number of moves
         '''
-        return 0
+        temp = ChessMetric(size)
+        return temp.numWays(start, end, numMoves)
     
     pass
 
 if __name__ == "__main__":
+    # Quick test of affectedSquares()
+#     ob = ChessMetric(7, (0, 0), (6,6), 2)
+#     idx = ob.affectedSquares(ob.toIndex(3, 3))
+#     for i in idx:
+#         ob._board[i] = 8
+#     ob.printBoard()
+    
+    ChessMetric.howMany(3, (0,0), (2,2), 1)
+    
     # Check
 #     ordering = FlowerGarden().getOrdering([5,4,3,2,1], 
 #                              [1,1,1,1,1], 
@@ -384,14 +461,14 @@ if __name__ == "__main__":
 #     
 #     print ordering
     
-    # [1,2,3,4,5]
-    ordering = FlowerGarden().getOrdering([5,4,3,2,1], 
-                                                         [1,5,10,15,20], 
-                                                         [5,10,15,20,25])
-    print ordering
-    
-    ordering = FlowerGarden().getOrdering([1,2,3,4,5,6], 
-                         [1,3,1,3,1,3], 
-                         [2,4,2,4,2,4])
-    print ordering
+#     # [1,2,3,4,5]
+#     ordering = FlowerGarden().getOrdering([5,4,3,2,1], 
+#                                                          [1,5,10,15,20], 
+#                                                          [5,10,15,20,25])
+#     print ordering
+#     
+#     ordering = FlowerGarden().getOrdering([1,2,3,4,5,6], 
+#                          [1,3,1,3,1,3], 
+#                          [2,4,2,4,2,4])
+#     print ordering
     
