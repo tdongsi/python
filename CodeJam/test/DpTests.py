@@ -160,6 +160,23 @@ class ChessMetricsTest(unittest.TestCase):
         self.assertEqual(5, ChessMetric.howMany(3, (0,0), (0,0), 2) )
         self.assertEqual(243097320072600, ChessMetric.howMany(100, (0,0), (0,99), 50) )
 
+
+class JewelryTest(unittest.TestCase):
+    '''
+    Unit tests for Jewelry problem
+    '''
+    
+    def test_howMany(self):
+        self.assertEqual(9, Jewelry().howMany([1,2,5,3,4,5]))
+        self.assertEqual(18252025766940, Jewelry().howMany([1000,1000,1000,1000,1000,
+                                                     1000,1000,1000,1000,1000,
+                                                     1000,1000,1000,1000,1000,
+                                                     1000,1000,1000,1000,1000,
+                                                     1000,1000,1000,1000,1000,
+                                                     1000,1000,1000,1000,1000]))
+        self.assertEqual(4, Jewelry().howMany([1,2,3,4,5]))
+        self.assertEqual(607, Jewelry().howMany([7,7,8,9,10,11,1,2,2,3,4,5,6]))
+        self.assertEqual(0, Jewelry().howMany([123,217,661,678,796,964,54,111,417,526,917,923]))
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
