@@ -416,21 +416,34 @@ class ChessMetric:
         return indexList
     
     def isValidSquare(self, r, c):
+        '''
+        Perform boundary check, given the (r,c) position on the board.
+        '''
         if ( r < 0 or r >= self._size or c < 0 or c >= self._size):
             return False
         return True
     
     def toIndex(self, r, c):
+        '''
+        Convert (r,c) position on the chess board to 1D array index.
+        '''
         return (self._size*r + c)
     
     def filledSquares(self):
         '''
         Return the indexes of the filled squares on the board.
+        Any element in the _board list that is not 0 represents a filled squares.
         '''
         index = [i for i, value in enumerate(self._board) if value != 0 ]
         return index
         
     def numWays(self, start, end, numMoves):
+        '''
+        Actually solve the ChessMetrics problem for the current board size.
+        '''
+        # Reset the board
+        self._board = [0] * (self._size*self._size)
+        
         # First move
         idx = self.affectedSquares(self.toIndex(start[0], start[1]))
         for i in idx:
