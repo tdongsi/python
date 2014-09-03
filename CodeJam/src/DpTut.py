@@ -372,6 +372,9 @@ class ChessMetric:
         self._board = [0] * (size*size)
         
     def printBoard(self):
+        '''
+        Print the internal _board as 2D array
+        '''
         print
         for r in range(self._size):
             print self._board[r*self._size:(r+1)*self._size]
@@ -382,25 +385,40 @@ class ChessMetric:
         current position (r,c)
         '''
         indexList = []
+        r = idx // self._size
+        c = idx % self._size
         
         # Top L's
-        indexList.append(idx - 2*self._size - 1)
-        indexList.append(idx - 2*self._size + 1)
+        if ( self.isValidSquare(r-2, c-1) ):
+            indexList.append(idx - 2*self._size - 1)
+        if ( self.isValidSquare(r-2, c+1) ):
+            indexList.append(idx - 2*self._size + 1)
         
         # Bottom L's
-        indexList.append(idx + 2*self._size - 1)
-        indexList.append(idx + 2*self._size + 1)
+        if ( self.isValidSquare(r+2, c-1)):
+            indexList.append(idx + 2*self._size - 1)
+        if ( self.isValidSquare(r+2, c+1) ):
+            indexList.append(idx + 2*self._size + 1)
         
         # Same-row X's
-        indexList.append(idx - 1)
-        indexList.append(idx + 1)
+        if ( self.isValidSquare(r, c-1) ):
+            indexList.append(idx - 1)
+        if ( self.isValidSquare(r, c+1) ):
+            indexList.append(idx + 1)
         
         # The rest
-        for c in range(-2, 3):
-            indexList.append(idx + self._size + c)
-            indexList.append(idx - self._size + c)
+        for i in range(-2, 3):
+            if ( self.isValidSquare(r+1, c+i) ):
+                indexList.append(idx + self._size + i)
+            if ( self.isValidSquare(r-1, c+i) ):
+                indexList.append(idx - self._size + i)
         
         return indexList
+    
+    def isValidSquare(self, r, c):
+        if ( r < 0 or r >= self._size or c < 0 or c >= self._size):
+            return False
+        return True
     
     def toIndex(self, r, c):
         return (self._size*r + c)
@@ -418,19 +436,21 @@ class ChessMetric:
         for i in idx:
             self._board[i] = 1
         
-        self.printBoard()
             
         for move in range(numMoves-1):
-            self.printBoard()
+#             self.printBoard()
             
             idx = self.filledSquares()
+            # save a copy of the boards
+            temp = self._board[:]
             
             for i in idx:
                 jdx = self.affectedSquares(i)
                 
                 for j in jdx:
-                    self._board[j] += 1        
+                    self._board[j] += temp[i]
         
+#         self.printBoard()
         return self._board[self.toIndex(end[0], end[1])]
     
     @staticmethod
@@ -439,20 +459,20 @@ class ChessMetric:
         Parameters:    int, int[], int[], int
         Returns: int for number of moves
         '''
-        temp = ChessMetric(size)
-        return temp.numWays(start, end, numMoves)
+        return ChessMetric(size).numWays(start, end, numMoves)
     
     pass
 
 if __name__ == "__main__":
     # Quick test of affectedSquares()
-#     ob = ChessMetric(7, (0, 0), (6,6), 2)
-#     idx = ob.affectedSquares(ob.toIndex(3, 3))
-#     for i in idx:
-#         ob._board[i] = 8
-#     ob.printBoard()
+    ob = ChessMetric(7)
+    idx = ob.affectedSquares(ob.toIndex(3, 3))
+    for i in idx:
+        ob._board[i] = 8
+    ob.printBoard()
     
-    ChessMetric.howMany(3, (0,0), (2,2), 1)
+    print ChessMetric.howMany(3, (0,0), (0,0), 2)
+    print ChessMetric.howMany(100, (0,0), (0,99), 50)
     
     # Check
 #     ordering = FlowerGarden().getOrdering([5,4,3,2,1], 
