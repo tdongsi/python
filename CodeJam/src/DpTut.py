@@ -510,6 +510,9 @@ class Jewelry:
     Frank given the policy, so your method would return 9.
     '''
     
+    def __init__(self):
+        pass
+    
     def howMany(self, items):
         '''
         Parameters:    int[]

@@ -177,6 +177,8 @@ class JewelryTest(unittest.TestCase):
         self.assertEqual(4, Jewelry().howMany([1,2,3,4,5]))
         self.assertEqual(607, Jewelry().howMany([7,7,8,9,10,11,1,2,2,3,4,5,6]))
         self.assertEqual(0, Jewelry().howMany([123,217,661,678,796,964,54,111,417,526,917,923]))
+
+
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
