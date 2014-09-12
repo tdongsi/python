@@ -194,16 +194,31 @@ class StripePainterTest(unittest.TestCase):
         
 class QuickSumsTest(unittest.TestCase):
     '''
-    Unit tests for StripePainter problem
+    Unit tests for QuickSums problem
     '''
     
-    def test_minStrokes(self):
+    def test_minSums(self):
         self.assertEqual(4, QuickSums().minSums('99999', 45))
         self.assertEqual(3, QuickSums().minSums('1110', 3))
         self.assertEqual(8, QuickSums().minSums('0123456789', 45))
         self.assertEqual(-1, QuickSums().minSums('99999', 100))
         self.assertEqual(2, QuickSums().minSums('382834', 100))
         self.assertEqual(4, QuickSums().minSums('9230560001', 71))
+
+
+class ShortPalindromesTest(unittest.TestCase):
+    '''
+    Unit tests for ShortPalindromes problem
+    '''
+    
+    def test_shortest(self):
+        self.assertEqual('ECARACE', ShortPalindromes().shortest('RACE'))
+        self.assertEqual('REDTOCPCOTDER', ShortPalindromes().shortest('TOPCODER'))
+        self.assertEqual('Q', ShortPalindromes().shortest('Q'))
+        self.assertEqual('MADAMIMADAM', ShortPalindromes().shortest('MADAMIMADAM'))
+        self.assertEqual('AFLRCAGIOEOUAEOCEGRURGECOEAUOEOIGACRLFA', 
+                     ShortPalindromes().shortest('ALRCAGOEUAOEURGCOEUOOIGFA'))
+
 
 
 if __name__ == "__main__":
