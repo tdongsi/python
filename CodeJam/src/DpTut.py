@@ -679,6 +679,7 @@ class MiniPaint:
         return 0
 
 
+
 if __name__ == "__main__":
     # Quick test of affectedSquares()
     ob = ChessMetric(7)
@@ -689,22 +690,4 @@ if __name__ == "__main__":
     
     print ChessMetric.howMany(3, (0,0), (0,0), 2)
     print ChessMetric.howMany(100, (0,0), (0,99), 50)
-    
-    # Check
-#     ordering = FlowerGarden().getOrdering([5,4,3,2,1], 
-#                              [1,1,1,1,1], 
-#                              [365,365,365,365,365])
-#     
-#     print ordering
-    
-#     # [1,2,3,4,5]
-#     ordering = FlowerGarden().getOrdering([5,4,3,2,1], 
-#                                                          [1,5,10,15,20], 
-#                                                          [5,10,15,20,25])
-#     print ordering
-#     
-#     ordering = FlowerGarden().getOrdering([1,2,3,4,5,6], 
-#                          [1,3,1,3,1,3], 
-#                          [2,4,2,4,2,4])
-#     print ordering
     
