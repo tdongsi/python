@@ -263,6 +263,32 @@ class StarAdventureTest(unittest.TestCase):
                  "9999999999"]
         self.assertEqual(335, StarAdventure().mostStars(map))
 
+class MiniPaintTest(unittest.TestCase):
+    '''
+    Unit tests for MiniPaint problem
+    '''
+    
+    def test_leastBad(self):
+        pic = [ "BBBBBBBBBBBBBBB",
+                "WWWWWWWWWWWWWWW",
+                "WWWWWWWWWWWWWWW",
+                "WWWWWBBBBBWWWWW"]
+        self.assertEqual(0, MiniPaint().leastBad(pic, 6))
+        
+        self.assertEqual(5, MiniPaint().leastBad(pic, 4))
+        
+        self.assertEqual(60, MiniPaint().leastBad(pic, 0))
+        
+        pic =[  "BWBWBWBWBWBWBWBWBWBWBWBWBWBWBW",
+                "BWBWBWBWBWBWBWBWBWBWBWBWBWBWBW",
+                "BWBWBWBWBWBWBWBWBWBWBWBWBWBWBW",
+                "BWBWBWBWBWBWBWBWBWBWBWBWBWBWBW",
+                "BWBWBWBWBWBWBWBWBWBWBWBWBWBWBW",
+                "BWBWBWBWBWBWBWBWBWBWBWBWBWBWBW"]
+        self.assertEqual(40, MiniPaint().leastBad(pic, 100))
+        
+        pic = ["B"]
+        self.assertEqual(0, MiniPaint().leastBad(pic, 1))
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

@@ -643,6 +643,41 @@ class StarAdventure:
         return 0
 
 
+class MiniPaint:
+    '''
+    You have been given a String[] picture. Each character in picture represents 
+    a space in the picture. A 'B' designates a space that needs to be painted 
+    black, and a 'W' denotes a space that must be painted white. The painting 
+    device you have been given only makes horizontal strokes, of any length, 
+    exactly one space high. In addition, it can only use 1 color at a time. 
+    Due to the nature of the paint, a space cannot be painted twice. For example, 
+    the following picture could be colored in 6 distinct strokes:
+    picture = {"BBBBBBBBBBBBBBB",
+               "WWWWWWWWWWWWWWW",
+               "WWWWWWWWWWWWWWW",
+               "WWWWWBBBBBWWWWW"}
+    You would use 1 stroke for each of the first 3 lines, and then 3 strokes on the last line.
+
+    This wouldn't be an issue if we had forever to paint the picture. Unfortunately, 
+    you only have enough time to make at most maxStrokes distinct strokes. Any 
+    more strokes would put you past your deadline. Since finishing on time is 
+    more important than getting it perfect, you are willing to mispaint some of 
+    the spaces. Return the fewest number of spaces that can be mispainted while 
+    still using no more than maxStrokes strokes. An unpainted space is considered 
+    mispainted.
+    '''
+
+    def __init__(self):
+        pass
+    
+    def leastBad(self, picture, maxStrokes):
+        '''
+        Parameters:    String[], int
+        Returns:    int for fewest number of spaces that can be mispainted
+        '''
+        
+        return 0
+
 
 if __name__ == "__main__":
     # Quick test of affectedSquares()
