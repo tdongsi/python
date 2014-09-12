@@ -611,6 +611,37 @@ class ShortPalindromes:
         return base
 
 
+class StarAdventure:
+    '''
+    On each level you search for stars that earn you points. Simply moving over 
+    a location containing stars allows you to acquire them. To help you on your 
+    journey, you are given an overhead map of the level in a String[]. Each 
+    character in level describes the number of stars at that location. You begin 
+    in the upper left spot of the map (character 0 of element 0 of level). On 
+    the current stage you must move according to the following rules:
+    1) On the first pass you may only move downward or rightward each move 
+    (not diagonally) until you reach the lower right corner.
+    2) The second pass begins in the lower right corner where the first pass 
+    ended, and proceeds back to the beginning using only upward and leftward 
+    steps (not diagonal).
+    3) The final pass, like the first pass, begins in the upper left corner and 
+    proceeds to the lower right corner using only rightward and downward 
+    (not diagonal) steps.
+    Once the stars on a spot are claimed, they cannot be claimed again on a 
+    future pass. Return the largest possible number of stars that can be acquired.
+    '''
+    
+    def __init__(self):
+        pass
+    
+    def mostStars(self, levels):
+        '''
+        Parameters:    String[] with each string for each level
+        Returns:    int for largest number of stars acquired.
+        '''
+        
+        return 0
+
 
 
 if __name__ == "__main__":

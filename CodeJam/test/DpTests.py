@@ -220,6 +220,49 @@ class ShortPalindromesTest(unittest.TestCase):
                      ShortPalindromes().shortest('ALRCAGOEUAOEURGCOEUOOIGFA'))
 
 
+class StarAdventureTest(unittest.TestCase):
+    '''
+    Unit tests for StarAdventure problem
+    '''
+    
+    def test_mostStars(self):
+        map = ["01",
+               "11"]
+        self.assertEqual(3, StarAdventure().mostStars(map))
+        
+        map = [  "0999999999"
+                ,"9999999999"
+                ,"9999999999"
+                ,"9999999999"
+                ,"9999999999"
+                ,"9999999999"
+                ,"9999999999"
+                ,"9999999999"
+                ,"9999999999"
+                ,"9999999999"]
+        self.assertEqual(450, StarAdventure().mostStars(map))
+
+        map = [  "012"
+                ,"012"
+                ,"012"
+                ,"012"
+                ,"012"
+                ,"012"
+                ,"012"]
+        self.assertEqual(21, StarAdventure().mostStars(map))
+        
+        map = [  "0123456789",
+                 "1123456789",
+                 "2223456789",
+                 "3333456789",
+                 "4444456789",
+                 "5555556789",
+                 "6666666789",
+                 "7777777789",
+                 "8888888889",
+                 "9999999999"]
+        self.assertEqual(335, StarAdventure().mostStars(map))
+
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
