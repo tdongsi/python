@@ -190,8 +190,22 @@ class StripePainterTest(unittest.TestCase):
         self.assertEqual(4, StripePainter().minStrokes('ABACADA'))
         self.assertEqual(7, StripePainter().minStrokes('AABBCCDDCCBBAABBCCDD'))
         self.assertEqual(26, StripePainter().minStrokes('BECBBDDEEBABDCADEAAEABCACBDBEECDEDEACACCBEDABEDADD'))
+
         
-        
+class QuickSumsTest(unittest.TestCase):
+    '''
+    Unit tests for StripePainter problem
+    '''
+    
+    def test_minStrokes(self):
+        self.assertEqual(4, QuickSums().minSums('99999', 45))
+        self.assertEqual(3, QuickSums().minSums('1110', 3))
+        self.assertEqual(8, QuickSums().minSums('0123456789', 45))
+        self.assertEqual(-1, QuickSums().minSums('99999', 100))
+        self.assertEqual(2, QuickSums().minSums('382834', 100))
+        self.assertEqual(4, QuickSums().minSums('9230560001', 71))
+
+
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
