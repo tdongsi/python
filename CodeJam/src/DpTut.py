@@ -522,6 +522,34 @@ class Jewelry:
         return 0
     
 
+class StripePainter:
+    '''
+    http://community.topcoder.com/stat?c=problem_statement&pm=1215&rd=4555
+    
+    Abbreviating each color to a single uppercase letter, Karel would write the 
+    stripe pattern red-green-blue-green-red as "RGBGR" (quotes added for clarity). 
+    It would take him three brush strokes to paint this pattern. The first stroke 
+    would cover the entire canvas in red (RRRRR). The second stroke would leave 
+    a band of red on either side and fill in the rest with green (RGGGR). The 
+    final brush stroke would fill in the blue stripe in the center (RGBGR).
+
+    Given a stripe pattern stripes as a String, calculate the minimum number of 
+    brush strokes required to paint that pattern.
+    '''
+    
+    def __init__(self):
+        pass
+    
+    def minStrokes(self, stripes):
+        '''
+        Parameters:    String
+        Returns:    int for number of brush strokes
+        '''
+        
+        return 0
+
+
+
 if __name__ == "__main__":
     # Quick test of affectedSquares()
     ob = ChessMetric(7)

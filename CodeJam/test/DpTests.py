@@ -179,6 +179,18 @@ class JewelryTest(unittest.TestCase):
         self.assertEqual(0, Jewelry().howMany([123,217,661,678,796,964,54,111,417,526,917,923]))
 
 
+class StripePainterTest(unittest.TestCase):
+    '''
+    Unit tests for StripePainter problem
+    '''
+    
+    def test_minStrokes(self):
+        self.assertEqual(3, StripePainter().minStrokes('RGBGR'))
+        self.assertEqual(3, StripePainter().minStrokes('RGRG'))
+        self.assertEqual(4, StripePainter().minStrokes('ABACADA'))
+        self.assertEqual(7, StripePainter().minStrokes('AABBCCDDCCBBAABBCCDD'))
+        self.assertEqual(26, StripePainter().minStrokes('BECBBDDEEBABDCADEAAEABCACBDBEECDEDEACACCBEDABEDADD'))
+        
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
