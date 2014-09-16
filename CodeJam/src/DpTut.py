@@ -9,7 +9,7 @@ For the Algorithm tutorial: "Dynamic Programming: From novice to advanced"
 
 import math
 
-class MinNumOfCoin:
+class MinNumOfCoin(object):
     '''
     Given a list of N coins, their values (V1, V2, ... , VN), and the total sum S. 
     Find the minimum number of coins the sum of which is S (we can use as many coins of one type as we want), 
@@ -44,7 +44,7 @@ class MinNumOfCoin:
         return _min[totalValue]
     
     
-class ZigZag:
+class ZigZag(object):
     '''
     http://community.topcoder.com/stat?c=problem_statement&pm=1259&rd=4493
     
@@ -101,7 +101,7 @@ class ZigZag:
         return (maxLength[-1] + 1)
     
 
-class BadNeighbors:
+class BadNeighbors(object):
     '''
     Each of the town's residents is willing to donate a certain amount, as 
     specified in the int[] donations, which is listed in clockwise order around 
@@ -155,7 +155,7 @@ class BadNeighbors:
 #         print "maxSum call: %s" % str(maxSum)
         return maxSum[-1]
 
-class Flower:
+class Flower(object):
         
     def __init__(self, height, bloom, wilt):
         self.height = height
@@ -167,7 +167,7 @@ class Flower:
         return '(H: %d, B: %d, W: %d)' % (self.height, self.bloom, self.wilt)
         
 
-class FlowerGarden:
+class FlowerGarden(object):
     '''
     http://community.topcoder.com/stat?c=problem_statement&pm=1918&rd=5006
     
@@ -258,7 +258,7 @@ class FlowerGarden:
             return int(math.copysign(1, flower2.height - flower1.height))
 
 
-class AvoidRoads:
+class AvoidRoads(object):
     '''
     http://topcoder.bgcoder.com/print.php?id=382
     
@@ -343,7 +343,7 @@ class AvoidRoads:
         return set(edgeString)
         
 
-class ChessMetric:
+class ChessMetric(object):
     '''
     Suppose you had an n by n chess board and a super piece called a kingknight.
     
@@ -477,7 +477,7 @@ class ChessMetric:
     pass
 
 
-class Jewelry:
+class Jewelry(object):
     '''
     You have been given a list of jewelry items that must be split amongst two 
     people: Frank and Bob. you have devised the following policy:
@@ -522,7 +522,7 @@ class Jewelry:
         return 0
     
 
-class StripePainter:
+class StripePainter(object):
     '''
     http://community.topcoder.com/stat?c=problem_statement&pm=1215&rd=4555
     
@@ -549,7 +549,7 @@ class StripePainter:
         return 0
 
 
-class QuickSums:
+class QuickSums(object):
     '''
     http://community.topcoder.com/stat?c=problem_statement&pm=2829
     
@@ -581,7 +581,7 @@ class QuickSums:
         return -1
 
 
-class ShortPalindromes:
+class ShortPalindromes(object):
     '''
     A palindrome is a String that is spelled the same forward and backwards. Given 
     a String base that may or may not be a palindrome, we can always force base 
@@ -611,7 +611,7 @@ class ShortPalindromes:
         return base
 
 
-class StarAdventure:
+class StarAdventure(object):
     '''
     On each level you search for stars that earn you points. Simply moving over 
     a location containing stars allows you to acquire them. To help you on your 
@@ -643,7 +643,7 @@ class StarAdventure:
         return 0
 
 
-class MiniPaint:
+class MiniPaint(object):
     '''
     You have been given a String[] picture. Each character in picture represents 
     a space in the picture. A 'B' designates a space that needs to be painted 
