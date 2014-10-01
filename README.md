@@ -9,3 +9,4 @@ Python scripts and fun projects.
 * **SimpleguiDemo**: Collection of demos of the simplegui module used in Cousera's "An Introduction to Interactive Programming in Python".
 * **Objectivity**: Scripts to run Objectivity's samples, for demonstrating how to run them.
 * **Scripts**: Utility (i.e., quick and dirty) scripts for different purposes.
+* **PerformanceLog**: Cassandra performance test by logging JMX values. Cloned from my Cassandra repo.
