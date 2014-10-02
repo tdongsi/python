@@ -57,10 +57,14 @@ def main():
     cppRelPaths = [os.path.relpath(path, my_path).replace("\\","/") for path in cppList]
     hRelPaths = [os.path.relpath(path, my_path).replace("\\","/") for path in hList]
     
+    cppFiles = [os.path.split(path)[1] for path in cppList]
+    objFiles = [os.path.splitext(file)[0] + ".obj" for file in cppFiles]
+    
     # Print
     with open('paths.txt', 'w') as f:
         print >>f, "CXX_SRCS = " + " ".join(cppRelPaths)
         print >>f, "HEADER_FILES = " + " ".join(hRelPaths)
+        print >>f, "CXX_OBJS = " + " ".join(objFiles)
     
 
 if __name__ == '__main__':
