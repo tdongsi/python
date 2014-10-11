@@ -21,7 +21,17 @@ class AnswerTwo(object):
         self._rootDir = rootDir
         self._ipFileList = collections.Counter()
         
- 
+        '''
+        Explain the regex pattern:
+        ^\s?: Has a space before it or starts at the beginning of a line
+        (\d{1,3} \.){3} \d{1,3}: in the range 0.0.0.0 - 999.999.999.999
+        \s?$: Has a space after it or finishes at the end of a line
+        
+        NOTE:
+        IPv4 address will be further validated in Python
+        The recommended practice is to use a simple regex and process in Python.
+        Fully validating an IPv4 in regex will make the regex hard to maintain.
+        '''
         self._pattern = re.compile(r'^\s?(\d{1,3}\.){3}\d{1,3}\s?$')
         # Test
 #         print self._pattern.match(' 127.0.0.1').span()
@@ -51,6 +61,10 @@ class AnswerTwo(object):
         '''
         Get an alphabetically sorted list of files with a count of valid IPv4 
         addresses for each file.
+        
+        The sort order should be case sensitive. Files starting with integers 
+        should be listed first, followed by files starting with upper case letters, 
+        followed by files starting with lower case letters.
         '''
         
         keys = self._ipFileList.keys()
@@ -89,6 +103,11 @@ class AnswerTwo(object):
     def _isIpv4(self, input_string):
         '''
         Check if the given input string is a valid IP4 address
+        
+        Assume a valid IPv4 address has the following criteria:
+        1. Has a space before it or starts at the beginning of a line
+        2. Has a space after it or finishes at the end of a line
+        3. Is in the range 0.0.0.0 - 255.255.255.255 (inclusive)
         '''
         
         if self._pattern.match(input_string):
