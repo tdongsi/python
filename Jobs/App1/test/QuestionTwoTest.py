@@ -14,7 +14,7 @@ class Test(unittest.TestCase):
 
     def test_functional(self):
         answer = AnswerTwo(u'../test/Q2Test2')
-        expected = [(u'1_File.txt', 3), (u'A_File.rtf', 4), (u'C_File.log', 7), (u'a_File.txt', 4)]
+        expected = [(u'1_File.txt', 5), (u'A_File.rtf', 4), (u'C_File.log', 7), (u'a_File.txt', 6)]
         self.assertEqual(answer.getFileList(), expected)
 
 

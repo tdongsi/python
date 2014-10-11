@@ -23,18 +23,18 @@ class AnswerTwo(object):
         
         '''
         Explain the regex pattern:
-        ^\s?: Has a space before it or starts at the beginning of a line
+        (\s+|\A): Has a space before it or starts at the beginning of a line
         (\d{1,3} \.){3} \d{1,3}: in the range 0.0.0.0 - 999.999.999.999
-        \s?$: Has a space after it or finishes at the end of a line
+        (\s+|\Z): Has a space after it or finishes at the end of a line
         
         NOTE:
         IPv4 address will be further validated in Python
         The recommended practice is to use a simple regex and process in Python.
         Fully validating an IPv4 in regex will make the regex hard to maintain.
         '''
-        self._pattern = re.compile(r'^\s?(\d{1,3}\.){3}\d{1,3}\s?$')
-        # Test
-#         print self._pattern.match(' 127.0.0.1').span()
+        self._pattern = re.compile(r'(\s+|\A)(\d{1,3}\.){3}\d{1,3}(\s+|\Z)')
+#         # Test
+#         print self._pattern.match('  0.0.0.0').span()
         
         # Start searching
         self.search()
@@ -91,11 +91,14 @@ class AnswerTwo(object):
                 lines = [line.rstrip("\r\n") for line in lines]
                 
                 for line in lines:
-                    if self._isIpv4(line):
-                        myLogger.debug( 'IPv4 YES: [%s]', line)
-                        self._ipFileList[fName] += 1
-                    else:
-                        myLogger.debug( 'IPv4 NOT: [%s]', line)
+                    matches = self._pattern.finditer(line)
+                    
+                    for match in matches:
+                        if self._isIpv4(match.group(0)):
+                            myLogger.debug( 'IPv4 YES: [%s]', line)
+                            self._ipFileList[fName] += 1
+                        else:
+                            myLogger.debug( 'IPv4 NOT: [%s]', line)
         except IOError:
             myLogger.error( 'Cannot open file %s/%s', path, fName)
         
