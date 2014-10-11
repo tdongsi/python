@@ -1,4 +1,4 @@
-The solution uses Python version: 2.7
+This project solves the problems listed in Questions.txt file. This solution uses Python version 2.7.
 
 Answers to
 * Question 1: src/QuestionOne.py
@@ -9,17 +9,14 @@ Directory listing
 
 **src/**
 
-MyLogger.py: my logging configuration. In summary, info to screen and debug to file.
+MyLogger.py: my logging configuration. In summary, info or higher to screen and 
+debug logging to file.
 
-QuestionOne.py: answer to Question 1. 
+QuestionOne.py: answer to Question 1. The answer is encoded as class AnswerOne. 
+The main() function demonstrates how to use the class.
 
-The answer is encoded as class AnswerOne. The main() function demonstrates how to use
-the class.
-
-QuestionTwo.py: answer to Question 2.
-
-The answer is encoded as class AnswerTwo. The main() function demonstrates how to use
-the class.
+QuestionTwo.py: answer to Question 2. The answer is encoded as class AnswerTwo. 
+The main() function demonstrates how to use the class.
 
 **test/**
 
