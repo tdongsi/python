@@ -1,7 +1,5 @@
 '''
-Created on Sep 24, 2014
-
-@author: cuongd
+@author: tdongsi
 '''
 import unittest
 from QuestionTwo import *
