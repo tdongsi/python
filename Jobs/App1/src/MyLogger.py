@@ -9,7 +9,7 @@ import subprocess
 import inspect
 
 # set up logging to file
-LOG_FILENAME = 'Apple.log'
+LOG_FILENAME = 'App1.log'
 # Additional logging info: %(asctime)s %(name)-12s 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s {%(name)-12s} %(levelname)-8s %(message)s',
