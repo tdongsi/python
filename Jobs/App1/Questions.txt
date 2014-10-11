@@ -1,0 +1,62 @@
+=========
+Question 1:
+=========
+
+Assume a file has the following entries. The first column contains the key and second column contains the value(s).
+For the following example, in the first line, X1 is the key and X2 and X3 and X4 are values.
+
+X1   X2,X3,X4
+X2   X4,X5
+X3   X6,X7
+X4  1,2,3
+
+
+Given an input for a program say X4 it should print the values for the key X4.
+
+X4---->1--->2---3
+
+Also it should print all dependencies.
+
+For instance given X2 it should print the values of X2  as X4 and X5. If X4 or X5 in-turn have values, which X4 has in this case, print them and so on.
+
+X2----->X4---->1--->2--->3---->X5
+
+Order in which values are printed does not matter as long as all dependencies are printed.
+
+NOTE 1: The input file given is only an example.  The program should be versatile enough to work with other key/value input files of the same format.
+
+
+=========
+Question 2:
+=========
+
+Given a directory structure, write a program which can find all valid IPv4 addresses in each file of the directory structure.  
+The program should accept the name of a top level directory as an argument and output an alphabetically sorted list of files with a count of valid IPv4 addresses for each file.  
+If a file does not contain any valid IPv4 addresses, it should not be listed in the output.
+
+Example Directory Structure:
+
+   Top_Level_Dir/
+       B_File.txt
+       2nd_Level_Dir/
+         A_File.rtf
+         C_File.log
+         3rd_Level_Dir/
+           a_File.txt
+           1_File.txt
+
+
+Example Output:
+
+1_File.txt 21
+A_File.rtf, 42
+C_File.log, 107
+a_File.txt, 10
+
+
+NOTE 1:  The sort order should be case sensitive.  Files starting with integers 
+should be listed first, followed by files starting with uppercase letters, followed by files starting with lowercase letters.
+NOTE 2: For the purpose of this problem, assume a valid IPv4 address has the following criteria:
+	1. Has a space before it or starts at the beginning of a line
+	2. Has a space after it or finishes at the end of a line
+	3. Is in the range 0.0.0.0 - 255.255.255.255 (inclusive)
