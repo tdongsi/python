@@ -5,3 +5,7 @@ Scripts/src/installCheck.mylog
 *.pydevproject
 Objectivity/sample/winTest.bat
 Scripts/src/paths.txt
+CodeJam/data/SampleProblemB.txt
+CodeJam/data/SampleProblemC.txt
+CodeJam/src/ProblemB.py
+CodeJam/src/ProblemC.py
