@@ -1,6 +1,4 @@
 '''
-Created on Sep 24, 2014
-
 @author: tdongsi
 '''
 import unittest
