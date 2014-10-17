@@ -44,9 +44,24 @@ class DirWalker(object):
         return [self._fileList[ext] for ext in fileExtList]
     
     @staticmethod
-    def searchPath(self, filePath, fileExtList):
+    def searchPath(self, filePath):
         pass
+    
+    @staticmethod
+    def printRelativePath(filePath):
+        '''
+        Print the relative paths of all files while walking a directory.
+        '''
         
+        outString = ""
+        for dirName, subdirList, fileList in os.walk(filePath):
+            relPath = os.path.relpath(dirName, filePath)
+            
+            outString += " ".join([os.path.join(relPath, fname).replace("\\", "/") 
+                                   for fname in fileList])
+            outString += "\n"
+        return outString
+    
 
 def main():
     my_path = 'C:/datatest/DataApi/Functional/'
@@ -66,6 +81,7 @@ def main():
         print >>f, "HEADER_FILES = " + " ".join(hRelPaths)
         print >>f, "CXX_OBJS = " + " ".join(objFiles)
     
+    print DirWalker.printRelativePath( my_path )
 
 if __name__ == '__main__':
     main()
