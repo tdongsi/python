@@ -40,13 +40,13 @@ Example:
 >
 >	...
 
+* Records in a Cassandra table
+
 * Performance plot as PNG file (automatically generated from CSV output file)
 
 Example:
 
 ![alt text](https://dl.dropbox.com/s/0vy2u8b7hb7djjv/jmxMetrics.png "Performance Plot")
-
-* Records in a Cassandra table
 
 ## Python modules
 1. PerformanceLog.py: Main module to run the automated tasks. Please use "python PerformanceLog -h"
