@@ -1,5 +1,0 @@
-Download Media Manager sample from
-
-http://support.objectivity.com/downloads
-
-Save it as mediaManager.zip.
