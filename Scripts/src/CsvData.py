@@ -6,6 +6,36 @@ Created on Sep 23, 2015
 
 import csv
 
+def remove_column(input_file, output_file):
+    '''
+    Remove the last column of the CSV file. Lazy way.
+    '''
+    
+    try:
+        with open(input_file) as input, open(output_file, 'w') as output:
+            output.truncate()
+            reader = csv.reader(input)
+            
+            # The first line is the header
+            header = reader.next()
+            output.write( ','.join(header[:-1]) )
+            output.write("\n")
+            
+            for row in reader:
+                
+                if int(row[1]) < 300:
+                    '''
+                    region_id is the second column.
+                    Filtering out data with region_id larger than 300
+                    '''
+                    output.write( ','.join(row[:-1]) )
+                    output.write("\n")
+                
+                
+                
+    except IOError:
+        print 'Error reading file %s or opening %s' % (input_file, output_file)
+
 def generateUpdateStatement(input_file, output_file):
     # %s after set is the mapping column_name=column_value
     template = "UPDATE {table} SET {column_value} WHERE qbo_region_id={id_value} and {first_column} is null;"
@@ -59,6 +89,7 @@ def main():
     outputfile = 'out2.txt'
     
     generateUpdateStatement(inputfile,outputfile)
+    remove_column(inputfile,'out.txt')
     
 
 if __name__ == '__main__':
