@@ -9,7 +9,24 @@ def quick_sort(input):
     Implement quick-sort algorithm
     '''
     
-    return input
+    if len(input) < 2:
+        return input
+    else:
+        # pivot is the middle
+        n = len(input)//2
+        pivot = input[n]
+        
+        # Pivoting is the tricky part in quick-sort
+        # In C++/Java, it is done by swapping
+        left = [x for x in input if x <= pivot]
+        right = [x for x in input if x > pivot]
+        left.remove(pivot)
+        
+        merged = quick_sort(left)
+        merged.append(pivot)
+        merged.extend(quick_sort(right))
+    
+        return merged
 
 def merge(sorted_left, sorted_right):
     '''
@@ -59,16 +76,16 @@ def main():
     '''
     
     input_1 = [7, 6, 5, 4, 3, 2, 1]
-    print merge_sort(input_1)
+    print quick_sort(input_1)
     
     input_2 = [5, 4, 3, 2, 1, 6, 7]
-    print merge_sort(input_2)
+    print quick_sort(input_2)
     
     input_3 = [1, 2, 3, 4, 5, 7, 6]
-    print merge_sort(input_3)
+    print quick_sort(input_3)
     
     input_4 = [1, 1, 3, 3, 2, 2, 4]
-    print merge_sort(input_4)
+    print quick_sort(input_4)
 
 
 if __name__ == '__main__':
