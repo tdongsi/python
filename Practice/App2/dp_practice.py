@@ -4,6 +4,50 @@ Created on Oct 17, 2015
 @author: cdongsi
 '''
 
+def maximal_subarray(number_list):
+    '''
+    Given an array, find the subarray with the maximum sum.
+    '''
+    
+    sum = 0
+    running_sum = [0] * len(number_list)
+    for idx, num in enumerate(number_list):
+        sum += num
+        running_sum[idx] = sum
+    
+#     print number_list
+#     print running_sum
+    
+    bot_idx = -1
+    bot = max(number_list) # some large value
+    peak_bot_idx = -1
+    peak_idx = -1
+    diff = 0 # some small value
+    
+    for idx, sum in enumerate(running_sum):
+        if (sum < bot):
+            bot_idx = idx
+            bot = sum
+            if peak_bot_idx == -1:
+                peak_bot_idx = bot_idx
+            
+        if (sum - bot > diff):
+            diff = sum - bot
+            peak_idx = idx
+            peak_bot_idx = bot_idx
+    
+    print "Bottom: %d, Peak: %d" % (peak_bot_idx, peak_idx)
+    print "Maximum subarray sum: %d" % diff
+    
+    return number_list[peak_bot_idx+1:peak_idx+1]
+
+def test_maximal_subarray():
+    '''
+    Test maximal_subarray
+    '''
+    
+    input_list = [1, -3, 5, -2, 9, -8, -6, 4]
+    print maximal_subarray(input_list)
 
 def find_coin_number(sum, coins):
     '''
@@ -59,7 +103,8 @@ def test_find_coint_number():
 
 def main():
     
-    test_find_coint_number()
+#     test_find_coint_number()
+    test_maximal_subarray()
 
 if __name__ == '__main__':
     main()
