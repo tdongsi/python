@@ -1,11 +1,11 @@
-'''
+"""
 Created on Apr 12, 2014
 
 @author: EpipolarGineer
 
 To solve the problem and submit, use the following:
 python MagicTrick.py -inputfile A-small-attempt0.in > out.txt
-'''
+"""
 
 import argparse
 
@@ -55,5 +55,5 @@ if __name__ == "__main__":
             print ("Case #%d: Bad magician!" % (i+1))
         else:
             print ("Case #%d: Volunteer cheated!" % (i+1))
-            
-            
+
+    pass

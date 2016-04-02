@@ -4,9 +4,9 @@ Created on May 11, 2014
 @author: tdongsi
 '''
 
+from __future__ import print_function
 import sys
 from fractions import gcd
-import math
 
 def generation_count(num, dem):
     MAX_COUNT = 40
