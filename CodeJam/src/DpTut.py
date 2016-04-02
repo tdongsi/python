@@ -1,29 +1,30 @@
-'''
+"""
 Created on Aug 27, 2014
 
 Some Dynamic Programming exercises and solutions.
 For the Algorithm tutorial: "Dynamic Programming: From novice to advanced"
 
 @author: cuongd
-'''
+"""
 
 import math
 
+
 class MinNumOfCoin(object):
-    '''
+    """
     Given a list of N coins, their values (V1, V2, ... , VN), and the total sum S. 
     Find the minimum number of coins the sum of which is S (we can use as many coins of one type as we want), 
     or report that it's not possible to select coins in such a way that they sum up to S.
-    '''
+    """
     
     @staticmethod
     def minNumOfCoin(totalValue, coinValues):
-        '''
+        """
         totalValue: an integer for totalValue
         coinValues: a list of coin values, assuming all positives.
         Return:
         0 indicates it's impossible to select coins. Otherwise, returns >= 1.
-        '''
+        """
         
         # Largest number of coins to get that sum 
         _maxCount = math.ceil(totalValue/min(coinValues))
@@ -32,7 +33,7 @@ class MinNumOfCoin(object):
         _min[0] = 0
         
         for _sum in range(1, totalValue+1):
-            minCount = _big;
+            minCount = _big
             for val in coinValues:
                 if ( _sum - val >= 0 and _min[_sum-val]+1 < minCount):
                     minCount = _min[_sum-val]+1
@@ -45,7 +46,7 @@ class MinNumOfCoin(object):
     
     
 class ZigZag(object):
-    '''
+    """
     http://community.topcoder.com/stat?c=problem_statement&pm=1259&rd=4493
     
     A sequence of numbers is called a zig-zag sequence if the differences between 
@@ -62,15 +63,15 @@ class ZigZag(object):
     subsequence of sequence that is a zig-zag sequence. A subsequence is obtained 
     by deleting some number of elements (possibly zero) from the original sequence, 
     leaving the remaining elements in their original order.
-    '''
+    """
     
     @staticmethod
     def longestZigZag(input):
-        '''
+        """
         Parameters: a sequence of integers
         Returns: integer: length of the longest subsequence of sequence that is 
         a zig-zag sequence.
-        '''
+        """
         
         length = len(input)
         if ( length == 1 ):
@@ -85,7 +86,7 @@ class ZigZag(object):
                 diff[i] = math.copysign(1, input[i+1] - input[i])
             
         maxLength = [0]*len(diff)
-        maxLength[0] = 1;
+        maxLength[0] = 1
         
         for i in range(1, len(maxLength)):
             maxLength[i] = maxLength[i-1]
@@ -102,7 +103,7 @@ class ZigZag(object):
     
 
 class BadNeighbors(object):
-    '''
+    """
     Each of the town's residents is willing to donate a certain amount, as 
     specified in the int[] donations, which is listed in clockwise order around 
     the well. However, nobody is willing to contribute to a fund to which his 
@@ -110,13 +111,13 @@ class BadNeighbors(object):
     consecutively in donations, except that the first and last entries in 
     donations are also for next-door neighbors. You must calculate and return 
     the maximum amount of donations that can be collected.
-    '''
+    """
     
     def maxDonations( self, donations ):
-        '''
+        """
         Parameters: list of donations by each neighbor
         Returns: integer for max donations
-        '''
+        """
         if (len(donations) == 1):
             return sum(donations)
         elif (len(donations) == 2):
@@ -128,10 +129,10 @@ class BadNeighbors(object):
         return max( self.maxSum(donations[:-1]), self.maxSum(donations[1:]) )
     
     def maxSum( self, inputList ):
-        '''
+        """
         Return the largest sum on the condition that two adjacent elements could 
         not counted together 
-        '''
+        """
         maxSum = [0]*len(inputList)
         maxSum[0] = inputList[0]
         maxSum[1] = max(inputList[:2]) # larger of the two adjacent elements
@@ -168,7 +169,7 @@ class Flower(object):
         
 
 class FlowerGarden(object):
-    '''
+    """
     http://community.topcoder.com/stat?c=problem_statement&pm=1918&rd=5006
     
     You will be given a int[] height, a int[] bloom, and a int[] wilt. 
@@ -191,13 +192,13 @@ class FlowerGarden(object):
     garden is represented by the first element in your return value, and is where 
     you view the garden from. The elements of height will all be unique, so there 
     will always be a well-defined ordering.
-    '''
+    """
     
     def getOrdering(self, height, bloom, wilt):
-        '''
+        """
         Parameters:    int[], int[], int[]
         Returns:    int[]
-        '''
+        """
         length = len(height)
         assert len(bloom) == length
         assert len(wilt) == length
@@ -241,9 +242,9 @@ class FlowerGarden(object):
     
             
     def block(self, flower1, flower2):
-        '''
+        """
         Return true if first Flower's bloom overlaps the second Flower's bloom
-        '''
+        """
         if (flower2.bloom > flower1.wilt or flower2.wilt < flower1.bloom):
             return False
         else:
@@ -259,7 +260,7 @@ class FlowerGarden(object):
 
 
 class AvoidRoads(object):
-    '''
+    """
     http://topcoder.bgcoder.com/print.php?id=382
     
     You are standing at the corner with coordinates 0,0. Your destination is at 
@@ -280,10 +281,10 @@ class AvoidRoads(object):
     a and c are between 0 and width inclusive,
     b and d are between 0 and height inclusive,
     and a,b is one block away from c,d.
-    '''
+    """
     
     def numWays(self, width, height, bad):
-        '''
+        """
         Parameters: int, int, String[]
         Returns: int for number of ways to traverse
         
@@ -293,7 +294,7 @@ class AvoidRoads(object):
         
         This solution has the time and space complexity of O(N^2).
         Space complexity can be reduced to O(N) by maintaining just two rows.
-        '''
+        """
         
         _width = width + 1
         _height = height + 1
@@ -321,9 +322,9 @@ class AvoidRoads(object):
         return states[height][width]
 
     def isBlock(self, a, b, c, d, bad):
-        '''
+        """
         Return True if it is blocked from (a,b) to (c,d), based on input bad[].
-        '''
+        """
         edgeString = self.edgeString(a, b, c, d)
         if (len(edgeString & set(bad)) > 0):
             return True
@@ -331,10 +332,10 @@ class AvoidRoads(object):
             return False
         
     def edgeString(self, a, b, c, d):
-        '''
+        """
         Return the strings that represent the edge from (a,b) to (c,d).
         Could be either "a b c d" or "c d a b".
-        '''
+        """
         edgeString = []
         indexes = [str(i) for i in [a, b, c, d]]
         edgeString.append(" ".join(indexes))
@@ -344,7 +345,7 @@ class AvoidRoads(object):
         
 
 class ChessMetric(object):
-    '''
+    """
     Suppose you had an n by n chess board and a super piece called a kingknight.
     
     The kingknight can move either one space in any direction (vertical, 
@@ -365,25 +366,25 @@ class ChessMetric(object):
     move sequences differ in any way. In addition, you are allowed to use spaces 
     on the board (including start and finish) repeatedly during a particular path 
     from start to finish.
-    '''
+    """
     
     def __init__(self, size):
         self._size = size
         self._board = [0] * (size*size)
         
     def printBoard(self):
-        '''
+        """
         Print the internal _board as 2D array
-        '''
+        """
         print
         for r in range(self._size):
             print self._board[r*self._size:(r+1)*self._size]
 
     def affectedSquares(self, idx):
-        '''
+        """
         Return the indexes of the affected squares by the king-knight, given the
         current position (r,c)
-        '''
+        """
         indexList = []
         r = idx // self._size
         c = idx % self._size
@@ -416,31 +417,31 @@ class ChessMetric(object):
         return indexList
     
     def isValidSquare(self, r, c):
-        '''
+        """
         Perform boundary check, given the (r,c) position on the board.
-        '''
+        """
         if ( r < 0 or r >= self._size or c < 0 or c >= self._size):
             return False
         return True
     
     def toIndex(self, r, c):
-        '''
+        """
         Convert (r,c) position on the chess board to 1D array index.
-        '''
+        """
         return (self._size*r + c)
     
     def filledSquares(self):
-        '''
+        """
         Return the indexes of the filled squares on the board.
         Any element in the _board list that is not 0 represents a filled squares.
-        '''
+        """
         index = [i for i, value in enumerate(self._board) if value != 0 ]
         return index
         
     def numWays(self, start, end, numMoves):
-        '''
+        """
         Actually solve the ChessMetrics problem for the current board size.
-        '''
+        """
         # Reset the board
         self._board = [0] * (self._size*self._size)
         
@@ -451,8 +452,7 @@ class ChessMetric(object):
         
             
         for move in range(numMoves-1):
-#             self.printBoard()
-            
+
             idx = self.filledSquares()
             # save a copy of the boards
             temp = self._board[:]
@@ -468,17 +468,17 @@ class ChessMetric(object):
     
     @staticmethod
     def howMany( size, start, end, numMoves):
-        '''
+        """
         Parameters:    int, int[], int[], int
         Returns: int for number of moves
-        '''
+        """
         return ChessMetric(size).numWays(start, end, numMoves)
     
     pass
 
 
 class Jewelry(object):
-    '''
+    """
     You have been given a list of jewelry items that must be split amongst two 
     people: Frank and Bob. you have devised the following policy:
     1) Each piece of jewelry given to Frank must be valued greater than or equal 
@@ -508,22 +508,22 @@ class Jewelry(object):
     Note that each '5' is a different piece of jewelry and needs to be accounted 
     for separately. There are 9 legal ways of allocating the jewelry to Bob and 
     Frank given the policy, so your method would return 9.
-    '''
+    """
     
     def __init__(self):
         pass
     
     def howMany(self, items):
-        '''
+        """
         Parameters:    int[]
         Returns: int for number of ways
-        '''
+        """
         
         return 0
     
 
 class StripePainter(object):
-    '''
+    """
     http://community.topcoder.com/stat?c=problem_statement&pm=1215&rd=4555
     
     Abbreviating each color to a single uppercase letter, Karel would write the 
@@ -535,22 +535,22 @@ class StripePainter(object):
 
     Given a stripe pattern stripes as a String, calculate the minimum number of 
     brush strokes required to paint that pattern.
-    '''
+    """
     
     def __init__(self):
         pass
     
     def minStrokes(self, stripes):
-        '''
+        """
         Parameters:    String
         Returns:    int for number of brush strokes
-        '''
+        """
         
         return 0
 
 
 class QuickSums(object):
-    '''
+    """
     http://community.topcoder.com/stat?c=problem_statement&pm=2829
     
     Given a string of digits, find the minimum number of additions required for 
@@ -567,22 +567,22 @@ class QuickSums(object):
     numbers and an int sum. The method should calculate and return the minimum 
     number of additions required to create an expression from numbers that 
     evaluates to sum. If this is impossible, return -1.
-    '''
+    """
     
     def __init__(self):
         pass
     
     def minSums(self, numbers, sum):
-        '''
+        """
         Parameters:    String
         Returns:    int for number of brush strokes
-        '''
+        """
         
         return -1
 
 
 class ShortPalindromes(object):
-    '''
+    """
     A palindrome is a String that is spelled the same forward and backwards. Given 
     a String base that may or may not be a palindrome, we can always force base 
     to be a palindrome by adding letters to it. For example, given the word "RACE", 
@@ -596,23 +596,23 @@ class ShortPalindromes(object):
     more than one palindrome of minimal length that can be made, return the 
     lexicographically earliest (that is, the one that occurs first in alphabetical 
     order).
-    '''
+    """
     
     def __init__(self):
         pass
     
     def shortest(self, base):
-        '''
+        """
         Parameters:    String
         Returns:    String for the lexicographically earliest string that is 
         palindrome of minimal length.
-        '''
+        """
         
         return base
 
 
 class StarAdventure(object):
-    '''
+    """
     On each level you search for stars that earn you points. Simply moving over 
     a location containing stars allows you to acquire them. To help you on your 
     journey, you are given an overhead map of the level in a String[]. Each 
@@ -629,22 +629,22 @@ class StarAdventure(object):
     (not diagonal) steps.
     Once the stars on a spot are claimed, they cannot be claimed again on a 
     future pass. Return the largest possible number of stars that can be acquired.
-    '''
+    """
     
     def __init__(self):
         pass
     
     def mostStars(self, levels):
-        '''
+        """
         Parameters:    String[] with each string for each level
         Returns:    int for largest number of stars acquired.
-        '''
+        """
         
         return 0
 
 
 class MiniPaint(object):
-    '''
+    """
     You have been given a String[] picture. Each character in picture represents 
     a space in the picture. A 'B' designates a space that needs to be painted 
     black, and a 'W' denotes a space that must be painted white. The painting 
@@ -665,19 +665,18 @@ class MiniPaint(object):
     the spaces. Return the fewest number of spaces that can be mispainted while 
     still using no more than maxStrokes strokes. An unpainted space is considered 
     mispainted.
-    '''
+    """
 
     def __init__(self):
         pass
     
     def leastBad(self, picture, maxStrokes):
-        '''
+        """
         Parameters:    String[], int
         Returns:    int for fewest number of spaces that can be mispainted
-        '''
+        """
         
         return 0
-
 
 
 if __name__ == "__main__":
