@@ -1,13 +1,14 @@
-'''
+"""
 @author: tdongsi
-'''
+"""
 
 # create logger
 import logging
-import MyLogger
+import practice.app1.MyLogger
 myLogger = logging.getLogger('AnswerOne')
 
 import collections
+
 
 class AnswerOne(object):
     
@@ -24,7 +25,7 @@ class AnswerOne(object):
         
         
     def init(self):
-        '''
+        """
         Process the specified input file in self._filename to construct the tree
         The tree is represented by self._dict.
         
@@ -32,7 +33,7 @@ class AnswerOne(object):
         
         Assumption 2: The structure specified by the file has a tree structure.
         Especially, no dependency cycle.
-        '''
+        """
         
         try:
             with open(self._filename) as f:
@@ -51,12 +52,11 @@ class AnswerOne(object):
         except IOError:
             myLogger.error('Cannot open file %s', self._filename)
             
-        
     def getValueString(self, key_input):
-        '''
+        """
         Print the values for the key input and its dependencies, based on the 
         constructed tree.
-        '''
+        """
         
         if key_input in self._dict:
         
@@ -79,10 +79,10 @@ class AnswerOne(object):
             return ''
     
     def _getValueSet(self, key):  
-        '''
+        """
         Iterate over the nodes of the tree (represented as dict of list) from the
         given node and get the UNIQUE node value.
-        '''
+        """
         my_set = set()
         my_set.add(key)
         
@@ -99,12 +99,12 @@ class AnswerOne(object):
 
 
 def main():
-    '''
+    """
     A sample program to print values and dependencies for a given key. 
     Initialize with a given file. The file content is based on the assignment.
     Read from command line for input and print out the values.
     Press Enter from command-line to terminate.
-    '''
+    """
     
     answer = AnswerOne('../test/Q1Test1.txt')
     key_input = 'ready'

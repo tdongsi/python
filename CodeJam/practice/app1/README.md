@@ -1,6 +1,7 @@
 This project solves the problems listed in Questions.txt file. This solution uses Python version 2.7.
 
 Answers to
+
 * Question 1: src/QuestionOne.py
 * Question 2: src/QuestionTwo.py
 
@@ -37,10 +38,12 @@ How to run
 It is easier to run in Eclipse with PyDev plug-in.
 
 Question 1: From src folder
+
 * Run solution from Terminal: python QuestionOne.py
 * Run test cases from Terminal: python ../test/QuestionOneTest.py
 
 Question 2:
+
 * Run solution from Terminal: python QuestionTwo.py
 * Run test cases from Terminal: python ../test/QuestionTwoTest.py
 
@@ -61,6 +64,7 @@ The tests for answer to Question 2 are organized as unit tests, based on unittes
 One functional aspect of the program is to validate the IPv4 address string in a file.
 Tests for this functionality is included into the text files in Q2Test2 directory and its sub-
 directory. Text files in Q2Test2 includes positive cases and negative cases such as:
+
 * 256.12.36.198
 * 0.0.0.0.0
 * 127.1
@@ -71,6 +75,7 @@ Because of that, there is no test for IPv4 validation in unit test QuestionTwoTe
 the module tests exceptional scenarios in terms of file system, such as empty directory.
 
 Other corner test cases that are not feasible for the current assignment:
+
 * Large text files.
 * Long file paths.
 * Files with different EOL.
