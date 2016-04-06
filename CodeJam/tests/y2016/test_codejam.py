@@ -2,7 +2,7 @@
 import unittest
 import StringIO
 
-from practice.y2016.codejam import StoreCredit
+from practice.y2016.codejam import *
 
 PROJECT_HOME = "/Users/cdongsi/Hub/python/CodeJam"
 
@@ -31,6 +31,21 @@ class StoreCreditTest(unittest.TestCase):
 
     def test_large_input(self):
         solver = StoreCredit(PROJECT_HOME + "/data/A-large-practice.in")
+        with open("out.txt", "w") as f:
+            solver.solve(output=f)
+        pass
+
+
+class ReverseWordsTest(unittest.TestCase):
+
+    def test_small_input(self):
+        solver = ReverseWords(PROJECT_HOME + "/data/B-small-practice.in")
+        with open("out.txt", "w") as f:
+            solver.solve(output=f)
+        pass
+
+    def test_large_input(self):
+        solver = ReverseWords(PROJECT_HOME + "/data/B-large-practice.in")
         with open("out.txt", "w") as f:
             solver.solve(output=f)
         pass
