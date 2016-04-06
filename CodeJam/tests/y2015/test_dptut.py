@@ -3,8 +3,10 @@ Created on Aug 27, 2014
 
 @author: tdongsi
 """
+
 import unittest
-from DpTut import *
+
+from codejam.y2015.DpTut import *
 
 
 class MinNumOfCoinTest(unittest.TestCase):

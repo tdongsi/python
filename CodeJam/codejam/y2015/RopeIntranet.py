@@ -46,7 +46,7 @@ def solve( input_filename, f = sys.stdout):
 if __name__ == '__main__':
     
     f = open("output.txt", 'w')
-    input_filename = "../data/RopeIntranet.txt"
+    input_filename = "../../data/RopeIntranet.txt"
 #     input_filename = "../data/A-small-practice.in"
 #     input_filename = "../data/A-large-practice.in"
     

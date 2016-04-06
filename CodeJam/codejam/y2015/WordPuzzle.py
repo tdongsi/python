@@ -17,7 +17,7 @@ def addWord(d, length, w):
 
 
 def getDict(dict, length):
-    fin = open('../data/words.txt')
+    fin = open('../../data/words.txt')
 
     for line in fin:
         l = line.strip()

@@ -71,7 +71,7 @@ def solve( input_filename, f = sys.stdout):
 if __name__ == '__main__':
     
     f = open("output.txt", 'w')
-    input_filename = "../data/PartElfSample.txt"
+    input_filename = "../../data/PartElfSample.txt"
 #     input_filename = "../data/A-small-attempt0.in"
 #     input_filename = "../data/A-large.in"
     

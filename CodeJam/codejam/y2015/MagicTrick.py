@@ -12,7 +12,7 @@ import argparse
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(description='Google Code Jam 2014: Magic Trick')
-    parser.add_argument('-inputfile', action='store', default='../data/MagicTrickSample.txt', dest='filename')
+    parser.add_argument('-inputfile', action='store', default='../../data/MagicTrickSample.txt', dest='filename')
     args = parser.parse_args()
     
 #     print ('Processing file %s' % args.filename)
