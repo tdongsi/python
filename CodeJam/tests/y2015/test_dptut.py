@@ -1,10 +1,12 @@
-'''
+"""
 Created on Aug 27, 2014
 
 @author: tdongsi
-'''
+"""
+
 import unittest
-from DpTut import *
+
+from codejam.y2015.DpTut import *
 
 
 class MinNumOfCoinTest(unittest.TestCase):
@@ -30,12 +32,13 @@ class MinNumOfCoinTest(unittest.TestCase):
     def test_minNumOfCoin_invalid(self):
         self.assertEqual(0, MinNumOfCoin.minNumOfCoin(5, [3]))
         self.assertEqual(0, MinNumOfCoin.minNumOfCoin(5, [6]))
-        
+
+
 class ZigZagTest(unittest.TestCase):
-    '''
+    """
     Unit tests for ZigZag problem
     http://community.topcoder.com/stat?c=problem_statement&pm=1259&rd=4493
-    '''
+    """
     
     knownInputOutput = ( ([1, 7, 4, 9, 2, 5], 6),
                          ([1, 17, 5, 10, 13, 15, 10, 5, 16, 8], 7),
@@ -52,16 +55,15 @@ class ZigZagTest(unittest.TestCase):
     
     def test_longestZigZag_knownValues(self):
         for input, expected in self.knownInputOutput:
-#             print input
             output = ZigZag.longestZigZag(input)
             self.assertEqual(expected, output)
             
             
 class BadNeighborTest(unittest.TestCase):
-    '''
+    """
     Unit tests for Bad Neighbors problem
     http://mattcb.blogspot.com/2013/03/bad-neighbors.html
-    '''
+    """
     
     def test_maxDonations(self):
         self.assertEqual(11, BadNeighbors().maxDonations([11]))
@@ -77,12 +79,13 @@ class BadNeighborTest(unittest.TestCase):
                   106, 80, 92, 81, 679, 4, 61,  
                   6, 237, 12, 72, 74, 29, 95, 265, 35, 47, 1, 61, 397,
                   52, 72, 37, 51, 1, 81, 45, 435, 7, 36, 57, 86, 81, 72]))
-    
+
+
 class FlowerGardenTest(unittest.TestCase):
-    '''
+    """
     Unit tests for Flower Garden problem
     http://community.topcoder.com/stat?c=problem_statement&pm=1918&rd=5006
-    '''
+    """
     
     def test_compare(self):
         self.assertTrue(FlowerGarden().block(Flower(1,1,10), Flower(2,1,10)))
@@ -95,10 +98,10 @@ class FlowerGardenTest(unittest.TestCase):
         self.assertEqual( 1, FlowerGarden().compare(Flower(6,3,4), Flower(4,3,4)) )
     
     def test_getOrdering(self):
-        '''
+        """
         These flowers all bloom on January 1st and wilt on December 31st. 
         Since they all may block each other, you must order them from shortest to tallest
-        '''
+        """
         self.assertListEqual([1, 2, 3, 4, 5],
                               FlowerGarden().getOrdering([5,4,3,2,1], 
                                                          [1,1,1,1,1], 
@@ -130,16 +133,17 @@ class FlowerGardenTest(unittest.TestCase):
                              )
         
         
-        self.assertListEqual([4,  5,  2,  3],
+        self.assertListEqual([4, 5, 2, 3],
                               FlowerGarden().getOrdering([3,2,5,4], 
                                                          [1,2,11,10], 
                                                          [4,3,12,13])
                              )
 
+
 class AvoidRoadTest(unittest.TestCase):
-    '''
+    """
     Unit tests for AvoidRoads problem
-    '''
+    """
     
     def test_numWays(self):
         self.assertEqual(252, AvoidRoads().numWays(6, 6, ("0 0 0 1","6 6 5 6")) )
@@ -149,9 +153,9 @@ class AvoidRoadTest(unittest.TestCase):
     
 
 class ChessMetricsTest(unittest.TestCase):
-    '''
+    """
     Unit tests for ChessMetrics problem
-    '''
+    """
     
     def test_numWays(self):
         self.assertEqual(1, ChessMetric.howMany(3, (0,0), (1,0), 1) )
@@ -162,9 +166,9 @@ class ChessMetricsTest(unittest.TestCase):
 
 
 class JewelryTest(unittest.TestCase):
-    '''
+    """
     Unit tests for Jewelry problem
-    '''
+    """
     
     def test_howMany(self):
         self.assertEqual(9, Jewelry().howMany([1,2,5,3,4,5]))
@@ -180,9 +184,9 @@ class JewelryTest(unittest.TestCase):
 
 
 class StripePainterTest(unittest.TestCase):
-    '''
+    """
     Unit tests for StripePainter problem
-    '''
+    """
     
     def test_minStrokes(self):
         self.assertEqual(3, StripePainter().minStrokes('RGBGR'))
@@ -193,9 +197,9 @@ class StripePainterTest(unittest.TestCase):
 
         
 class QuickSumsTest(unittest.TestCase):
-    '''
+    """
     Unit tests for QuickSums problem
-    '''
+    """
     
     def test_minSums(self):
         self.assertEqual(4, QuickSums().minSums('99999', 45))
@@ -207,9 +211,9 @@ class QuickSumsTest(unittest.TestCase):
 
 
 class ShortPalindromesTest(unittest.TestCase):
-    '''
+    """
     Unit tests for ShortPalindromes problem
-    '''
+    """
     
     def test_shortest(self):
         self.assertEqual('ECARACE', ShortPalindromes().shortest('RACE'))
@@ -221,9 +225,9 @@ class ShortPalindromesTest(unittest.TestCase):
 
 
 class StarAdventureTest(unittest.TestCase):
-    '''
+    """
     Unit tests for StarAdventure problem
-    '''
+    """
     
     def test_mostStars(self):
         map = ["01",
@@ -263,10 +267,11 @@ class StarAdventureTest(unittest.TestCase):
                  "9999999999"]
         self.assertEqual(335, StarAdventure().mostStars(map))
 
+
 class MiniPaintTest(unittest.TestCase):
-    '''
+    """
     Unit tests for MiniPaint problem
-    '''
+    """
     
     def test_leastBad(self):
         pic = [ "BBBBBBBBBBBBBBB",
@@ -290,6 +295,6 @@ class MiniPaintTest(unittest.TestCase):
         pic = ["B"]
         self.assertEqual(0, MiniPaint().leastBad(pic, 1))
 
+
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

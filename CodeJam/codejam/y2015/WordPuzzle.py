@@ -1,22 +1,23 @@
-'''
+"""
 Created on May 6, 2014
 
-@author: tdongsi
-'''
-
-'''
-Solve puzzle: from a source word, modify one character in each step such that the new word is valid in order to get to destination word
+Solve puzzle: from a source word, modify one character in each step such that the new word is valid in order to get to
+destination word.
 
 Example:
 ('mold -> mole', 'mole -> male', 'male -> mace', 'mace -> mach', 'mach -> each', 'each -> etch')
-'''
+
+@author: tdongsi
+"""
+
 
 def addWord(d, length, w):
     if len(w) == length:
         d.add(w)
 
+
 def getDict(dict, length):
-    fin = open('../data/words.txt')
+    fin = open('../../data/words.txt')
 
     for line in fin:
         l = line.strip()
@@ -26,6 +27,7 @@ lookup = set()
 fullPath = {}
 wordList = []
 found = set()
+
 
 def findValidChange(w, i, path):
     # print("Find valid change", w, i)
@@ -39,6 +41,7 @@ def findValidChange(w, i, path):
                 wordList.append(w2)
                 found.add(w2)
                 fullPath[w2] = p
+
 
 def findPair(w, path):
     for i in range(len(w)):

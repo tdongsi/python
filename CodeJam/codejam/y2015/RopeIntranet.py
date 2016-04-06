@@ -1,15 +1,18 @@
-'''
+"""
 Created on May 10, 2014
 
-'''
+"""
 
+from __future__ import print_function
 import sys
 
 def prod(pos1, pos2):
     return (pos1[0]-pos2[0])*(pos1[1]-pos2[1])
 
 def intersect_count(wires):
-    '''Naive solution for counting number of intersections'''
+    """
+    Naive solution for counting number of intersections
+    """
     count = 0
     for i in range(len(wires)):
         for j in range(i+1, len(wires)):
@@ -43,9 +46,9 @@ def solve( input_filename, f = sys.stdout):
 if __name__ == '__main__':
     
     f = open("output.txt", 'w')
-#     input_filename = "../data/RopeIntranet.txt"
+    input_filename = "../../data/RopeIntranet.txt"
 #     input_filename = "../data/A-small-practice.in"
-    input_filename = "../data/A-large-practice.in"
+#     input_filename = "../data/A-large-practice.in"
     
     solve(input_filename, f)
     solve(input_filename)

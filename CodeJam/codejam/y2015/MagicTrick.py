@@ -1,18 +1,18 @@
-'''
+"""
 Created on Apr 12, 2014
 
 @author: EpipolarGineer
 
 To solve the problem and submit, use the following:
 python MagicTrick.py -inputfile A-small-attempt0.in > out.txt
-'''
+"""
 
 import argparse
 
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(description='Google Code Jam 2014: Magic Trick')
-    parser.add_argument('-inputfile', action='store', default='../data/MagicTrickSample.txt', dest='filename')
+    parser.add_argument('-inputfile', action='store', default='../../data/MagicTrickSample.txt', dest='filename')
     args = parser.parse_args()
     
 #     print ('Processing file %s' % args.filename)
@@ -55,5 +55,5 @@ if __name__ == "__main__":
             print ("Case #%d: Bad magician!" % (i+1))
         else:
             print ("Case #%d: Volunteer cheated!" % (i+1))
-            
-            
+
+    pass

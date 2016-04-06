@@ -12,3 +12,5 @@ CodeJam/src/ProblemC.py
 Scripts/src/cvspath.txt
 Scripts/data
 out*.txt
+*.log
+*/.idea

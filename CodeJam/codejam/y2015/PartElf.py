@@ -4,9 +4,9 @@ Created on May 11, 2014
 @author: tdongsi
 '''
 
+from __future__ import print_function
 import sys
 from fractions import gcd
-import math
 
 def generation_count(num, dem):
     MAX_COUNT = 40
@@ -71,7 +71,7 @@ def solve( input_filename, f = sys.stdout):
 if __name__ == '__main__':
     
     f = open("output.txt", 'w')
-    input_filename = "../data/PartElfSample.txt"
+    input_filename = "../../data/PartElfSample.txt"
 #     input_filename = "../data/A-small-attempt0.in"
 #     input_filename = "../data/A-large.in"
     
