@@ -1,13 +1,13 @@
-'''
+"""
 Created on Oct 17, 2015
 
 @author: cdongsi
-'''
+"""
 
 def maximal_subarray(number_list):
-    '''
+    """
     Given an array, find the subarray with the maximum sum.
-    '''
+    """
     
     sum = 0
     running_sum = [0] * len(number_list)
@@ -41,21 +41,23 @@ def maximal_subarray(number_list):
     
     return number_list[peak_bot_idx+1:peak_idx+1]
 
+
 def test_maximal_subarray():
-    '''
+    """
     Test maximal_subarray
-    '''
+    """
     
     input_list = [1, -3, 5, -2, 9, -8, -6, 4]
     print maximal_subarray(input_list)
 
+
 def find_coin_number(sum, coins):
-    '''
+    """
     Given a list of N coins, their values (V1, V2, ... , VN), and the total sum S. 
     Find the minimum number of coins the sum of which is S (we can use as many coins of one type as we want), 
     or report that it's not possible to select coins in such a way that they sum up to S.
     Retun -1 if it's not possible
-    '''
+    """
     
     min_coin = min(coins)
     numbers = [-1]*(sum+1)
@@ -84,9 +86,9 @@ def find_coin_number(sum, coins):
 
 
 def test_find_coint_number():
-    '''
+    """
     Run tests
-    '''
+    """
     sum = 79
     
     coins_1 = [1, 5, 10, 25, 100]
@@ -101,10 +103,12 @@ def test_find_coint_number():
     sum_3 = 3
     print find_coin_number(sum_3, coins_3)
 
+
 def main():
     
 #     test_find_coint_number()
     test_maximal_subarray()
+
 
 if __name__ == '__main__':
     main()

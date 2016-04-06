@@ -1,14 +1,15 @@
-'''
+"""
 Created on Oct 2, 2015
 
 @author: cdongsi
-'''
+"""
 import random
 
+
 def quick_sort(input):
-    '''
+    """
     Implement quick-sort algorithm
-    '''
+    """
     
     if len(input) < 2:
         return input
@@ -29,10 +30,11 @@ def quick_sort(input):
     
         return merged
 
+
 def merge(sorted_left, sorted_right):
-    '''
+    """
     Merging two sorted lists to produce a sorted list
-    '''
+    """
     merged = []
     idx_left, idx_right = 0, 0
     
@@ -46,21 +48,22 @@ def merge(sorted_left, sorted_right):
     
     # Append the remaining to merged
     # If you want to determine which half remains
-    '''
+    """
     if idx_left < len(sorted_left):
         merged.extend(sorted_left[idx_left:])
     else:
         merged.extend(sorted_right[idx_right:])
-    '''
+    """
     
     merged.extend(sorted_left[idx_left:])
     merged.extend(sorted_right[idx_right:])
     return merged
 
+
 def merge_sort(input):
-    '''
+    """
     Do merge sort
-    '''
+    """
     
     if len(input) <= 1:
         return input
@@ -71,11 +74,12 @@ def merge_sort(input):
         
         return merge(sorted_left, sorted_right)
 
+
 def find_order(input, k):
-    '''
+    """
     Find the kth smallest number in a list of integers
     k = 0 for the smallest number.
-    '''
+    """
     if ( k >= len(input) or k < 0 ):
         return None
     elif len(input) == 0:
@@ -97,16 +101,18 @@ def find_order(input, k):
             right = [x for x in input if x > pivot]
             return find_order(right, k-1-len(left))
 
+
 def find_median(input):
-    '''
+    """
     Find the median of a list of integers
-    '''
+    """
     return find_order(input, len(input)//2)
 
+
 def main_sort():
-    '''
+    """
     Run test program of sorting algorithms
-    '''
+    """
     
     input_1 = [7, 6, 5, 4, 3, 2, 1]
     print find_median(input_1)
@@ -120,10 +126,11 @@ def main_sort():
     input_4 = [1, 1, 3, 3, 2, 2, 4]
     print find_median(input_4)
 
+
 def shuffle(input):
-    '''
+    """
     Random shuffling of a deck, represented by a list of integers
-    '''
+    """
     deck = input[:]
     for i in xrange(len(deck)-1):
         # Find a random index between i and end of deck
@@ -132,13 +139,15 @@ def shuffle(input):
         
     return deck
 
+
 def main():
-    '''
+    """
     Run test of shuffling algorithm
-    '''
+    """
     input_1 = [7, 6, 5, 4, 3, 2, 1]
     print shuffle(input_1)
     print input_1
+
 
 if __name__ == '__main__':
     main()

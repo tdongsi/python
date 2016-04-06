@@ -1,11 +1,13 @@
-'''
+"""
 Created on Oct 31, 2014
 
-@author: tdongsi
-'''
+Answer to a algorihtm puzzle in TIBCO interview.
 
-def maxArea(heights):
-    '''
+@author: tdongsi
+"""
+
+def max_area(heights):
+    """
     Problem statement:
     You are given a list of integers, representing heights of columns.
     If a column is next to a higher or equal column, we can extend an "area" to
@@ -24,7 +26,7 @@ def maxArea(heights):
     
     In the end, the "area" associated with each column is [12, 6, 10, 6, 3, 6].
     The method should return 12.
-    '''
+    """
     
     # Divide and conquer approach
     
@@ -39,10 +41,10 @@ def maxArea(heights):
     
     # Solve the smaller problem for sublist before smallest number 
     # E.g. solve [4,6,5]
-    front = maxArea(heights[0:minIdx])
+    front = max_area(heights[0:minIdx])
     # Solve the smaller problem for sublist after smallest number
     # E.g.: solve [3,2]
-    back = maxArea(heights[minIdx+1:])
+    back = max_area(heights[minIdx + 1:])
     # The area associated with minimum column is trivial to compute
     current = minVal*len(heights)
     
@@ -52,7 +54,7 @@ def maxArea(heights):
 
 def main():
     # Expected 12
-    print maxArea( [4,6,5,1,3,2])
+    print max_area([4, 6, 5, 1, 3, 2])
 
 if __name__ == '__main__':
     main()
