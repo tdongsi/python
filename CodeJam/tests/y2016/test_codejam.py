@@ -2,7 +2,7 @@
 import unittest
 import StringIO
 
-from practice.y2016.codejam import *
+import practice.y2016.codejam as cj
 
 PROJECT_HOME = "/Users/cdongsi/Hub/python/CodeJam"
 
@@ -10,7 +10,7 @@ PROJECT_HOME = "/Users/cdongsi/Hub/python/CodeJam"
 class StoreCreditTest(unittest.TestCase):
 
     def test_example(self):
-        solver = StoreCredit(PROJECT_HOME + "/data/StoreCredit.txt")
+        solver = cj.StoreCredit(PROJECT_HOME + "/data/StoreCredit.txt")
         str_output = StringIO.StringIO()
 
         solver.solve(output=str_output)
@@ -24,13 +24,13 @@ class StoreCreditTest(unittest.TestCase):
         pass
 
     def test_small_input(self):
-        solver = StoreCredit(PROJECT_HOME + "/data/A-small-practice.in")
+        solver = cj.StoreCredit(PROJECT_HOME + "/data/A-small-practice.in")
         with open("out.txt", "w") as f:
             solver.solve(output=f)
         pass
 
     def test_large_input(self):
-        solver = StoreCredit(PROJECT_HOME + "/data/A-large-practice.in")
+        solver = cj.StoreCredit(PROJECT_HOME + "/data/A-large-practice.in")
         with open("out.txt", "w") as f:
             solver.solve(output=f)
         pass
@@ -39,13 +39,32 @@ class StoreCreditTest(unittest.TestCase):
 class ReverseWordsTest(unittest.TestCase):
 
     def test_small_input(self):
-        solver = ReverseWords(PROJECT_HOME + "/data/B-small-practice.in")
+        solver = cj.ReverseWords(PROJECT_HOME + "/data/B-small-practice.in")
         with open("out.txt", "w") as f:
             solver.solve(output=f)
         pass
 
     def test_large_input(self):
-        solver = ReverseWords(PROJECT_HOME + "/data/B-large-practice.in")
+        solver = cj.ReverseWords(PROJECT_HOME + "/data/B-large-practice.in")
         with open("out.txt", "w") as f:
             solver.solve(output=f)
         pass
+
+
+class AlienLanguage(unittest.TestCase):
+
+    def test_example(self):
+        solver = cj.AlienLanguage(PROJECT_HOME + "/data/AlienLanguage.txt")
+        str_output = StringIO.StringIO()
+        solver.solve(output=str_output)
+        actual = str_output.getvalue()
+        expected = ("Case #1: 2\n"
+                    "Case #2: 1\n"
+                    "Case #3: 3\n"
+                    "Case #4: 0\n")
+        self.assertEqual(actual, expected)
+        str_output.close()
+        pass
+
+if __name__ == "__main__":
+    unittest.main()

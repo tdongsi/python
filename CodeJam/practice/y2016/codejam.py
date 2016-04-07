@@ -2,6 +2,7 @@
 Practice for Code Jam 2016
 """
 
+import re
 import sys
 
 
@@ -117,6 +118,65 @@ class StoreCredit(object):
         return (first, second) if first <= second else (second, first)
 
     pass
+
+
+class AlienLanguage(object):
+
+    def __init__(self, filename):
+        """ Initialize with the given input file.
+
+        :param filename: input file path
+        :return:
+        """
+        self._filename = filename
+        pass
+
+    def solve(self, output=sys.stdout):
+        """ Handle input and output before calling an internal method to solve the problem.
+
+        :param output: specify output to file or screen.
+        :return:
+        """
+        try:
+            with open(self._filename, 'r') as f:
+                lines = f.readlines()
+                lines_iter = iter(lines)
+
+                # First line
+                line = lines_iter.next().split(' ')
+                length, dict_count, test_count = [int(elem) for elem in line]
+
+                # Construct dictionary
+                dictionary = set([])
+                for i in xrange(dict_count):
+                    dictionary.add(lines_iter.next())
+
+                # Process test cases
+                for i in xrange(test_count):
+                    test = lines_iter.next()
+                    count = self._solve_alien_language(dictionary, test)
+                    output.write("Case #%d: %d\n" % (i+1, count))
+        except StopIteration:
+            print "Unexpected StopIteration, check file"
+        except IOError:
+            print "Error opening file"
+        pass
+
+    def _solve_alien_language(self, dictionary, test):
+        """ Solve by converting the test case to regular expression.
+
+        :param dictionary:
+        :param test:
+        :return:
+        """
+        pattern = test.replace("(", "[").replace(")", "]")
+        # print pattern
+        matcher = re.compile(pattern)
+        count = 0
+        for entry in dictionary:
+            if matcher.match(entry):
+                count += 1
+        return count
 
 
 def main():
