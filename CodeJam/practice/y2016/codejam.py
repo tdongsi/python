@@ -2,6 +2,7 @@
 Practice for Code Jam 2016
 """
 
+import math
 import re
 import sys
 
@@ -243,6 +244,77 @@ class AllYourBase(object):
             prod += my_dict[char]
 
         return prod
+
+
+class CenterOfMass(object):
+    """
+    https://code.google.com/codejam/contest/189252/dashboard#s=p1&a=0
+    """
+
+    def __init__(self, filename):
+        """ Initialize with the given input file.
+
+        :param filename: input file path
+        :return:
+        """
+        self._filename = filename
+        pass
+
+    def solve(self, output=sys.stdout):
+        """ Handle input and output before calling an internal method to solve the problem.
+
+        :param output: specify output to file or screen.
+        :return:
+        """
+        try:
+            with open(self._filename, 'r') as f:
+                lines = f.readlines()
+                num = int(lines[0])
+                i_lines = iter(lines)
+                i_lines.next()
+
+                for case in xrange(num):
+                    num_fly = float(i_lines.next())
+                    sum_pos = [0, 0, 0]
+                    sum_vel = [0, 0, 0]
+
+                    for fly in xrange(int(num_fly)):
+                        tokens = i_lines.next().strip().split(' ')
+                        fly_pv = [int(token) for token in tokens]
+                        # print fly_pv
+
+                        sum_pos = [sumc + p for sumc, p in zip(sum_pos, fly_pv[:3])]
+                        sum_vel = [sumc + v for sumc, v in zip(sum_vel, fly_pv[3:])]
+
+                    pos_0 = [p/num_fly for p in sum_pos]
+                    vel = [v/num_fly for v in sum_vel]
+                    func_a = sum([a*b for a, b in zip(vel, vel)])
+                    func_b = 2*sum([a*b for a, b in zip(vel, pos_0)])
+                    func_c = sum([a*b for a, b in zip(pos_0, pos_0)])
+                    d_min, t_min = self._solve_quadratic_min(func_a, func_b, func_c)
+
+                    output.write("Case #%d: %f %f\n" % (case+1, d_min, t_min))
+
+        except StopIteration:
+            print "Unexpected stop. Check input file."
+        except IOError:
+            print "Error opening file"
+        pass
+
+    def _solve_quadratic_min(self, a, b, c):
+        # print a, b, c
+        if a == 0.0:
+            t_min = 0.0
+        else:
+            t_min = max(0.0, -b/2.0/a)
+        d_squared = a * t_min * t_min + b * t_min + c
+        if d_squared > 0:
+            d_min = math.sqrt(d_squared)
+        else:
+            # if d_squared is close to zero, it could be less than zero
+            # due to floating point error.
+            d_min = 0.0
+        return d_min, t_min
 
 
 def main():

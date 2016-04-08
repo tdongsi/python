@@ -94,5 +94,24 @@ class AllYourBaseTest(unittest.TestCase):
         pass
 
 
+class CenterOfMassTest(unittest.TestCase):
+
+    def test_example(self):
+        solver = cj.CenterOfMass(PROJECT_HOME + "/data/CenterOfMass.txt")
+        solver.solve()
+
+    def test_small_input(self):
+        solver = cj.CenterOfMass(PROJECT_HOME + "/data/B-small-practice.in")
+        with open("out.txt", "w") as f:
+            solver.solve(output=f)
+        pass
+
+    def test_large_input(self):
+        solver = cj.CenterOfMass(PROJECT_HOME + "/data/B-large-practice.in")
+        with open("out.txt", "w") as f:
+            solver.solve(output=f)
+        pass
+
+
 if __name__ == "__main__":
     unittest.main()
