@@ -51,7 +51,7 @@ class ReverseWordsTest(unittest.TestCase):
         pass
 
 
-class AlienLanguage(unittest.TestCase):
+class AlienLanguageTest(unittest.TestCase):
 
     def test_example(self):
         solver = cj.AlienLanguage(PROJECT_HOME + "/data/AlienLanguage.txt")
@@ -65,6 +65,34 @@ class AlienLanguage(unittest.TestCase):
         self.assertEqual(actual, expected)
         str_output.close()
         pass
+
+
+class AllYourBaseTest(unittest.TestCase):
+
+    def test_example(self):
+        solver = cj.AllYourBase(PROJECT_HOME + "/data/AllYourBase.txt")
+        str_output = StringIO.StringIO()
+        solver.solve(output=str_output)
+        actual = str_output.getvalue()
+        expected = ("Case #1: 201\n"
+                    "Case #2: 75\n"
+                    "Case #3: 11\n")
+        self.assertEqual(actual, expected)
+        str_output.close()
+        pass
+
+    def test_small_input(self):
+        solver = cj.AllYourBase(PROJECT_HOME + "/data/A-small-practice.in")
+        with open("out.txt", "w") as f:
+            solver.solve(output=f)
+        pass
+
+    def test_large_input(self):
+        solver = cj.AllYourBase(PROJECT_HOME + "/data/A-large-practice.in")
+        with open("out.txt", "w") as f:
+            solver.solve(output=f)
+        pass
+
 
 if __name__ == "__main__":
     unittest.main()

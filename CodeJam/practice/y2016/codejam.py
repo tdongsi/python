@@ -179,6 +179,72 @@ class AlienLanguage(object):
         return count
 
 
+class AllYourBase(object):
+    """
+    https://code.google.com/codejam/contest/189252/dashboard#s=p0
+    """
+
+    def __init__(self, filename):
+        """ Initialize with the given input file.
+
+        :param filename: input file path
+        :return:
+        """
+        self._filename = filename
+        pass
+
+    def solve(self, output=sys.stdout):
+        """ Handle input and output before calling an internal method to solve the problem.
+
+        :param output: specify output to file or screen.
+        :return:
+        """
+        try:
+            with open(self._filename, 'r') as f:
+                lines = f.readlines()
+                num = int(lines[0])
+
+                for i in xrange(num):
+                    idx = i + 1
+                    out = self._solve_all_your_base(lines[idx].strip())
+                    output.write( "Case #%d: %d\n"%(idx, out) )
+        except IOError:
+            print "Error opening file"
+        pass
+
+    def _solve_all_your_base(self, line):
+        """ Compute the minimum number, given the string
+
+        Brute force algorithm:
+        Most significant digit should be one.
+        The next significant, different digit should be zero.
+        Other digits: increment, starting from two for next significant digits.
+
+        The base is the number of distinct digits + 1.
+        """
+        my_dict = {}
+        digit_value = 1
+
+        for char in line:
+            if digit_value == 1:
+                my_dict[char] = digit_value
+                digit_value = 0
+            elif char not in my_dict and digit_value == 0:
+                my_dict[char] = digit_value
+                digit_value = 2
+            elif char not in my_dict:
+                my_dict[char] = digit_value
+                digit_value += 1
+
+        base = max(len(my_dict),2)
+        prod = my_dict[line[0]]
+        for char in line[1:]:
+            prod *= base
+            prod += my_dict[char]
+
+        return prod
+
+
 def main():
     pass
 
