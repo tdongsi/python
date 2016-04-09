@@ -8,6 +8,25 @@ import codejam.y2016.codejam as real
 PROJECT_HOME = "/Users/cdongsi/Hub/python/CodeJam"
 
 
+class RevengeOfPancakes(unittest.TestCase):
+
+    def test_example(self):
+        solver = real.RevengeOfPancakes(PROJECT_HOME + "/data/RevengeOfPancakes.txt")
+        solver.solve()
+
+    def test_small_input(self):
+        solver = real.RevengeOfPancakes(PROJECT_HOME + "/data/A-small-attempt0.in")
+        with open("out.txt", "w") as f:
+            solver.solve(output=f)
+        pass
+
+    def test_large_input(self):
+        solver = real.RevengeOfPancakes(PROJECT_HOME + "/data/A-large.in")
+        with open("out.txt", "w") as f:
+            solver.solve(output=f)
+        pass
+
+
 class CountingSheepTest(unittest.TestCase):
 
     def test_example(self):
