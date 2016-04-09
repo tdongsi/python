@@ -3,8 +3,28 @@ import unittest
 import StringIO
 
 import practice.y2016.codejam as cj
+import codejam.y2016.codejam as real
 
 PROJECT_HOME = "/Users/cdongsi/Hub/python/CodeJam"
+
+
+class CountingSheepTest(unittest.TestCase):
+
+    def test_example(self):
+        solver = real.CountingSheep(PROJECT_HOME + "/data/CountingSheep.txt")
+        solver.solve()
+
+    def test_small_input(self):
+        solver = real.CountingSheep(PROJECT_HOME + "/data/A-small-attempt0.in")
+        with open("out.txt", "w") as f:
+            solver.solve(output=f)
+        pass
+
+    def test_large_input(self):
+        solver = real.CountingSheep(PROJECT_HOME + "/data/A-large.in")
+        with open("out.txt", "w") as f:
+            solver.solve(output=f)
+        pass
 
 
 class StoreCreditTest(unittest.TestCase):
