@@ -2,9 +2,9 @@
 import sys
 
 
-class CountingSheep(object):
+class RevengeOfPancakes(object):
     """
-    https://code.google.com/codejam/contest/6254486/dashboard#s=p0
+    https://code.google.com/codejam/contest/6254486/dashboard#s=p1
     """
 
     def __init__(self, filename):
@@ -29,40 +29,46 @@ class CountingSheep(object):
 
                 for i in xrange(num):
                     idx = i + 1
-                    out = self._solve_counting_sheep(int(lines[idx].strip()))
-                    if out == -1:
-                        output.write("Case #%d: INSOMNIA\n" %(idx))
-                    else:
-                        output.write("Case #%d: %d\n" %(idx, out))
+                    out = self._solve_revenge_pancakes(lines[idx].strip())
+                    output.write("Case #%d: %d\n" %(idx, out))
         except IOError:
             print "Error opening file"
         pass
 
-    def _solve_counting_sheep(self, number):
-        """ Find the last number before Bellatrix falls asleep.
+    def _solve_revenge_pancakes(self, stack):
+        """ Find the minimum number of flips to make all pancakes up.
 
-        :param number: starting number
-        :return: -1 if Bellatrix will have INSOMNIA
+        The idea: for a stack of N cakes,
+        if the last cake is up (+), the problem is equivalent to solving the top N-1 cakes.
+        if the last case is down (-), the problem is equivalent to solving the top N-1 cakes inverted + 1.
+
+        :param stack:
+        :return:
         """
 
-        if number == 2 * number:
-            # Could not figure out any other case that gives INSOMNIA
-            return -1
-        else:
-            curr_number = 0
-            check = set()
-            while len(check) < 10:
-                # current number
-                curr_number += number
-                # Keep adding new unique digits into the set
-                check |= set(str(curr_number))
+        my_dict = { "+" : True, "-": False}
+        count = 0
+        # instead of inverting top (N-1) cakes, keep this flag to invert the top cakes if needed.
+        flip = True
 
-            return curr_number
+        for char in reversed(stack):
+            # Check the bottom pancake first
+
+            is_up = my_dict[char] if flip else not my_dict[char]
+            if not is_up:
+                # if the bottom pancake is "-"
+                count += 1
+                flip = not flip
+            else:
+                # do nothing
+                pass
+
+        return count
 
 
 def main():
     PROJECT_HOME = "/Users/cdongsi/Hub/python/CodeJam"
-    solver = CountingSheep(PROJECT_HOME + "/data/A-large.in")
+    solver = RevengeOfPancakes(PROJECT_HOME + "/data/B-large.in")
     with open("out.txt", "w") as f:
         solver.solve(output=f)
 
