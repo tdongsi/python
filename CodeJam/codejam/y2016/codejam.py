@@ -50,7 +50,6 @@ class CoinJam(object):
         number = 1 << (length-1)
         number += 1
 
-        # TODO replace 10 with cases
         while count < cases:
             num_string = bin(number)[2:]
             # Convert the binary string to a vector of 0 and 1
