@@ -8,6 +8,13 @@ import codejam.y2016.codejam as real
 PROJECT_HOME = "/Users/cdongsi/Hub/python/CodeJam"
 
 
+class CoinJamTest(unittest.TestCase):
+
+    def test_example(self):
+        solver = real.CoinJam(PROJECT_HOME + "/data/CoinJam.txt")
+        solver.solve()
+
+
 class RevengeOfPancakes(unittest.TestCase):
 
     def test_example(self):
