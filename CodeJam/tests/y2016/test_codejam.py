@@ -23,6 +23,19 @@ class BffTest(unittest.TestCase):
         self.assertEqual(actual, expected)
 
         str_output.close()
+        pass
+
+    def test_small_input(self):
+        solver = real.Bff(PROJECT_HOME + "/data/C-small-practice.in")
+        with open("out.txt", "w") as f:
+            solver.solve(output=f)
+        pass
+
+    def test_large_input(self):
+        solver = real.Bff(PROJECT_HOME + "/data/C-large-practice.in")
+        with open("out.txt", "w") as f:
+            solver.solve(output=f)
+        pass
 
 
 class LastWordTest(unittest.TestCase):

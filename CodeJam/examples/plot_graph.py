@@ -40,7 +40,8 @@ class Bff(object):
 
 def main():
     plot = Bff("bff.png")
-    plot.draw("7 8 10 10 9 2 9 6 3 3")
+    # plot.draw("2 1 6 3 8 4 6 5")
+    plot.draw("6 1 6 5 4 1 5 10 3 7")
     pass
 
 

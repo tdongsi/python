@@ -60,9 +60,6 @@ class Bff(object):
                 # If cycle length is three, we cannot add more nodes
                 max_length = len(cycle)
 
-        # nx.draw_networkx(gr)
-        # plt.show()
-
         return max_length
 
     def _find_path_length(self, mutual_bff, tree):
