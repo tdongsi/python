@@ -49,16 +49,21 @@ class Bff(object):
 
         max_length = 0
         tree = self._build_tree(bffs)
+        paths = []
         # For each simple cycles in the graph
         for cycle in nx.simple_cycles(gr):
             if len(cycle) == 2:
-                # If cycle length is two, we can add more nodes
+                # If cycle length is two, we can add more nodes to form a path
                 path_length = self._find_path_length(cycle, tree)
-                if path_length > max_length:
-                    max_length = path_length
+                # All the paths can be chained to form a circle
+                paths.append(path_length)
             elif len(cycle) > max_length:
                 # If cycle length is three, we cannot add more nodes
                 max_length = len(cycle)
+
+        total_path_length = sum(paths)
+        if total_path_length > max_length:
+            max_length = total_path_length
 
         return max_length
 
