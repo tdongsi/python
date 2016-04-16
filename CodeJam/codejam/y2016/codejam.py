@@ -73,21 +73,19 @@ class Bff(object):
         If two BFFs form a cycle of two, we can keep adding BFFs to both sides to form larger cycle.
         """
         # Remove the cycle from the general tree.
-        left_tree = copy.deepcopy(tree)
-        left_tree[mutual_bff[0]].remove(mutual_bff[1])
-        right_tree = copy.deepcopy(tree)
-        right_tree[mutual_bff[1]].remove(mutual_bff[0])
+        tree[mutual_bff[0]].remove(mutual_bff[1])
+        tree[mutual_bff[1]].remove(mutual_bff[0])
 
-        left_length = self._tree_height(mutual_bff[0], left_tree)
-        right_length = self._tree_height(mutual_bff[1], right_tree)
+        left_length = self._tree_height(mutual_bff[0], tree)
+        right_length = self._tree_height(mutual_bff[1], tree)
 
         return left_length + right_length
 
     def _build_tree(self, bff_list):
-        """ Build the reverse tree: given BFF's ID, find the original ID.
+        """ Build the reverse map: given BFF's ID, find the original ID.
 
         :param bff_list: List of BFFs, such that value at is BFF of i.
-        :return:
+        :return: a dictionary of ID -> list.
         """
         tree = defaultdict(list)
 

@@ -1,6 +1,7 @@
 
 import unittest
 import StringIO
+import time
 
 import practice.y2016.codejam as cj
 import codejam.y2016.codejam as real
@@ -34,7 +35,10 @@ class BffTest(unittest.TestCase):
     def test_large_input(self):
         solver = real.Bff(PROJECT_HOME + "/data/C-large-practice.in")
         with open("out.txt", "w") as f:
+            start = time.clock()
             solver.solve(output=f)
+            elapsed = time.clock() - start
+            print elapsed
         pass
 
 
