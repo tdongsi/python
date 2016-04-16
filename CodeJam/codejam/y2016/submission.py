@@ -1,13 +1,13 @@
 #!/usr/local/bin/python
 import sys
 
-import prime as pr
+from collections import deque
 
-class CoinJam(object):
-    """
-    https://code.google.com/codejam/contest/6254486/dashboard#s=p2
-    """
 
+class LastWord(object):
+    """
+    https://code.google.com/codejam/contest/4304486/dashboard#s=p0
+    """
     def __init__(self, filename):
         """ Initialize with the given input file.
 
@@ -26,61 +26,29 @@ class CoinJam(object):
         try:
             with open(self._filename, 'r') as f:
                 lines = f.readlines()
-                N, J = [int(ele) for ele in lines[1].strip().split(' ')]
-                output.write("Case #1:\n")
-                self._find_jam_coins(length=N, cases=J, output=output)
+                num = int(lines[0])
+
+                for i in xrange(num):
+                    last_word = self._solve_last_word(lines[i+1].strip())
+                    output.write("Case #%d: %s\n" %(i+1, last_word))
         except IOError:
             print "Error opening file"
         pass
 
-    def _product(self, list_a, list_b):
-        return sum([a*b for a, b in zip(list_a, list_b)])
+    def _solve_last_word(self, word):
+        q = deque(word[0])
 
-    def _find_jam_coins(self, length, cases, output):
-
-        TRIAL = 100
-
-        bases = []
-        for base in xrange(2, 11):
-            base_mul = [base**i for i in range(length)]
-            bases.append(base_mul)
-        # print bases
-
-        count = 0
-        number = 1 << (length-1)
-        number += 1
-
-        while count < cases:
-            num_string = bin(number)[2:]
-            # Convert the binary string to a vector of 0 and 1
-            num_lst = [int(e) for e in reversed(num_string)]
-            flag = False
-            factors = [0]*len(bases)
-
-            for idx in xrange(len(bases)):
-                value = self._product(num_lst, bases[idx])
-                # print value
-                factor = pr.find_factor(value, trial=TRIAL)
-
-                if factor == 1:
-                    flag = True
-                    break
-                else:
-                    factors[idx] = factor
-
-            number += 2
-            if flag:
-                continue
+        for c in word[1:]:
+            if c >= q[0]:
+                q.appendleft(c)
             else:
-                output.write("%s %s\n" % (num_string, ' '.join([str(e) for e in factors])) )
-                count += 1
-
-        pass
+                q.append(c)
+        return ''.join(q)
 
 
 def main():
     PROJECT_HOME = "/Users/cdongsi/Hub/python/CodeJam"
-    solver = CoinJam(PROJECT_HOME + "/data/CoinJam.txt")
+    solver = LastWord(PROJECT_HOME + "/data/A-large.in")
     with open("out.txt", "w") as f:
         solver.solve(output=f)
 

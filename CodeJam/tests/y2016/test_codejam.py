@@ -8,6 +8,13 @@ import codejam.y2016.codejam as real
 PROJECT_HOME = "/Users/cdongsi/Hub/python/CodeJam"
 
 
+class LastWordTest(unittest.TestCase):
+
+    def test_example(self):
+        solver = real.LastWord(PROJECT_HOME + "/data/LastWord.txt")
+        solver.solve()
+
+
 class CoinJamTest(unittest.TestCase):
 
     def test_example(self):
