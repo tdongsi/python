@@ -1,11 +1,52 @@
 
 import unittest
 import StringIO
+import time
 
 import practice.y2016.codejam as cj
 import codejam.y2016.codejam as real
 
 PROJECT_HOME = "/Users/cdongsi/Hub/python/CodeJam"
+
+
+class BffTest(unittest.TestCase):
+
+    def test_example(self):
+        solver = real.Bff(PROJECT_HOME + "/data/BFF.txt")
+        str_output = StringIO.StringIO()
+
+        solver.solve(output=str_output)
+        actual = str_output.getvalue()
+        expected = ("Case #1: 4\n"
+                    "Case #2: 3\n"
+                    "Case #3: 3\n"
+                    "Case #4: 6\n")
+        self.assertEqual(actual, expected)
+
+        str_output.close()
+        pass
+
+    def test_small_input(self):
+        solver = real.Bff(PROJECT_HOME + "/data/C-small-practice.in")
+        with open("out.txt", "w") as f:
+            solver.solve(output=f)
+        pass
+
+    def test_large_input(self):
+        solver = real.Bff(PROJECT_HOME + "/data/C-large-practice.in")
+        with open("out.txt", "w") as f:
+            start = time.clock()
+            solver.solve(output=f)
+            elapsed = time.clock() - start
+            print elapsed
+        pass
+
+
+class LastWordTest(unittest.TestCase):
+
+    def test_example(self):
+        solver = real.LastWord(PROJECT_HOME + "/data/LastWord.txt")
+        solver.solve()
 
 
 class CoinJamTest(unittest.TestCase):

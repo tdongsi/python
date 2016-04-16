@@ -1,7 +1,148 @@
-
+import copy
+from collections import deque, defaultdict
 import sys
 
+import matplotlib.pyplot as plt
+import networkx as nx
+
 import prime as pr
+
+class Bff(object):
+    """
+    https://code.google.com/codejam/contest/4304486/dashboard#s=p2
+    """
+    def __init__(self, filename):
+        """ Initialize with the given input file.
+
+        :param filename: input file path
+        :return:
+        """
+        self._filename = filename
+        pass
+
+    def solve(self, output=sys.stdout):
+        """ Handle input and output before calling an internal method to solve the problem.
+
+        :param output: specify output to file or screen.
+        :return:
+        """
+        try:
+            with open(self._filename, 'r') as f:
+                lines = f.readlines()
+                num = int(lines[0])
+
+                for case_num, idx in enumerate(xrange(2,len(lines),2), start=1):
+                    # skip the first line
+                    cycle_length = self._solve_bff(lines[idx].strip())
+                    output.write("Case #%d: %d\n" %(case_num, cycle_length))
+        except IOError:
+            print "Error opening file"
+        pass
+
+    def _solve_bff(self, input):
+        # Construct the directed graph
+        bffs = [int(e.strip()) for e in input.split(' ')]
+        nodes = [i+1 for i in xrange(len(bffs))]
+        gr = nx.DiGraph()
+        gr.add_nodes_from(nodes)
+        gr.add_edges_from([e for e in zip(nodes, bffs)])
+
+        max_length = 0
+        tree = self._build_tree(bffs)
+        paths = []
+        # For each simple cycles in the graph
+        for cycle in nx.simple_cycles(gr):
+            if len(cycle) == 2:
+                # If cycle length is two, we can add more nodes to form a path
+                path_length = self._find_path_length(cycle, tree)
+                # All the paths can be chained to form a circle
+                paths.append(path_length)
+            elif len(cycle) > max_length:
+                # If cycle length is three, we cannot add more nodes
+                max_length = len(cycle)
+
+        total_path_length = sum(paths)
+        if total_path_length > max_length:
+            max_length = total_path_length
+
+        return max_length
+
+    def _find_path_length(self, mutual_bff, tree):
+        """ Find length due to mutual bff.
+
+        If two BFFs form a cycle of two, we can keep adding BFFs to both sides to form larger cycle.
+        """
+        # Remove the cycle from the general tree.
+        tree[mutual_bff[0]].remove(mutual_bff[1])
+        tree[mutual_bff[1]].remove(mutual_bff[0])
+
+        left_length = self._tree_height(mutual_bff[0], tree)
+        right_length = self._tree_height(mutual_bff[1], tree)
+
+        return left_length + right_length
+
+    def _build_tree(self, bff_list):
+        """ Build the reverse map: given BFF's ID, find the original ID.
+
+        :param bff_list: List of BFFs, such that value at is BFF of i.
+        :return: a dictionary of ID -> list.
+        """
+        tree = defaultdict(list)
+
+        for idx, friend in enumerate(bff_list):
+            tree[friend].append(idx+1)
+
+        return tree
+
+    def _tree_height(self, root, tree):
+        # print root, tree.items()
+        if root in tree and tree[root]:
+            return max([self._tree_height(e, tree) for e in tree[root]]) + 1
+        else:
+            return 1
+
+
+class LastWord(object):
+    """
+    https://code.google.com/codejam/contest/4304486/dashboard#s=p0
+    """
+    def __init__(self, filename):
+        """ Initialize with the given input file.
+
+        :param filename: input file path
+        :return:
+        """
+        self._filename = filename
+        pass
+
+    def solve(self, output=sys.stdout):
+        """ Handle input and output before calling an internal method to solve the problem.
+
+        :param output: specify output to file or screen.
+        :return:
+        """
+        try:
+            with open(self._filename, 'r') as f:
+                lines = f.readlines()
+                num = int(lines[0])
+
+                for i in xrange(num):
+                    last_word = self._solve_last_word(lines[i+1].strip())
+                    output.write("Case #%d: %s\n" %(i+1, last_word))
+        except IOError:
+            print "Error opening file"
+        pass
+
+    def _solve_last_word(self, word):
+        q = deque(word[0])
+
+        for c in word[1:]:
+            if c >= q[0]:
+                q.appendleft(c)
+            else:
+                q.append(c)
+        return ''.join(q)
+
 
 class CoinJam(object):
     """
@@ -76,6 +217,7 @@ class CoinJam(object):
                 count += 1
 
         pass
+
 
 class RevengeOfPancakes(object):
     """
