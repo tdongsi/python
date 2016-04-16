@@ -1,11 +1,11 @@
-
-from collections import deque
+import copy
+from collections import deque, defaultdict
 import sys
 
-import prime as pr
 import matplotlib.pyplot as plt
 import networkx as nx
 
+import prime as pr
 
 class Bff(object):
     """
@@ -48,15 +48,16 @@ class Bff(object):
         gr.add_edges_from([e for e in zip(nodes, bffs)])
 
         max_length = 0
-        other_bffs = nodes[:]
+        tree = self._build_tree(bffs)
+        # For each simple cycles in the graph
         for cycle in nx.simple_cycles(gr):
             if len(cycle) == 2:
-                other_bffs = [e for e in other_bffs if e not in cycle]
-                path_length = self._find_path(cycle, other_bffs)
+                # If cycle length is two, we can add more nodes
+                path_length = self._find_path_length(cycle, tree)
                 if path_length > max_length:
                     max_length = path_length
             elif len(cycle) > max_length:
-                other_bffs = [e for e in other_bffs if e not in cycle]
+                # If cycle length is three, we cannot add more nodes
                 max_length = len(cycle)
 
         # nx.draw_networkx(gr)
@@ -64,13 +65,41 @@ class Bff(object):
 
         return max_length
 
-    def _find_path(self, mutual_bff, bffs):
+    def _find_path_length(self, mutual_bff, tree):
         """ Find length due to mutual bff.
-        """
-        print bffs
-        length = 2
 
-        return length
+        If two BFFs form a cycle of two, we can keep adding BFFs to both sides to form larger cycle.
+        """
+        # Remove the cycle from the general tree.
+        left_tree = copy.deepcopy(tree)
+        left_tree[mutual_bff[0]].remove(mutual_bff[1])
+        right_tree = copy.deepcopy(tree)
+        right_tree[mutual_bff[1]].remove(mutual_bff[0])
+
+        left_length = self._tree_height(mutual_bff[0], left_tree)
+        right_length = self._tree_height(mutual_bff[1], right_tree)
+
+        return left_length + right_length
+
+    def _build_tree(self, bff_list):
+        """ Build the reverse tree: given BFF's ID, find the original ID.
+
+        :param bff_list: List of BFFs, such that value at is BFF of i.
+        :return:
+        """
+        tree = defaultdict(list)
+
+        for idx, friend in enumerate(bff_list):
+            tree[friend].append(idx+1)
+
+        return tree
+
+    def _tree_height(self, root, tree):
+        # print root, tree.items()
+        if root in tree and tree[root]:
+            return max([self._tree_height(e, tree) for e in tree[root]]) + 1
+        else:
+            return 1
 
 
 class LastWord(object):
@@ -188,6 +217,7 @@ class CoinJam(object):
                 count += 1
 
         pass
+
 
 class RevengeOfPancakes(object):
     """
