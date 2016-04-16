@@ -8,6 +8,13 @@ import codejam.y2016.codejam as real
 PROJECT_HOME = "/Users/cdongsi/Hub/python/CodeJam"
 
 
+class BffTest(unittest.TestCase):
+
+    def test_example(self):
+        solver = real.Bff(PROJECT_HOME + "/data/BFF.txt")
+        solver.solve()
+
+
 class LastWordTest(unittest.TestCase):
 
     def test_example(self):

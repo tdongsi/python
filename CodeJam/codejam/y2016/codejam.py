@@ -3,6 +3,74 @@ from collections import deque
 import sys
 
 import prime as pr
+import matplotlib.pyplot as plt
+import networkx as nx
+
+
+class Bff(object):
+    """
+    https://code.google.com/codejam/contest/4304486/dashboard#s=p2
+    """
+    def __init__(self, filename):
+        """ Initialize with the given input file.
+
+        :param filename: input file path
+        :return:
+        """
+        self._filename = filename
+        pass
+
+    def solve(self, output=sys.stdout):
+        """ Handle input and output before calling an internal method to solve the problem.
+
+        :param output: specify output to file or screen.
+        :return:
+        """
+        try:
+            with open(self._filename, 'r') as f:
+                lines = f.readlines()
+                num = int(lines[0])
+
+                for case_num, idx in enumerate(xrange(2,len(lines),2), start=1):
+                    # skip the first line
+                    cycle_length = self._solve_bff(lines[idx].strip())
+                    output.write("Case #%d: %d\n" %(case_num, cycle_length))
+        except IOError:
+            print "Error opening file"
+        pass
+
+    def _solve_bff(self, input):
+        # Construct the directed graph
+        bffs = [int(e.strip()) for e in input.split(' ')]
+        nodes = [i+1 for i in xrange(len(bffs))]
+        gr = nx.DiGraph()
+        gr.add_nodes_from(nodes)
+        gr.add_edges_from([e for e in zip(nodes, bffs)])
+
+        max_length = 0
+        other_bffs = nodes[:]
+        for cycle in nx.simple_cycles(gr):
+            if len(cycle) == 2:
+                other_bffs = [e for e in other_bffs if e not in cycle]
+                path_length = self._find_path(cycle, other_bffs)
+                if path_length > max_length:
+                    max_length = path_length
+            elif len(cycle) > max_length:
+                other_bffs = [e for e in other_bffs if e not in cycle]
+                max_length = len(cycle)
+
+        # nx.draw_networkx(gr)
+        # plt.show()
+
+        return max_length
+
+    def _find_path(self, mutual_bff, bffs):
+        """ Find length due to mutual bff.
+        """
+        print bffs
+        length = 2
+
+        return length
 
 
 class LastWord(object):
