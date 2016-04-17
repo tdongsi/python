@@ -24,9 +24,6 @@ class Bff(object):
         :param input: the string that represents the bff network.
         :return:
         """
-        self._plot_graph(input)
-
-    def _plot_graph(self, input):
         # Construct the directed graph
         bffs = [int(e.strip()) for e in input.split(' ')]
         nodes = [i+1 for i in xrange(len(bffs))]
@@ -34,6 +31,7 @@ class Bff(object):
         gr.add_nodes_from(nodes)
         gr.add_edges_from([e for e in zip(nodes, bffs)])
 
+        # nx.simple_cycles(gr)
         nx.draw_networkx(gr)
         plt.savefig(self._filename)
 

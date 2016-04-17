@@ -28,10 +28,9 @@ def is_pseudo_prime(prime, trial=10):
     SMALL_PRIMES = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37,
                     43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
 
-    def rabin_miller_trial(prime, num):
+    def rabin_miller_trial(num):
         """ Check if prime pass the Rabin-Miller trial.
 
-        :param prime: a prospective prime.
         :param num: a random "witness" of primality.
 
         :return: True if composite, False if probably prime.
@@ -64,7 +63,7 @@ def is_pseudo_prime(prime, trial=10):
 
     for _ in xrange(trial):
         num = random.randint(2, prime - 2)
-        if rabin_miller_trial(prime, num):
+        if rabin_miller_trial(num):
             return False
 
     return True
@@ -93,10 +92,9 @@ def find_factor(prime, trial=100):
                  827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887, 907, 911,
                  919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997]
 
-    def rabin_miller_trial(prime, num):
+    def rabin_miller_trial(num):
         """ Find factor based on the Rabin-Miller trial.
 
-        :param prime: a prospective prime.
         :param num: a random "witness" of primality.
 
         :return: > 1 if composite, 1 if probably prime.
@@ -138,7 +136,7 @@ def find_factor(prime, trial=100):
 
     for _ in xrange(trial):
         num = random.randint(2, prime - 2)
-        factor = rabin_miller_trial(prime, num)
+        factor = rabin_miller_trial(num)
         if factor > 1:
             return factor
 
