@@ -6,10 +6,12 @@ import networkx as nx
 import prime as pr
 
 
-class Bff(object):
+class Problem(object):
     """
-    https://code.google.com/codejam/contest/4304486/dashboard#s=p2
+    Base class for Code Jam problems.
+    Specify the input file.
     """
+
     def __init__(self, filename):
         """ Initialize with the given input file.
 
@@ -18,6 +20,12 @@ class Bff(object):
         """
         self._filename = filename
         pass
+
+
+class Bff(Problem):
+    """
+    https://code.google.com/codejam/contest/4304486/dashboard#s=p2
+    """
 
     def solve(self, output=sys.stdout):
         """ Handle input and output before calling an internal method to solve the problem.
@@ -100,18 +108,10 @@ class Bff(object):
             return 1
 
 
-class LastWord(object):
+class LastWord(Problem):
     """
     https://code.google.com/codejam/contest/4304486/dashboard#s=p0
     """
-    def __init__(self, filename):
-        """ Initialize with the given input file.
-
-        :param filename: input file path
-        :return:
-        """
-        self._filename = filename
-        pass
 
     def solve(self, output=sys.stdout):
         """ Handle input and output before calling an internal method to solve the problem.
@@ -142,19 +142,10 @@ class LastWord(object):
         return ''.join(q)
 
 
-class CoinJam(object):
+class CoinJam(Problem):
     """
     https://code.google.com/codejam/contest/6254486/dashboard#s=p2
     """
-
-    def __init__(self, filename):
-        """ Initialize with the given input file.
-
-        :param filename: input file path
-        :return:
-        """
-        self._filename = filename
-        pass
 
     def solve(self, output=sys.stdout):
         """ Handle input and output before calling an internal method to solve the problem.
@@ -217,19 +208,10 @@ class CoinJam(object):
         pass
 
 
-class RevengeOfPancakes(object):
+class RevengeOfPancakes(Problem):
     """
     https://code.google.com/codejam/contest/6254486/dashboard#s=p1
     """
-
-    def __init__(self, filename):
-        """ Initialize with the given input file.
-
-        :param filename: input file path
-        :return:
-        """
-        self._filename = filename
-        pass
 
     def solve(self, output=sys.stdout):
         """ Handle input and output before calling an internal method to solve the problem.
@@ -281,19 +263,10 @@ class RevengeOfPancakes(object):
         return count
 
 
-class CountingSheep(object):
+class CountingSheep(Problem):
     """
     https://code.google.com/codejam/contest/6254486/dashboard#s=p0
     """
-
-    def __init__(self, filename):
-        """ Initialize with the given input file.
-
-        :param filename: input file path
-        :return:
-        """
-        self._filename = filename
-        pass
 
     def solve(self, output=sys.stdout):
         """ Handle input and output before calling an internal method to solve the problem.

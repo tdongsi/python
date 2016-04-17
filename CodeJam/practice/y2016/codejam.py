@@ -7,9 +7,10 @@ import re
 import sys
 
 
-class ReverseWords(object):
+class Problem(object):
     """
-    https://code.google.com/codejam/contest/351101/dashboard#s=p1
+    Base class for Code Jam problems.
+    Specify the input file.
     """
 
     def __init__(self, filename):
@@ -20,6 +21,12 @@ class ReverseWords(object):
         """
         self._filename = filename
         pass
+
+
+class ReverseWords(Problem):
+    """
+    https://code.google.com/codejam/contest/351101/dashboard#s=p1
+    """
 
     def solve(self, output=sys.stdout):
         """ Handle input and output before calling an internal method to solve the problem.
@@ -52,19 +59,10 @@ class ReverseWords(object):
         pass
 
 
-class StoreCredit(object):
+class StoreCredit(Problem):
     """
     https://code.google.com/codejam/contest/351101/dashboard#s=p0
     """
-
-    def __init__(self, filename):
-        """ Initialize with the given input file.
-
-        :param filename: input file path
-        :return:
-        """
-        self._filename = filename
-        pass
 
     def solve(self, output=sys.stdout):
         """ Handle input and output before calling an internal method to solve the problem.
@@ -121,16 +119,7 @@ class StoreCredit(object):
     pass
 
 
-class AlienLanguage(object):
-
-    def __init__(self, filename):
-        """ Initialize with the given input file.
-
-        :param filename: input file path
-        :return:
-        """
-        self._filename = filename
-        pass
+class AlienLanguage(Problem):
 
     def solve(self, output=sys.stdout):
         """ Handle input and output before calling an internal method to solve the problem.
@@ -180,19 +169,10 @@ class AlienLanguage(object):
         return count
 
 
-class AllYourBase(object):
+class AllYourBase(Problem):
     """
     https://code.google.com/codejam/contest/189252/dashboard#s=p0
     """
-
-    def __init__(self, filename):
-        """ Initialize with the given input file.
-
-        :param filename: input file path
-        :return:
-        """
-        self._filename = filename
-        pass
 
     def solve(self, output=sys.stdout):
         """ Handle input and output before calling an internal method to solve the problem.
@@ -246,19 +226,10 @@ class AllYourBase(object):
         return prod
 
 
-class CenterOfMass(object):
+class CenterOfMass(Problem):
     """
     https://code.google.com/codejam/contest/189252/dashboard#s=p1&a=0
     """
-
-    def __init__(self, filename):
-        """ Initialize with the given input file.
-
-        :param filename: input file path
-        :return:
-        """
-        self._filename = filename
-        pass
 
     def solve(self, output=sys.stdout):
         """ Handle input and output before calling an internal method to solve the problem.
