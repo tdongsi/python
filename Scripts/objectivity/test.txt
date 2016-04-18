@@ -1,0 +1,17 @@
+#
+#
+#                   Copyright Notice
+#                         All Rights Reserved   
+#
+#       RANDOM TEXT
+#       
+
+INSTALL_DIR = C:/objydev
+SQL_ROOT        = $(INSTALL_DIR)
+LS_HOST         = $(COMPUTERNAME)
+FDID            = 6969
+
+
+        $(LD) $(LDFLAGS) -o create $(SCHEMA)_ddl.o create.o  
+
+# More text here
