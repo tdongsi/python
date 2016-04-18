@@ -1,4 +1,4 @@
-'''
+"""
 Created on Aug 1, 2014
 
 This script is to check many (not all) samples in Objectivity/DB product.
@@ -21,7 +21,7 @@ NOTE: Make sure that the following tools/executables are in the PATH:
 Objy tools, javac, java, nmake/make.
 
 @author: cuongd
-'''
+"""
 
 import logging
 import argparse
@@ -66,19 +66,19 @@ def runCommand(logger, cmdStr, envMap = None):
     logger.info( '> %s', ' '.join(cmdStr))
     try:
         output = subprocess.check_output( cmdStr, stderr=subprocess.STDOUT,
-                  env = envMap )
+                  env=envMap )
         logger.debug(output)
     except subprocess.CalledProcessError as e:
-        logger.error( "Error code: %d" % e.returncode)
+        logger.error("Error code: %d" % e.returncode)
         logger.error(e.output)
     return
 
 
 def searchAndReplace( filename, oldString, newString):
-    '''
+    """
     Open a file, search for oldString (regex) and replace with a new string.
     Raw string is recommended for oldString input.
-    '''
+    """
     
     try:
         with open(filename, 'r') as f:
@@ -114,7 +114,7 @@ class SampleChecker:
         self._osString = osString
         
     def runSamples(self):
-        ''' Run all the samples '''
+        """ Run all the samples """
         # Java samples
         self.runJavaSamples()
           
@@ -133,11 +133,11 @@ class SampleChecker:
         
 
     def runSqlSamples(self):
-        '''
+        """
         Run Objy/SQL++ samples in samples/sql/ooisql
         In Windows, make sure the script is running in VS Command Prompt where
         nmake tool is available.
-        '''
+        """
         
         myLogger.info('SQL++ SAMPLES')
         samplePath = 'samples/sql/ooisql'
@@ -228,7 +228,7 @@ class SampleChecker:
     
     
     def runCppSamples(self):
-        '''Run C++ samples in samples/cxx/helloWorld'''
+        """Run C++ samples in samples/cxx/helloWorld"""
 
         myLogger.info('C++ SAMPLES')
         samplePath = 'samples/cxx/helloWorld'
@@ -257,7 +257,7 @@ class SampleChecker:
     
     
     def runPythonSamples(self):
-        '''Run Python samples in samples/python'''
+        """Run Python samples in samples/python"""
         
         myLogger.info('PYTHON SAMPLES')
         samplePath1 = 'samples/python/helloWorld'
@@ -289,7 +289,7 @@ class SampleChecker:
     
     
     def storageCleanup(self, resetExec, dirs):
-        '''Clean up the sample'''
+        """Clean up the sample"""
         myLogger.info( 'Cleaning up storage location tutorial')
         
         runCommand(myLogger, [resetExec, '-clean'])
@@ -304,7 +304,7 @@ class SampleChecker:
         return
     
     def checkDbFiles(self):
-        '''List all DB files in current directory and all sub-directories'''
+        """List all DB files in current directory and all sub-directories"""
         
     #     runCommand(myLogger, ['ls', '*.DB'])
     #     runCommand(myLogger, ['ls', '*/*.DB'])
@@ -317,7 +317,7 @@ class SampleChecker:
     
     
     def storageExample4(self, resetExec, populatorExec, dirs, names, bootfile):
-        ''' Example 4 of the Storage Location tutorial '''
+        """ Example 4 of the Storage Location tutorial """
         runCommand(myLogger, [resetExec, '-MSG'])
         runCommand(myLogger, ['objy', 'ImportPlacement', 
                              '-inFile', 'Customers.pmd', 
@@ -336,7 +336,7 @@ class SampleChecker:
     
     
     def storageExample3(self, resetExec, populatorExec, dirs, names, bootfile):
-        ''' Example 3 of the Storage Location tutorial '''
+        """ Example 3 of the Storage Location tutorial """
         runCommand(myLogger, [resetExec, '-msg'])
         runCommand(myLogger, [populatorExec, 
                                '-loadConfiguration', 'App1Prefs.config'])
@@ -348,7 +348,7 @@ class SampleChecker:
     
     
     def storageExample2(self, resetExec, populatorExec, dirs, names, bootfile):
-        ''' Example 2 of the Storage Location tutorial '''
+        """ Example 2 of the Storage Location tutorial """
         
         runCommand(myLogger, [resetExec, '-Msg'])
         runCommand(myLogger, ['objy', 'ImportPlacement', 
@@ -379,10 +379,10 @@ class SampleChecker:
     
     
     def runStorageLocationTutorial(self):
-        '''
+        """
         This script is to verify the tutorial 3: Specifying File Storage
         Run the samples in samples/placementTutorial/storageTasks
-        '''
+        """
         
         myLogger.info('PLACEMENT TUTORIAL SAMPLES')
         samplePath = 'samples/placementTutorial/storageTasks'
@@ -433,7 +433,7 @@ class SampleChecker:
             os.chdir(curPath)
     
     def runJavaSamples(self):
-        '''Run Java samples in samples/java/helloWorld'''
+        """Run Java samples in samples/java/helloWorld"""
         
         myLogger.info('JAVA SAMPLES')
         samplePath = 'samples/java/helloWorld'
@@ -471,7 +471,7 @@ class SampleChecker:
     
 
 def main():
-    '''Automatically run as many samples as it can in the installation directory.'''
+    """Automatically run as many samples as it can in the installation directory."""
     
     parser = argparse.ArgumentParser(description='Script to run installer and ' 
                                      'uninstall multiple times.')
@@ -498,8 +498,8 @@ def main():
     
 
 if __name__ == "__main__":
-    '''
+    """
     See the top comment for usage.    
-    '''
+    """
     out = main()
     

@@ -1,33 +1,35 @@
-'''
+"""
 Created on Oct 2, 2014
 
 @author: tdongsi
-'''
+"""
 
 import collections
 import os
 
 import logging
+
 logging.basicConfig(level=logging.DEBUG)
 
+
 class DirWalker(object):
-    '''
+    """
     An object of this class will walk a directory structure and create a list
     of files with the given extensions.
-    '''
+    """
     
     def __init__(self, rootDir):
         self._rootDir = rootDir
         self._fileList = collections.defaultdict(list)
     
     def search(self, fileExtList):
-        '''
+        """
         Find all files with the given extension.
         Input:
         A list of file extensions, in format '.ext', e.g. .cpp, .h.
         Output:
         List of file lists, each list for each extension.
-        '''
+        """
         
         self._fileList.clear()
         
@@ -49,9 +51,9 @@ class DirWalker(object):
     
     @staticmethod
     def printRelativePath(filePath):
-        '''
+        """
         Print the relative paths of all files while walking a directory.
-        '''
+        """
         
         outString = ""
         for dirName, subdirList, fileList in os.walk(filePath):
@@ -83,6 +85,6 @@ def main():
     
     print DirWalker.printRelativePath( my_path )
 
+
 if __name__ == '__main__':
     main()
-    

@@ -6,6 +6,7 @@ Created on Sep 23, 2015
 
 import csv
 
+
 def remove_column(input_file, output_file):
     """
     Remove the last column of the CSV file. Lazy way.
@@ -18,7 +19,7 @@ def remove_column(input_file, output_file):
             
             # The first line is the header
             header = reader.next()
-            output.write( ','.join(header[:-1]) )
+            output.write(','.join(header[:-1]))
             output.write("\n")
             
             for row in reader:
@@ -28,13 +29,11 @@ def remove_column(input_file, output_file):
                     region_id is the second column.
                     Filtering out data with region_id larger than 300
                     """
-                    output.write( ','.join(row[:-1]) )
+                    output.write(','.join(row[:-1]))
                     output.write("\n")
-                
-                
-                
     except IOError:
         print 'Error reading file %s or opening %s' % (input_file, output_file)
+
 
 def generateUpdateStatement(input_file, output_file):
     # %s after set is the mapping column_name=column_value
@@ -44,8 +43,7 @@ def generateUpdateStatement(input_file, output_file):
     column_names = ['finance_chart_of_accounts_region',
                     'finance_enterprise_performance_management_region',
                     'finance_revenue_region']
-    
-    
+
     try:
         with open(input_file) as input, open(output_file, 'w') as output:
             output.truncate()
@@ -53,7 +51,7 @@ def generateUpdateStatement(input_file, output_file):
             
             # The first line is the header
             header = reader.next()
-            value_index = [0,4,3]
+            value_index = [0, 4, 3]
             print [header[i] for i in value_index]
             
             for row in reader:
@@ -66,17 +64,15 @@ def generateUpdateStatement(input_file, output_file):
                     
                     print [row[i] for i in value_index]
                     
-                    column_to_value_strings = ["%s='%s'" % (column_names[i],row[value_index[i]]) for i in range(3)]
+                    column_to_value_strings = ["%s='%s'" % (column_names[i], row[value_index[i]]) for i in range(3)]
                     set_values = ','.join(column_to_value_strings)
                     id_value = row[1]
                     
-                    command_string = template.format(table=table_name, column_value=set_values, id_value=id_value, first_column = column_names[0])
+                    command_string = template.format(table=table_name, column_value=set_values,
+                                                     id_value=id_value, first_column=column_names[0])
     #                 print command_string
-                    output.write( command_string )
+                    output.write(command_string)
                     output.write("\n")
-                
-                
-                
     except IOError:
         print 'Error reading file %s or opening %s' % (input_file, output_file)
     
@@ -88,8 +84,8 @@ def main():
     inputfile = '../data/test_data.csv'
     outputfile = 'out2.txt'
     
-    generateUpdateStatement(inputfile,outputfile)
-    remove_column(inputfile,'out.txt')
+    generateUpdateStatement(inputfile, outputfile)
+    remove_column(inputfile, 'out.txt')
     
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 #!/usr/buildtools/bin/python2.7
 
-'''
+"""
 Created on Apr 1, 2014
 
 @author: cuongd
@@ -23,7 +23,8 @@ Please install the following Python libraries: matplotlib, numpy, dateutil, pytz
 
 I believe installation of these Python libraries are straight-forward on Linux and Win32.
 On Win64, please find installers here: http://www.lfd.uci.edu/~gohlke/pythonlibs/
-'''
+"""
+
 import matplotlib.pyplot as plt
 import numpy as np
 import argparse
@@ -36,16 +37,15 @@ import argparse
 # plt.rc('font', **font)
 
 
-
 def parseDataThread(filename, threadNum):
-    '''
+    """
     parse data for all trials with given thread number
     Input:
     filename: the log myfile
     threadNum: the given thread number
     Output:
     1 x 3 array: average time, disk reads, buffer reads
-    '''
+    """
 
     f = open(filename)
     lines = f.readlines()
@@ -86,14 +86,14 @@ def parseDataThread(filename, threadNum):
 
   
 def parseDataRange(filename, threadNums):
-    '''
+    """
     parse data for all trials with the given range of thread numbers
     Input:
     filename: the log myfile
     threadNums: the given range of thread numbers
     Output:
     n x 3 array: average time, disk reads, buffere reads for each thread number
-    '''  
+    """  
     
     data = []
     
@@ -104,7 +104,6 @@ def parseDataRange(filename, threadNums):
         data.append(row)
 
     return data
-
 
 
 if __name__ == "__main__":
