@@ -1,15 +1,15 @@
-'''
+"""
 Created on Sep 23, 2015
 
 @author: cdongsi
-'''
+"""
 
 import csv
 
 def remove_column(input_file, output_file):
-    '''
+    """
     Remove the last column of the CSV file. Lazy way.
-    '''
+    """
     
     try:
         with open(input_file) as input, open(output_file, 'w') as output:
@@ -24,10 +24,10 @@ def remove_column(input_file, output_file):
             for row in reader:
                 
                 if int(row[1]) < 300:
-                    '''
+                    """
                     region_id is the second column.
                     Filtering out data with region_id larger than 300
-                    '''
+                    """
                     output.write( ','.join(row[:-1]) )
                     output.write("\n")
                 
@@ -59,10 +59,10 @@ def generateUpdateStatement(input_file, output_file):
             for row in reader:
                 
                 if int(row[1]) < 300:
-                    '''
+                    """
                     region_id is the second column.
                     Filtering out data with region_id larger than 300
-                    '''
+                    """
                     
                     print [row[i] for i in value_index]
                     
@@ -82,9 +82,9 @@ def generateUpdateStatement(input_file, output_file):
     
 
 def main():
-    '''
+    """
     Read CSV data and manipulate it.
-    '''
+    """
     inputfile = '../data/test_data.csv'
     outputfile = 'out2.txt'
     

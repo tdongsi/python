@@ -1,8 +1,8 @@
-'''
+"""
 Created on Jul 28, 2014
 
 @author: cuongd
-'''
+"""
 
 import logging
 import subprocess
@@ -49,9 +49,9 @@ def runCommand(cmdStr, logger = myLogger, envMap = None):
 
 @contextmanager
 def working_directory(path):
-    '''
+    """
     Switch to a new working directory and back to the current, using with statement.
-    '''
+    """
     
     current_dir = os.getcwd()
     os.chdir(path)

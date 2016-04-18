@@ -1,8 +1,8 @@
-'''
+"""
 Created on Jul 28, 2014
 
 @author: cuongd
-'''
+"""
 
 import argparse
 
@@ -68,11 +68,11 @@ PYTHON_PATH_ADD = ''
 PATH_SEPARATOR = ''
 
 def setup(installDir, osString):
-    '''
+    """
     Setup some global variables based on different OS.
     Human is better in identifying his current platform than a script.
     Avoid adding complexity to the script.
-    '''
+    """
     global INSTALLATION_DIR, INSTALL_LOG_DIR, UNINSTALLER, LICENSE_LOCATION
     global INSTALL_LOG_DIR
     global OOCHECKAMS, OOCHECKLS, OOCHECKQS
@@ -101,7 +101,7 @@ def setup(installDir, osString):
         PATH_SEPARATOR = ':'
         
     else:
-        '''Linux and Unix distributions'''
+        """Linux and Unix distributions"""
         INSTALLER_APP_EXT = '.run'
         UNINSTALLER = '%s/uninstall' %(installDir)
         LICENSE_LOCATION = '~oqa/oolicense.txt'
@@ -122,7 +122,7 @@ def setup(installDir, osString):
 
 
 def uninstallLocal( installDir ):
-    '''Perform uninstallation for the localhost'''
+    """Perform uninstallation for the localhost"""
     myLogger.info( "Uninstalling from %s", installDir )
     
     if (not os.path.exists(UNINSTALLER) ):
@@ -134,7 +134,7 @@ def uninstallLocal( installDir ):
 
 
 def installLocal( installer, installDir ):
-    '''Perform installation for the localhost'''
+    """Perform installation for the localhost"""
     myLogger.info( "Installing %s to %s", installer, installDir )
     
     runCommand([installer, '--mode', 'unattended', 
@@ -155,8 +155,8 @@ def countEnvironmentPath(path, pathList):
 
 
 def main():
-    '''Returns the paths in environment variables CLASSPATH and PYTHONPATH, 
-    then install and uninstall multiple times.'''
+    """Returns the paths in environment variables CLASSPATH and PYTHONPATH,
+    then install and uninstall multiple times."""
     parser = argparse.ArgumentParser(description='Script to run installer and ' 
                                      'uninstall multiple times.')
     
@@ -203,7 +203,7 @@ def main():
     return envi
 
 if __name__ == "__main__":
-    '''
+    """
     Usage:
     This script is used to verify:
     1. if environment variables CLASSPATH and PYTHONPATH are properly updated 
@@ -214,6 +214,6 @@ if __name__ == "__main__":
     
     After this, open another command-line windows (to refresh ENV) and run: 
     python thisScript -installer installer -installDir C:\installDir -repeat 0 -osString win
-    '''
+    """
     out = main()
     print out
