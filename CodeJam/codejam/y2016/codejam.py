@@ -1,16 +1,17 @@
-import copy
 from collections import deque, defaultdict
 import sys
 
-import matplotlib.pyplot as plt
 import networkx as nx
 
 import prime as pr
 
-class Bff(object):
+
+class Problem(object):
     """
-    https://code.google.com/codejam/contest/4304486/dashboard#s=p2
+    Base class for Code Jam problems.
+    Specify the input file.
     """
+
     def __init__(self, filename):
         """ Initialize with the given input file.
 
@@ -19,6 +20,12 @@ class Bff(object):
         """
         self._filename = filename
         pass
+
+
+class Bff(Problem):
+    """
+    https://code.google.com/codejam/contest/4304486/dashboard#s=p2
+    """
 
     def solve(self, output=sys.stdout):
         """ Handle input and output before calling an internal method to solve the problem.
@@ -29,19 +36,18 @@ class Bff(object):
         try:
             with open(self._filename, 'r') as f:
                 lines = f.readlines()
-                num = int(lines[0])
 
-                for case_num, idx in enumerate(xrange(2,len(lines),2), start=1):
+                for case_num, idx in enumerate(xrange(2, len(lines), 2), start=1):
                     # skip the first line
                     cycle_length = self._solve_bff(lines[idx].strip())
-                    output.write("Case #%d: %d\n" %(case_num, cycle_length))
+                    output.write("Case #%d: %d\n" % (case_num, cycle_length))
         except IOError:
             print "Error opening file"
         pass
 
-    def _solve_bff(self, input):
+    def _solve_bff(self, bff_str):
         # Construct the directed graph
-        bffs = [int(e.strip()) for e in input.split(' ')]
+        bffs = [int(e.strip()) for e in bff_str.split(' ')]
         nodes = [i+1 for i in xrange(len(bffs))]
         gr = nx.DiGraph()
         gr.add_nodes_from(nodes)
@@ -102,18 +108,10 @@ class Bff(object):
             return 1
 
 
-class LastWord(object):
+class LastWord(Problem):
     """
     https://code.google.com/codejam/contest/4304486/dashboard#s=p0
     """
-    def __init__(self, filename):
-        """ Initialize with the given input file.
-
-        :param filename: input file path
-        :return:
-        """
-        self._filename = filename
-        pass
 
     def solve(self, output=sys.stdout):
         """ Handle input and output before calling an internal method to solve the problem.
@@ -144,19 +142,10 @@ class LastWord(object):
         return ''.join(q)
 
 
-class CoinJam(object):
+class CoinJam(Problem):
     """
     https://code.google.com/codejam/contest/6254486/dashboard#s=p2
     """
-
-    def __init__(self, filename):
-        """ Initialize with the given input file.
-
-        :param filename: input file path
-        :return:
-        """
-        self._filename = filename
-        pass
 
     def solve(self, output=sys.stdout):
         """ Handle input and output before calling an internal method to solve the problem.
@@ -213,25 +202,16 @@ class CoinJam(object):
             if flag:
                 continue
             else:
-                output.write("%s %s\n" % (num_string, ' '.join([str(e) for e in factors])) )
+                output.write("%s %s\n" % (num_string, ' '.join([str(e) for e in factors])))
                 count += 1
 
         pass
 
 
-class RevengeOfPancakes(object):
+class RevengeOfPancakes(Problem):
     """
     https://code.google.com/codejam/contest/6254486/dashboard#s=p1
     """
-
-    def __init__(self, filename):
-        """ Initialize with the given input file.
-
-        :param filename: input file path
-        :return:
-        """
-        self._filename = filename
-        pass
 
     def solve(self, output=sys.stdout):
         """ Handle input and output before calling an internal method to solve the problem.
@@ -283,19 +263,10 @@ class RevengeOfPancakes(object):
         return count
 
 
-class CountingSheep(object):
+class CountingSheep(Problem):
     """
     https://code.google.com/codejam/contest/6254486/dashboard#s=p0
     """
-
-    def __init__(self, filename):
-        """ Initialize with the given input file.
-
-        :param filename: input file path
-        :return:
-        """
-        self._filename = filename
-        pass
 
     def solve(self, output=sys.stdout):
         """ Handle input and output before calling an internal method to solve the problem.
@@ -312,9 +283,9 @@ class CountingSheep(object):
                     idx = i + 1
                     out = self._solve_counting_sheep(int(lines[idx].strip()))
                     if out == -1:
-                        output.write("Case #%d: INSOMNIA\n" %(idx))
+                        output.write("Case #%d: INSOMNIA\n" % (idx))
                     else:
-                        output.write("Case #%d: %d\n" %(idx, out))
+                        output.write("Case #%d: %d\n" % (idx, out))
         except IOError:
             print "Error opening file"
         pass
@@ -339,6 +310,7 @@ class CountingSheep(object):
                 check |= set(str(curr_number))
 
             return curr_number
+
 
 def main():
     pass
