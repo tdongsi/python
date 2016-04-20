@@ -54,7 +54,7 @@ def create_config_file(filename, query_generator):
     config.queries = query_generator
 
     with open(filename, 'w') as config_file:
-        json.dump(config, config_file)
+        json.dump(config, config_file, default=lambda o: o.__dict__, indent=4)
 
 
 def main():
