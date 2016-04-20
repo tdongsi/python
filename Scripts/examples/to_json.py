@@ -3,7 +3,7 @@ import json
 
 
 def generate_count_queries():
-    return "TODO"
+    return "..."
 
 
 class OrderedConfig(collections.OrderedDict):
@@ -11,6 +11,18 @@ class OrderedConfig(collections.OrderedDict):
 
 
 class Config(object):
+
+    ODICT = "odict"
+
+    def __init__(self):
+        self.__dict__[self.ODICT] = collections.OrderedDict()
+
+    def __getattr__(self, item):
+        return self.__dict__[self.ODICT][item]
+
+    def __setattr__(self, key, value):
+        self.__dict__[self.ODICT][key] = value
+
     pass
 
 
@@ -58,7 +70,7 @@ def create_config_file(filename, query_generator):
     config.queries = query_generator
 
     with open(filename, 'w') as config_file:
-        json.dump(config, config_file, default=lambda o: o.__dict__, indent=4)
+        json.dump(config, config_file, default=lambda o: o.__dict__[Config.ODICT], indent=4)
 
 
 def ordered_config_file(filename, query_generator):
@@ -85,7 +97,7 @@ def main():
     FILE_NAME = "hive_vertica_count.json"
     query_generator = generate_count_queries()
     create_config_file(FILE_NAME, query_generator)
-    ordered_config_file(FILE_NAME, query_generator)
+    #ordered_config_file(FILE_NAME, query_generator)
 
 
 if __name__ == "__main__":
