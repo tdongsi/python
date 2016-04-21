@@ -15,7 +15,13 @@ class Config(object):
     ODICT = "odict"
 
     def __init__(self):
-        self.__dict__ = collections.OrderedDict()
+        self.__dict__[self.ODICT] = collections.OrderedDict()
+
+    def __getattr__(self, item):
+        return self.__dict__[self.ODICT][item]
+
+    def __setattr__(self, key, value):
+        self.__dict__[self.ODICT][key] = value
 
     pass
 
@@ -63,11 +69,8 @@ def create_config_file(filename, query_generator):
     config.testName = "count"
     config.queries = query_generator
 
-    print config.source.url
-    print config.testName
-
     with open(filename, 'w') as config_file:
-        json.dump(config, config_file, default=lambda o: o.__dict__, indent=4)
+        json.dump(config, config_file, default=lambda o: o.__dict__[Config.ODICT], indent=4)
 
 
 def ordered_config_file(filename, query_generator):
