@@ -11,8 +11,13 @@ PROJECT_HOME = "/Users/cdongsi/Hub/python/CodeJam"
 
 class GetDigitsTest(unittest.TestCase):
 
-    def test_example(self):
+    def test_solve(self):
         solver = real.GetDigits(PROJECT_HOME + "/data/GetDigits.txt")
+        self.assertEqual("122222", solver._solve_digits("TTWONWTWOOOOTWWEOT") )
+        self.assertEqual("2889", solver._solve_digits("GEENIOIITETTNGWHH") )
+
+    def test_example(self):
+        solver = real.GetDigits(PROJECT_HOME + "/data/A-small-attempt0.in")
 
         solver.solve()
 

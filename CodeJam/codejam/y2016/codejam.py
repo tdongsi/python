@@ -68,6 +68,10 @@ class GetDigits(Problem):
                 cnt.subtract(self.counters[digit])
                 number.append(str(digit))
 
+        if any(cnt.values()):
+            print cnt
+            assert False
+
         return ''.join(number)
 
     def _found_word(self, total, digit):
