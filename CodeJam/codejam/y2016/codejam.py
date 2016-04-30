@@ -86,9 +86,13 @@ class GetDigits(object):
         number = []
         for key in char_digit.keys():
             word_count = self.counters[char_digit[key]]
-            while cnt[key] > 0:
-                cnt.subtract(word_count)
-                number.append(char_digit[key])
+
+            # Multiply count values instead of subtract one by one
+            count = cnt[key]
+            if count > 0:
+                wc = {k: v*count for k, v in word_count.iteritems()}
+                cnt.subtract(wc)
+                number.extend([char_digit[key]] * count)
         return number
 
     def _get_word_counters(self):
