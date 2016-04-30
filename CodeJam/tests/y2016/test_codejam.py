@@ -9,6 +9,26 @@ import codejam.y2016.codejam as real
 PROJECT_HOME = "/Users/cdongsi/Hub/python/CodeJam"
 
 
+class GetDigitsTest(unittest.TestCase):
+
+    def test_example(self):
+        solver = real.GetDigits(PROJECT_HOME + "/data/GetDigits.txt")
+
+        solver.solve()
+
+        # str_output = StringIO.StringIO()
+        # solver.solve(output=str_output)
+        # actual = str_output.getvalue()
+        # expected = ("Case #1: 4\n"
+        #             "Case #2: 3\n"
+        #             "Case #3: 3\n"
+        #             "Case #4: 6\n")
+        # self.assertEqual(actual, expected)
+        #
+        # str_output.close()
+        pass
+
+
 class BffTest(unittest.TestCase):
 
     def test_example(self):

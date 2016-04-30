@@ -22,6 +22,34 @@ class Problem(object):
         pass
 
 
+class GetDigits(Problem):
+    """
+    https://code.google.com/codejam/contest/11254486/dashboard#s=p0
+    """
+
+    def solve(self, output=sys.stdout):
+        """ Handle input and output before calling an internal method to solve the problem.
+
+        :param output: specify output to file or screen.
+        :return:
+        """
+        try:
+            with open(self._filename, 'r') as f:
+                lines = f.readlines()
+
+                for case_num, line in enumerate(lines[1:], start=1):
+                    number = self._solve_digits(line.strip())
+                    output.write("Case #%d: %d\n" % (case_num, number))
+
+        except IOError:
+            print "Error opening file"
+        pass
+
+    def _solve_digits(self, istring):
+        return 0
+
+
+
 class Bff(Problem):
     """
     https://code.google.com/codejam/contest/4304486/dashboard#s=p2
