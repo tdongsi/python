@@ -28,6 +28,9 @@ class GetDigits(Problem):
     """
 
     WORDS = ["ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"]
+    CHAR_DIGIT_1 = {"Z" : 0, "W" : 2, "U": 4, "X": 6, "G": 8}
+    CHAR_DIGIT_2 = {"R": 3, "F": 5, "S" : 7}
+    CHAR_DIGIT_3 = {"O": 1, "I": 9}
 
     def __init__(self, filename):
         """ Initialize with the given input file.
@@ -58,21 +61,34 @@ class GetDigits(Problem):
         pass
 
     def _solve_digits(self, istring):
-        cnt = Counter()
-        for c in istring:
-            cnt[c] += 1
+        cnt = self._get_counter(istring)
 
         number = []
-        for digit in xrange(len(self.WORDS)):
-            while any(cnt.values()) and self._found_word(cnt, digit):
-                cnt.subtract(self.counters[digit])
-                number.append(str(digit))
 
-        if any(cnt.values()):
-            print cnt
-            assert False
+        # TODO: Use function to avoid duplicate codes
+        # Find digits 0, 2, 4, 6, 8
+        for key in self.CHAR_DIGIT_1.keys():
+            word_count = self.counters[self.CHAR_DIGIT_1[key]]
+            while cnt[key] > 0:
+                cnt.subtract(word_count)
+                number.append(self.CHAR_DIGIT_1[key])
 
-        return ''.join(number)
+        # Find digits 3, 5, 7
+        for key in self.CHAR_DIGIT_2.keys():
+            word_count = self.counters[self.CHAR_DIGIT_2[key]]
+            while cnt[key] > 0:
+                cnt.subtract(word_count)
+                number.append(self.CHAR_DIGIT_2[key])
+
+        # Find digits 1, 9
+        for key in self.CHAR_DIGIT_3.keys():
+            word_count = self.counters[self.CHAR_DIGIT_3[key]]
+            while cnt[key] > 0:
+                cnt.subtract(word_count)
+                number.append(self.CHAR_DIGIT_3[key])
+
+        number.sort()
+        return ''.join([str(e) for e in number])
 
     def _found_word(self, total, digit):
         word_counter = self.counters[digit]
