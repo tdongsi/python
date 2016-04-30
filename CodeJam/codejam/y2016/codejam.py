@@ -1,4 +1,4 @@
-from collections import deque, defaultdict
+from collections import deque, defaultdict, Counter
 import sys
 
 import networkx as nx
@@ -27,6 +27,18 @@ class GetDigits(Problem):
     https://code.google.com/codejam/contest/11254486/dashboard#s=p0
     """
 
+    WORDS = ["ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"]
+
+    def __init__(self, filename):
+        """ Initialize with the given input file.
+
+        :param filename: input file path
+        :return:
+        """
+        self._filename = filename
+        self.counters = self._get_word_counters()
+        pass
+
     def solve(self, output=sys.stdout):
         """ Handle input and output before calling an internal method to solve the problem.
 
@@ -39,15 +51,44 @@ class GetDigits(Problem):
 
                 for case_num, line in enumerate(lines[1:], start=1):
                     number = self._solve_digits(line.strip())
-                    output.write("Case #%d: %d\n" % (case_num, number))
+                    output.write("Case #%d: %s\n" % (case_num, number))
 
         except IOError:
             print "Error opening file"
         pass
 
     def _solve_digits(self, istring):
-        return 0
+        cnt = Counter()
+        for c in istring:
+            cnt[c] += 1
 
+        number = []
+        for digit in xrange(len(self.WORDS)):
+            while any(cnt.values()) and self._found_word(cnt, digit):
+                cnt.subtract(self.counters[digit])
+                number.append(str(digit))
+
+        return ''.join(number)
+
+    def _found_word(self, total, digit):
+        word_counter = self.counters[digit]
+        # print "%d: %s" % (digit, str(word_counter))
+        for key in word_counter:
+            if total[key] < word_counter[key]:
+                return False
+
+        return True
+
+    def _get_word_counters(self):
+        counters = [self._get_counter(word) for word in self.WORDS]
+        # print counters
+        return counters
+
+    def _get_counter(self, word):
+        counter = Counter()
+        for c in word:
+            counter[c] += 1
+        return counter
 
 
 class Bff(Problem):
