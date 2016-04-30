@@ -67,28 +67,29 @@ class GetDigits(object):
 
         # TODO: Use function to avoid duplicate codes
         # Find digits 0, 2, 4, 6, 8
-        for key in self.CHAR_DIGIT_1.keys():
-            word_count = self.counters[self.CHAR_DIGIT_1[key]]
-            while cnt[key] > 0:
-                cnt.subtract(word_count)
-                number.append(self.CHAR_DIGIT_1[key])
+        number.extend(self._extract_digits(cnt, self.CHAR_DIGIT_1))
 
         # Find digits 3, 5, 7
-        for key in self.CHAR_DIGIT_2.keys():
-            word_count = self.counters[self.CHAR_DIGIT_2[key]]
-            while cnt[key] > 0:
-                cnt.subtract(word_count)
-                number.append(self.CHAR_DIGIT_2[key])
+        number.extend(self._extract_digits(cnt, self.CHAR_DIGIT_2))
 
         # Find digits 1, 9
-        for key in self.CHAR_DIGIT_3.keys():
-            word_count = self.counters[self.CHAR_DIGIT_3[key]]
-            while cnt[key] > 0:
-                cnt.subtract(word_count)
-                number.append(self.CHAR_DIGIT_3[key])
+        number.extend(self._extract_digits(cnt, self.CHAR_DIGIT_3))
 
         number.sort()
         return ''.join([str(e) for e in number])
+
+    def _extract_digits(self, cnt, char_digit):
+        """ Find digits based on its unique character in its name.
+
+        Example: Find all 0s based on "Z" in "ZERO".
+        """
+        number = []
+        for key in char_digit.keys():
+            word_count = self.counters[char_digit[key]]
+            while cnt[key] > 0:
+                cnt.subtract(word_count)
+                number.append(char_digit[key])
+        return number
 
     def _get_word_counters(self):
         counters = [self._get_counter(word) for word in self.WORDS]
@@ -96,6 +97,11 @@ class GetDigits(object):
         return counters
 
     def _get_counter(self, word):
+        """ Given the input string, find the counts of each character.
+
+        :param word: input string
+        :return: collection.Counter object with counts
+        """
         counter = Counter()
         for c in word:
             counter[c] += 1

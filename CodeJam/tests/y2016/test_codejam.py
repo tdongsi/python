@@ -17,6 +17,7 @@ class GetDigitsTest(unittest.TestCase):
         self.assertEqual("122222", solver._solve_digits("TTWONWTWOOOOTWWEOT") )
         self.assertEqual("2889", solver._solve_digits("GEENIOIITETTNGWHH"))
 
+    @unittest.skip("Experiments to find solution")
     def test_experiment(self):
         solver = real.GetDigits(PROJECT_HOME + "/data/GetDigits.txt")
         counter = Counter()
@@ -52,20 +53,18 @@ class GetDigitsTest(unittest.TestCase):
         print counter
 
     def test_example(self):
-        solver = real.GetDigits(PROJECT_HOME + "/data/A-small-attempt0.in")
+        solver = real.GetDigits(PROJECT_HOME + "/data/GetDigits.txt")
 
-        solver.solve()
+        str_output = StringIO.StringIO()
+        solver.solve(output=str_output)
+        actual = str_output.getvalue()
+        expected = ("Case #1: 012\n"
+                    "Case #2: 2468\n"
+                    "Case #3: 114\n"
+                    "Case #4: 3\n")
+        self.assertEqual(actual, expected)
 
-        # str_output = StringIO.StringIO()
-        # solver.solve(output=str_output)
-        # actual = str_output.getvalue()
-        # expected = ("Case #1: 4\n"
-        #             "Case #2: 3\n"
-        #             "Case #3: 3\n"
-        #             "Case #4: 6\n")
-        # self.assertEqual(actual, expected)
-        #
-        # str_output.close()
+        str_output.close()
         pass
 
 
