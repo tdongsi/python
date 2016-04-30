@@ -22,7 +22,7 @@ class Problem(object):
         pass
 
 
-class GetDigits(Problem):
+class GetDigits(object):
     """
     https://code.google.com/codejam/contest/11254486/dashboard#s=p0
     """
@@ -89,15 +89,6 @@ class GetDigits(Problem):
 
         number.sort()
         return ''.join([str(e) for e in number])
-
-    def _found_word(self, total, digit):
-        word_counter = self.counters[digit]
-        # print "%d: %s" % (digit, str(word_counter))
-        for key in word_counter:
-            if total[key] < word_counter[key]:
-                return False
-
-        return True
 
     def _get_word_counters(self):
         counters = [self._get_counter(word) for word in self.WORDS]
