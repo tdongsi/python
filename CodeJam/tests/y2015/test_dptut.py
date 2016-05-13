@@ -5,8 +5,17 @@ Created on Aug 27, 2014
 """
 
 import unittest
+import practice.y2016.dp as y16
 
 from codejam.y2015.DpTut import *
+
+
+class MinNumOfCoin(object):
+
+    @staticmethod
+    def minNumOfCoin(sum, coinValues):
+        print "Input: %d, %s" %(sum, str(coinValues))
+        return y16.find_coin_number(sum, coinValues)
 
 
 class MinNumOfCoinTest(unittest.TestCase):
@@ -30,8 +39,14 @@ class MinNumOfCoinTest(unittest.TestCase):
             self.assertEqual(expected, output)
 
     def test_minNumOfCoin_invalid(self):
-        self.assertEqual(0, MinNumOfCoin.minNumOfCoin(5, [3]))
-        self.assertEqual(0, MinNumOfCoin.minNumOfCoin(5, [6]))
+        self.assertEqual(-1, MinNumOfCoin.minNumOfCoin(5, [3]))
+        self.assertEqual(-1, MinNumOfCoin.minNumOfCoin(5, [6]))
+
+        self.assertEqual(1, MinNumOfCoin.minNumOfCoin(5, [5]))
+
+        self.assertEqual(-1, MinNumOfCoin.minNumOfCoin(5, []))
+        self.assertEqual(-1, MinNumOfCoin.minNumOfCoin(5, [0]))
+        self.assertEqual(-1, MinNumOfCoin.minNumOfCoin(5, [0, 0]))
 
 
 class ZigZagTest(unittest.TestCase):
