@@ -28,3 +28,26 @@ def bin_search(mlist, num):
             return _bin_search(mlist, num, med+1, end)
 
     return _bin_search(mlist, num, 0, len(mlist))
+
+
+def atoi(sinput):
+    """ Convert string to integer.
+
+    :param input:
+    :return:
+    """
+
+    neg = False
+    num = sinput
+    if sinput[0] == "-":
+        neg = True
+        num = sinput[1:]
+
+    total = 0
+    for c in num:
+        total *= 10
+        total += int(c)
+    if neg:
+        total = -total
+
+    return total
