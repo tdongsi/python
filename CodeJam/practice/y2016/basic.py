@@ -1,4 +1,14 @@
 
+import heapq
+
+
+def heap_sort(mlist):
+    heap = []
+    for e in mlist:
+        heapq.heappush(heap, e)
+    return [heapq.heappop(heap) for i in xrange(len(mlist))]
+
+
 def bin_search(mlist, num, start=0, end=None):
     """ Binary search.
 
