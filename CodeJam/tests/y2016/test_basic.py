@@ -4,7 +4,7 @@ import random
 
 from practice.y2016.basic import solve_skyline as solve_skyline
 
-from practice.y2016.basic import merge_sort as do_sort
+from practice.y2016.basic import quicksort as do_sort
 from practice.y2016.basic import PriorityQueue as PriorityQueue
 
 from practice.y2016.basic import binary_search as binary_search
@@ -25,6 +25,13 @@ class TestSorting(unittest.TestCase):
                 # print mlist
                 self.assertEqual(do_sort(mlist), expected)
 
+        pass
+
+    def test_same_element(self):
+
+        self.assertEqual(do_sort([2, 3, 5, 7, 4, 2, 6, 1]), [1, 2, 2, 3, 4, 5, 6, 7])
+        self.assertEqual(do_sort([2, 2]), [2, 2])
+        self.assertEqual(do_sort([1, 2, 1]), [1, 1, 2])
         pass
 
 

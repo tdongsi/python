@@ -3,6 +3,22 @@ import heapq
 import itertools
 
 
+def quicksort(mlist):
+
+    if len(mlist) <= 1:
+        return mlist
+
+    pivot = mlist[0]
+    left = [e for e in mlist if e < pivot]
+    right = [e for e in mlist if e >= pivot]
+    right.remove(pivot)
+
+    result = quicksort(left)
+    result.append(pivot)
+    result.extend(quicksort(right))
+    return result
+
+
 def merge_sort(mlist):
 
     def _merge_sort(start, end):
