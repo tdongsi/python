@@ -8,8 +8,8 @@ def merge_sort(mlist):
     def _merge_sort(start, end):
         if start == end:  # empty list
             return []
-        elif start == end-1:
-            return mlist[start]
+        elif start == end-1:  # singleton list
+            return mlist[start:end]
         else:
             med = (start+end)/2
             first = _merge_sort(start, med)
