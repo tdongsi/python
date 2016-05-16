@@ -3,6 +3,45 @@ import heapq
 import itertools
 
 
+def merge_sort(mlist):
+
+    def _merge_sort(start, end):
+        if start == end:  # empty list
+            return []
+        elif start == end-1:
+            return mlist[start]
+        else:
+            med = (start+end)/2
+            first = _merge_sort(start, med)
+            second = _merge_sort(med, end)
+            return _merge(first, second)
+
+    def _merge(first, second):
+        idx1 = 0
+        idx2 = 0
+        li = []
+
+        while idx1 < len(first) and idx2 < len(second):
+            if first[idx1] < second[idx2]:
+                li.append(first[idx1])
+                idx1 += 1
+            else:
+                li.append(second[idx2])
+                idx2 += 1
+
+        if idx1 < len(first):
+            li.extend(first[idx1:])
+        if idx2 < len(second):
+            li.extend(second[idx2:])
+
+        return li
+
+    if len(mlist) == 0 or len(mlist) == 1:
+        return mlist
+    else:
+        return _merge_sort(0, len(mlist))
+
+
 def reverse_words(inputs):
     reverse_in = inputs[::-1]
     tokens = reverse_in.split(' ')
