@@ -2,11 +2,14 @@
 import unittest
 import random
 
-from practice.y2016.basic import heap_sort as do_sort
-from practice.y2016.basic import bin_search as binary_search
-from practice.y2016.basic import atoi as atoi
 from practice.y2016.basic import solve_skyline as solve_skyline
+
+from practice.y2016.basic import heap_sort as do_sort
 from practice.y2016.basic import PriorityQueue as PriorityQueue
+
+from practice.y2016.basic import binary_search as binary_search
+from practice.y2016.basic import atoi as atoi
+from practice.y2016.basic import reverse_words
 
 
 class TestSorting(unittest.TestCase):
@@ -26,6 +29,10 @@ class TestSorting(unittest.TestCase):
 
 
 class TestBasic(unittest.TestCase):
+
+    def test_reverse_words(self):
+        self.assertEqual(reverse_words("Hello World"), "World Hello")
+        self.assertEqual(reverse_words("I Love You"), "You Love I")
 
     def test_binary_search(self):
         self.assertEqual(binary_search([1, 2, 3], 4), -1)
@@ -68,6 +75,13 @@ class TestSkyline(unittest.TestCase):
         self.assertEqual(solve_skyline(buildings), skyline)
 
         pass
+
+    def test_corner_cases(self):
+        # One building completely overlap on the other
+        buildings = [(2, 5, 5), (2, 5, 9)]
+        skyline = [(2, 9), (5, 0)]
+        self.assertEqual(solve_skyline(buildings), skyline)
+
 
 class TestPriorityQueue(unittest.TestCase):
 

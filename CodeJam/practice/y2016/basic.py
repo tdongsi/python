@@ -3,6 +3,13 @@ import heapq
 import itertools
 
 
+def reverse_words(inputs):
+    reverse_in = inputs[::-1]
+    tokens = reverse_in.split(' ')
+    out = ' '.join([token[::-1] for token in tokens])
+    return out
+
+
 class PriorityQueue(object):
 
     REMOVED = "<removed-task>"
@@ -61,6 +68,39 @@ def heap_sort(mlist):
     for e in mlist:
         heapq.heappush(heap, e)
     return [heapq.heappop(heap) for i in xrange(len(mlist))]
+
+
+def binary_search(mlist, item):
+    """ Binary search
+
+    :param mlist: sorted list in ascending order
+    :param item:
+    :return: index of item in list. -1 if not found.
+    """
+
+    def _bin_search(start, end):
+        if start == end:
+            # empty
+            return -1
+        elif start == end-1:
+            # singleton
+            if mlist[start] == item:
+                return start
+            else:
+                return -1
+        else:
+            med = (start+end)/2
+            if mlist[med] == item:
+                return med
+            elif mlist[med] < item:
+                return _bin_search(med+1, end)
+            else:
+                return _bin_search(start, med)
+
+    if len(mlist) == 0:
+        return -1
+    else:
+        return _bin_search(0, len(mlist))
 
 
 def bin_search(mlist, num, start=0, end=None):
