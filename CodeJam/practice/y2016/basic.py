@@ -1,5 +1,59 @@
 
 import heapq
+import itertools
+
+
+class PriorityQueue(object):
+
+    REMOVED = "<removed-task>"
+
+    def __init__(self):
+        self.heap = []
+        self.entries = {}
+        self.counter = itertools.count()
+
+    def add_task(self, task, priority=0):
+        if task in self.entries:
+            self.remove_task(task)
+
+        count = next(self.counter)
+        # weight = -priority since heapq is a min-heap
+        entry = [-priority, count, task]
+        self.entries[task] = entry
+        heapq.heappush(self.heap, entry)
+        pass
+
+    def remove_task(self, task):
+        """ Mark the given task as REMOVED.
+
+        Do this to avoid breaking heap-invariance of the internal heap.
+
+        :param task:
+        :return:
+        """
+        entry = self.entries[task]
+        entry[-1] = PriorityQueue.REMOVED
+        pass
+
+    def pop_task(self):
+        """ Get task with highest priority.
+
+        :return: Task with highest priority
+        """
+        while self.heap:
+            weight, count, task = heapq.heappop(self.heap)
+            if task is not PriorityQueue.REMOVED:
+                del self.entries[task]
+                return task
+        raise KeyError("The priority queue is empty")
+
+    def __str__(self):
+        temp = [str(e) for e in self.heap if e[-1] is not PriorityQueue.REMOVED]
+        return "[%s]" % ", ".join(temp)
+
+
+def solve_skyline(mlist):
+    return []
 
 
 def heap_sort(mlist):

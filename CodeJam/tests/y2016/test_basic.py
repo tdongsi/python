@@ -5,6 +5,8 @@ import random
 from practice.y2016.basic import heap_sort as do_sort
 from practice.y2016.basic import bin_search as binary_search
 from practice.y2016.basic import atoi as atoi
+from practice.y2016.basic import solve_skyline as solve_skyline
+from practice.y2016.basic import PriorityQueue as PriorityQueue
 
 
 class TestSorting(unittest.TestCase):
@@ -44,3 +46,55 @@ class TestBasic(unittest.TestCase):
         self.assertEqual(atoi("-123"), int("-123"))
         self.assertEqual(atoi("0"), int("0"))
         self.assertEqual(atoi("-0"), int("-0"))
+
+
+class TestSkyline(unittest.TestCase):
+
+    def test_inout(self):
+        buildings = [(2, 9, 10), (3, 6, 15), (5, 12, 12), (13, 16, 10), (13, 16, 10), (15, 17, 5)]
+        skyline = [(2, 10), (3, 15), (6, 12), (12, 0), (13, 10), (16, 5), (17, 0)]
+        self.assertEqual(solve_skyline(buildings), skyline)
+
+        buildings = [(2, 9, 10), (3, 7, 15), (5, 12, 12), (15, 20, 10), (19, 24, 8)]
+        skyline = [(2, 10), (3, 15), (7, 12), (12, 0), (15, 10), (20, 8), (24, 0)]
+        self.assertEqual(solve_skyline(buildings), skyline)
+
+        buildings = [(1,11,5), (2,6,7), (3,13,9), (12,7,16), (14,3,25), (19,18,22), (23,13,29), (24,4,28)]
+        skyline = [(1, 11), (3, 13), (9, 0), (12, 7), (16, 3), (19, 18), (22, 3), (25, 0)]
+        self.assertEqual(solve_skyline(buildings), skyline)
+
+        buildings = [(1, 5, 11), (2, 7, 6), (3, 9, 13), (12, 16, 7), (14, 25, 3), (19, 22, 18), (23, 29, 13), (24, 28, 4)]
+        skyline = [(1, 11), (3, 13), (9, 0), (12, 7), (16, 3), (19, 18), (22, 3), (23, 13), (29, 0)]
+        self.assertEqual(solve_skyline(buildings), skyline)
+
+        pass
+
+class TestPriorityQueue(unittest.TestCase):
+
+    def test_output(self):
+
+        queue = PriorityQueue()
+        queue.add_task("Write code", 5)
+        queue.add_task("Write spec", 7)
+        queue.add_task("Create tests", 3)
+        queue.add_task("Write user docs", 1)
+
+        print queue
+
+        task = queue.pop_task()
+        self.assertEqual(task, "Write spec")
+
+        # Update priority of "Create tests"
+        queue.add_task("Create tests", 6)
+        print queue
+        task = queue.pop_task()
+        self.assertEqual(task, "Create tests")
+
+        # Remove task "Write user docs"
+        queue.remove_task("Write user docs")
+        print queue
+
+        task = queue.pop_task()
+        self.assertEqual(task, "Write code")
+        print queue
+
