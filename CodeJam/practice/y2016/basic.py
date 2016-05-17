@@ -3,6 +3,34 @@ import heapq
 import itertools
 
 
+def quicksort2(mlist, lo=0, hi=None):
+    """ Quick-sort algorithm with in-place implementation.
+    """
+    def partition(mlist, lo, hi):
+        i = lo
+        pivot = mlist[hi-1]
+        for j in range(lo+1, hi-1):
+            if mlist[j] < pivot:
+                mlist[i], mlist[j] = mlist[j], mlist[i]
+                i += 1
+        mlist[i], mlist[hi-1] = mlist[hi-1], mlist[i]
+        return i
+
+    if hi is None:
+        hi = len(mlist)
+
+    if lo == hi:
+        return mlist
+    elif lo == hi-1:
+        return mlist
+
+    p = partition(mlist, lo, hi)
+    quicksort2(mlist, lo, p)
+    quicksort2(mlist, p+1, hi)
+
+    return mlist
+
+
 def quicksort(mlist):
 
     if len(mlist) <= 1:
