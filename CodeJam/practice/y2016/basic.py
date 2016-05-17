@@ -9,7 +9,7 @@ def quicksort2(mlist, lo=0, hi=None):
     def partition(mlist, lo, hi):
         i = lo
         pivot = mlist[hi-1]
-        for j in range(lo+1, hi-1):
+        for j in range(lo, hi-1):
             if mlist[j] < pivot:
                 mlist[i], mlist[j] = mlist[j], mlist[i]
                 i += 1
