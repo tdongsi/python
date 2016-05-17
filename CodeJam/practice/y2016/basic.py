@@ -3,6 +3,33 @@ import heapq
 import itertools
 
 
+def mergesort(mlist):
+
+    def merge(first, second):
+        idx1 = 0
+        idx2 = 0
+        result = []
+        while idx1 < len(first) and idx2 < len(second):
+            if first[idx1] < second[idx2]:
+                result.append(first[idx1])
+                idx1 += 1
+            else:
+                result.append(second[idx2])
+                idx2 += 1
+
+        result.extend(first[idx1:])
+        result.extend(second[idx2:])
+        return result
+
+    if len(mlist) <= 1:
+        return mlist
+
+    med = len(mlist)//2
+    first = mergesort(mlist[:med])
+    second = mergesort(mlist[med:])
+    return merge(first, second)
+
+
 def quicksort2(mlist, lo=0, hi=None):
     """ Quick-sort algorithm with in-place implementation.
     """
