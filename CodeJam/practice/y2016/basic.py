@@ -3,6 +3,52 @@ import heapq
 import itertools
 
 
+def rotate(matrix):
+    """ Rotate matrix counter-clockwise.
+
+    Counter-closewise rotation is transpose + reverse ordering.
+    """
+    temp = [list(e) for e in zip(*matrix)]
+    return temp[::-1]
+
+
+def transpose(matrix):
+    """ Transpose matrix.
+    """
+    # zip returns the transpose with each row as tuple instead of list
+    return [list(e) for e in zip(*matrix)]
+
+
+def print_matrix(matrix):
+    print "* Matrix *"
+    for row in matrix:
+        print row
+
+
+def spiral_list(matrix):
+    """ Print the matrix to a list of items in spiral.
+
+    First going right to end of row, then going down, then left, then up.
+
+    :param matrix:
+    :return:
+    """
+    # print_matrix(matrix)
+    mlist = []
+
+    if len(matrix) == 0:
+        return mlist
+    elif len(matrix) == 1:
+        mlist.extend(matrix[0])
+        return mlist
+    else:
+        mlist.extend(matrix[0])
+        matrix_t = rotate(matrix[1:])
+        mlist.extend(spiral_list(matrix_t))
+        return mlist
+    pass
+
+
 def mergesort(mlist):
 
     def merge(first, second):

@@ -10,7 +10,32 @@ from practice.y2016.basic import PriorityQueue as PriorityQueue
 from practice.y2016.basic import binary_search as binary_search
 from practice.y2016.basic import atoi as atoi
 from practice.y2016.basic import reverse_words
+from practice.y2016.basic import spiral_list
 
+
+class TestSpiralPrint(unittest.TestCase):
+
+    def test_corner(self):
+        input = [[1]]
+        self.assertEqual(spiral_list(input), [1])
+
+        input = [[1], [2]]
+        self.assertEqual(spiral_list(input), [1, 2])
+
+    def test_case1(self):
+        # Expected is a list from 1-25, inclusive
+        expected = range(26)
+        del expected[0]
+
+        input = [[1, 2, 3, 4, 5],
+                 [16, 17, 18, 19, 6],
+                 [15, 24, 25, 20, 7],
+                 [14, 23, 22, 21, 8],
+                 [13, 12, 11, 10, 9]]
+
+        self.assertEqual(spiral_list(input), expected)
+
+        pass
 
 class TestSorting(unittest.TestCase):
 
