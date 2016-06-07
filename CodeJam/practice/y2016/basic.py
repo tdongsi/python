@@ -3,6 +3,21 @@ import heapq
 import itertools
 
 
+def insertion_sort(mlist):
+    if len(mlist) <= 1:
+        return mlist
+
+    for i in range(1, len(mlist)):
+        cur = mlist[i]
+        pos = i
+        while pos > 0 and cur < mlist[pos-1]:
+            mlist[pos] = mlist[pos-1]
+            pos -= 1
+        mlist[pos] = cur
+
+    return mlist
+
+
 def quicksort_June(mlist, lo=0, hi=None):
     def partition(l, lo, hi):
         i = lo
