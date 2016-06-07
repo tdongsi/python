@@ -3,6 +3,64 @@ import heapq
 import itertools
 
 
+def quicksort_June(mlist, lo=0, hi=None):
+    def partition(l, lo, hi):
+        i = lo
+        pivot = l[hi-1]
+        for j in range(lo, hi-1):
+            if l[j] < pivot:
+                l[i], l[j] = l[j], l[i]
+                i += 1
+
+        # swap pivot
+        l[i], l[hi-1] = l[hi-1], l[i]
+        return i
+
+    if hi is None:
+        hi = len(mlist)
+
+    if lo == hi:
+        # empty
+        return mlist
+    elif lo == hi-1:
+        # singleton
+        return mlist
+
+    p = partition(mlist, lo, hi)
+    quicksort_June(mlist, lo, p)
+    quicksort_June(mlist, p+1, hi)
+    return mlist
+
+
+def mergesort_June(mlist):
+
+    def merge(left, right):
+
+        out = []
+        idx1 = 0
+        idx2 = 0
+
+        while idx1 < len(left) and idx2 < len(right):
+            if left[idx1] < right[idx2]:
+                out.append(left[idx1])
+                idx1 += 1
+            else:
+                out.append(right[idx2])
+                idx2 += 1
+
+        out.extend(left[idx1:])
+        out.extend(right[idx2:])
+        return out
+
+    if len(mlist) <= 1:
+        return mlist
+    else:
+        mid = len(mlist)/2
+        left = mergesort_June(mlist[:mid])
+        right = mergesort_June(mlist[mid:])
+        return merge(left, right)
+
+
 def rotate(matrix):
     """ Rotate matrix counter-clockwise.
 
@@ -86,6 +144,8 @@ def quicksort2(mlist, lo=0, hi=None):
             if mlist[j] < pivot:
                 mlist[i], mlist[j] = mlist[j], mlist[i]
                 i += 1
+
+        # swap pivot to right place
         mlist[i], mlist[hi-1] = mlist[hi-1], mlist[i]
         return i
 
@@ -220,10 +280,8 @@ def solve_skyline(mlist):
 
 
 def heap_sort(mlist):
-    heap = []
-    for e in mlist:
-        heapq.heappush(heap, e)
-    return [heapq.heappop(heap) for i in xrange(len(mlist))]
+    heapq.heapify(mlist)
+    return [heapq.heappop(mlist) for e in range(len(mlist))]
 
 
 def binary_search(mlist, item):

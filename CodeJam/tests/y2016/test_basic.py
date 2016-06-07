@@ -4,7 +4,7 @@ import random
 
 from practice.y2016.basic import solve_skyline as solve_skyline
 
-from practice.y2016.basic import mergesort as do_sort
+from practice.y2016.basic import quicksort_June as do_sort
 from practice.y2016.basic import PriorityQueue as PriorityQueue
 
 from practice.y2016.basic import binary_search as binary_search
@@ -36,6 +36,7 @@ class TestSpiralPrint(unittest.TestCase):
         self.assertEqual(spiral_list(input), expected)
 
         pass
+
 
 class TestSorting(unittest.TestCase):
 
