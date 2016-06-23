@@ -3,6 +3,29 @@ import heapq
 import itertools
 
 
+def binary_search_June(alist, item, start=0, end=None):
+    if end is None:
+        end = len(alist)
+
+    if start == end:
+        # empty list
+        return -1
+    elif start == end-1:
+        # singleton list
+        if alist[start] == item:
+            return start
+        else:
+            return -1
+    else:
+        med = (start+end) // 2
+        if alist[med] == item:
+            return med
+        elif alist[med] > item:
+            return binary_search_June(alist, item, start, med)
+        else:
+            return binary_search_June(alist, item, med+1, end)
+
+
 def insertion_sort(mlist):
     if len(mlist) <= 1:
         return mlist

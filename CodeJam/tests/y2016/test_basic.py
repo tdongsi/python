@@ -7,7 +7,7 @@ from practice.y2016.basic import solve_skyline as solve_skyline
 from practice.y2016.basic import insertion_sort as do_sort
 from practice.y2016.basic import PriorityQueue as PriorityQueue
 
-from practice.y2016.basic import binary_search as binary_search
+from practice.y2016.basic import binary_search_June as binary_search
 from practice.y2016.basic import atoi as atoi
 from practice.y2016.basic import reverse_words
 from practice.y2016.basic import spiral_list
