@@ -42,35 +42,6 @@ def insertion_sort(mlist):
     return mlist
 
 
-def quicksort_June(mlist, lo=0, hi=None):
-    def partition(l, lo, hi):
-        i = lo
-        pivot = l[hi-1]
-        for j in range(lo, hi-1):
-            if l[j] < pivot:
-                l[i], l[j] = l[j], l[i]
-                i += 1
-
-        # swap pivot
-        l[i], l[hi-1] = l[hi-1], l[i]
-        return i
-
-    if hi is None:
-        hi = len(mlist)
-
-    if lo == hi:
-        # empty
-        return mlist
-    elif lo == hi-1:
-        # singleton
-        return mlist
-
-    p = partition(mlist, lo, hi)
-    quicksort_June(mlist, lo, p)
-    quicksort_June(mlist, p+1, hi)
-    return mlist
-
-
 def mergesort_June(mlist):
 
     def merge(left, right):
@@ -191,6 +162,34 @@ def quicksort2(mlist):
 
 
 def quicksort(mlist, lo=0, hi=None):
+
+    def partition(alist, lo, hi):
+        pivot = alist[hi - 1]
+        idx = lo
+
+        for i in range(lo, hi-1):
+            if alist[i] < pivot:
+                alist[i], alist[idx] = alist[idx], alist[i]
+                idx += 1
+        # move the pivot
+        alist[idx], alist[hi - 1] = alist[hi - 1], alist[idx]
+        return idx
+
+
+    if hi is None:
+        hi = len(mlist)
+
+    if lo == hi:
+        # empty list
+        return mlist
+    elif lo == hi-1:
+        # singleton list
+        return mlist
+    else:
+        p = partition(mlist, lo, hi)
+        quicksort(mlist, lo, p)
+        quicksort(mlist, p+1, hi)
+        return mlist
 
     pass
 

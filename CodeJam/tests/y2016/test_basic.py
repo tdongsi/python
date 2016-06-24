@@ -4,7 +4,7 @@ import random
 
 from practice.y2016.basic import solve_skyline as solve_skyline
 
-from practice.y2016.basic import quicksort2 as do_sort
+from practice.y2016.basic import quicksort as do_sort
 from practice.y2016.basic import PriorityQueue as PriorityQueue
 
 from practice.y2016.basic import binary_search_June as binary_search
