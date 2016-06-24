@@ -173,38 +173,9 @@ def mergesort(mlist):
     return merge(first, second)
 
 
-def quicksort2(mlist, lo=0, hi=None):
-    """ Quick-sort algorithm with in-place implementation.
+def quicksort2(mlist):
+    """ Conceptual Quick-sort algorithm (not in-place).
     """
-    def partition(mlist, lo, hi):
-        i = lo
-        pivot = mlist[hi-1]
-        for j in range(lo, hi-1):
-            if mlist[j] < pivot:
-                mlist[i], mlist[j] = mlist[j], mlist[i]
-                i += 1
-
-        # swap pivot to right place
-        mlist[i], mlist[hi-1] = mlist[hi-1], mlist[i]
-        return i
-
-    if hi is None:
-        hi = len(mlist)
-
-    if lo == hi:
-        return mlist
-    elif lo == hi-1:
-        return mlist
-
-    p = partition(mlist, lo, hi)
-    quicksort2(mlist, lo, p)
-    quicksort2(mlist, p+1, hi)
-
-    return mlist
-
-
-def quicksort(mlist):
-
     if len(mlist) <= 1:
         return mlist
 
@@ -213,14 +184,44 @@ def quicksort(mlist):
     right = [e for e in mlist if e >= pivot]
     right.remove(pivot)
 
-    result = quicksort(left)
+    result = quicksort2(left)
     result.append(pivot)
-    result.extend(quicksort(right))
+    result.extend(quicksort2(right))
     return result
 
 
-def merge_sort(mlist):
+def quicksort(mlist, lo=0, hi=None):
+
     pass
+
+
+def merge_sort(mlist):
+    def _merge(left, right):
+        alist = []
+        l_idx = 0
+        r_idx = 0
+
+        while l_idx < len(left) and r_idx < len(right):
+            if left[l_idx] < right[r_idx]:
+                alist.append(left[l_idx])
+                l_idx += 1
+            else:
+                alist.append(right[r_idx])
+                r_idx += 1
+
+        # append the rest
+        alist.extend(left[l_idx:])
+        alist.extend(right[r_idx:])
+
+        return alist
+
+    if len(mlist) <= 1:
+        return mlist
+    else:
+        med = len(mlist) // 2
+        left = merge_sort(mlist[:med])
+        right = merge_sort(mlist[med:])
+        return _merge(left, right)
 
 
 def reverse_words(inputs):
