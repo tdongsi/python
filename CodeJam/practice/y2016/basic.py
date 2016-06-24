@@ -30,9 +30,10 @@ def insertion_sort(mlist):
     if len(mlist) <= 1:
         return mlist
 
-    for i in range(1, len(mlist)):
-        cur = mlist[i]
+    for i in xrange(1, len(mlist)):
         pos = i
+        cur = mlist[i]
+
         while pos > 0 and cur < mlist[pos-1]:
             mlist[pos] = mlist[pos-1]
             pos -= 1
@@ -219,42 +220,7 @@ def quicksort(mlist):
 
 
 def merge_sort(mlist):
-
-    def _merge_sort(start, end):
-        if start == end:  # empty list
-            return []
-        elif start == end-1:  # singleton list
-            return mlist[start:end]
-        else:
-            med = (start+end)/2
-            first = _merge_sort(start, med)
-            second = _merge_sort(med, end)
-            return _merge(first, second)
-
-    def _merge(first, second):
-        idx1 = 0
-        idx2 = 0
-        li = []
-
-        while idx1 < len(first) and idx2 < len(second):
-            if first[idx1] < second[idx2]:
-                li.append(first[idx1])
-                idx1 += 1
-            else:
-                li.append(second[idx2])
-                idx2 += 1
-
-        if idx1 < len(first):
-            li.extend(first[idx1:])
-        if idx2 < len(second):
-            li.extend(second[idx2:])
-
-        return li
-
-    if len(mlist) == 0 or len(mlist) == 1:
-        return mlist
-    else:
-        return _merge_sort(0, len(mlist))
+    pass
 
 
 def reverse_words(inputs):
