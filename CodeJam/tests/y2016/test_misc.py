@@ -1,8 +1,15 @@
 
 import unittest
+import practice.y2016.dp as dp
 
 
 class TestMisc(unittest.TestCase):
+
+    def test_rearrange(self):
+        self.assertEqual(dp.rearrange("AAB"), "ABA")
+        self.assertEqual(dp.rearrange("AAA"), None)
+        self.assertEqual(dp.rearrange("AABBCC"), "ACBACB")
+        self.assertEqual(dp.rearrange("AABBCCCC"), "CACBCACB")
 
     def test_stuffs(self):
 
