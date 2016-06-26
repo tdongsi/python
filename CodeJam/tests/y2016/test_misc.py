@@ -1,6 +1,24 @@
 
 import unittest
 import practice.y2016.dp as dp
+import practice.y2016.misc as ms
+
+
+class TestCode(unittest.TestCase):
+
+    def test_merge_k_lists(self):
+        lists = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+        self.assertEqual(ms.merge_sorted_lists(*lists), range(1, 10))
+
+        lists = [[1, 4, 7], [2, 5, 8], [3, 6, 9]]
+        self.assertEqual(ms.merge_sorted_lists(*lists), range(1, 10))
+
+        lists = [[1, 1], [2, 2], [3, 3]]
+        self.assertEqual(ms.merge_sorted_lists(*lists), [1, 1, 2, 2, 3, 3])
+
+        lists = [[1, 2, 3], [1, 2, 3]]
+        self.assertEqual(ms.merge_sorted_lists(*lists), [1, 1, 2, 2, 3, 3])
+        pass
 
 
 class TestMisc(unittest.TestCase):
