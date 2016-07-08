@@ -20,6 +20,25 @@ class TestCode(unittest.TestCase):
         self.assertEqual(ms.merge_sorted_lists(*lists), [1, 1, 2, 2, 3, 3])
         pass
 
+    def test_merge_intervals(self):
+        mlist = [(4, 6), (5, 8), (20, 25)]
+        expected = [(4, 8), (20, 25)]
+        self.assertEqual(expected, ms.combine_intervals(mlist))
+
+        mlist = [(4, 6), (5, 8), (20, 25), (25, 26)]
+        expected = [(4, 8), (20, 26)]
+        self.assertEqual(expected, ms.combine_intervals(mlist))
+
+        mlist = [(4, 6), (5, 8), (4, 25), (25, 26)]
+        expected = [(4, 26)]
+        self.assertEqual(expected, ms.combine_intervals(mlist))
+
+        mlist = [(4, 6), (5, 8), (4, 5), (25, 26)]
+        expected = [(4, 8), (25, 26)]
+        self.assertEqual(expected, ms.combine_intervals(mlist))
+
+        pass
+
 
 class TestMisc(unittest.TestCase):
 
