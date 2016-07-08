@@ -57,6 +57,9 @@ def merge(left, right):
 
 def overlap(interval1, interval2):
     # Assumption: interval1[0] <= interval2[0]
+    if interval1[0] > interval2[0]:
+        interval1, interval2 = interval2, interval1
+
     if interval1[0] <= interval2[0] <= interval1[1]:
         return interval1[0], max(interval1[1], interval2[1])
     else:
