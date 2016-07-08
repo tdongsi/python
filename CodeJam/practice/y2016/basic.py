@@ -3,6 +3,35 @@ import heapq
 import itertools
 
 
+def quicksort_July(alist, lo=0, hi=None):
+    if hi is None:
+        hi = len(alist)
+
+    if lo == hi:
+        # empty list
+        return alist
+    elif lo == hi-1:
+        # singleton list
+        return alist
+    else:
+        pivot = partition(alist, lo, hi)
+        quicksort_July(alist, lo, pivot)
+        quicksort_July(alist, pivot+1, hi)
+        return alist
+
+
+def partition(alist, lo, hi):
+
+    pivot = alist[hi-1]
+    j = lo
+    for i in range(lo, hi-1):
+        if alist[i] < pivot:
+            alist[j], alist[i] = alist[i], alist[j]
+            j += 1
+    alist[j], alist[hi-1] = alist[hi-1], alist[j]
+    return j
+
+
 def binary_search_June(alist, item, start=0, end=None):
     if end is None:
         end = len(alist)
