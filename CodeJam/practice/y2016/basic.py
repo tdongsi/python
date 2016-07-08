@@ -3,6 +3,33 @@ import heapq
 import itertools
 
 
+def mergesort_J(alist):
+    if len(alist) <= 1:
+        return alist
+
+    med = len(alist)/2
+    left = mergesort_J(alist[:med])
+    right = mergesort_J(alist[med:])
+    return merge(left, right)
+
+
+def merge(left, right):
+    lidx = 0
+    ridx = 0
+    out = []
+    while lidx < len(left) and ridx < len(right):
+        if left[lidx] < right[ridx]:
+            out.append(left[lidx])
+            lidx += 1
+        else:
+            out.append(right[ridx])
+            ridx += 1
+
+    out.extend(left[lidx:])
+    out.extend(right[ridx:])
+    return out
+
+
 def quicksort_July(alist, lo=0, hi=None):
     if hi is None:
         hi = len(alist)
