@@ -44,15 +44,46 @@ def merge(left, right):
         return left
 
     out = []
-    ol = overlap(left[-1], right[0])
-    if ol is not None:
-        out.extend(left[:-1])
-        out.append(ol)
-        out.extend(right[1:])
-    else:
-        out.extend(left)
-        out.extend(right)
+    staging = None
+    lidx = 0
+    ridx = 0
+
+    while lidx < len(left) and ridx < len(right):
+        if left[lidx] < right[ridx]:
+            staging = merge_item(out, left[lidx], staging)
+            lidx += 1
+        else:
+            staging = merge_item(out, right[ridx], staging)
+            ridx += 1
+
+    while lidx < len(left):
+        staging = merge_item(out, left[lidx], staging)
+        lidx += 1
+
+    while ridx < len(right):
+        staging = merge_item(out, right[ridx], staging)
+        ridx += 1
+
+    # append the final item
+    out.append(staging)
     return out
+
+
+def merge_item(out, item, staging):
+    if staging is None:
+        staging = item
+    else:
+        new_staging = overlap(staging, item)
+        if new_staging is None:
+            # No overlapping
+            out.append(staging)
+            staging = item
+        else:
+            # item and staging overlapped
+            staging = new_staging
+
+    # return new staging
+    return staging
 
 
 def overlap(interval1, interval2):

@@ -45,6 +45,10 @@ class TestCode(unittest.TestCase):
         expected = [(4, 8), (25, 26)]
         self.assertEqual(expected, ms.combine_intervals(mlist))
 
+        mlist = [(4, 6), (7, 8), (4, 26), (5, 7), (25, 26)]
+        expected = [(4, 26)]
+        self.assertEqual(expected, ms.combine_intervals(mlist))
+
         pass
 
 
