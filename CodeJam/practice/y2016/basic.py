@@ -1,6 +1,7 @@
 
 import heapq
 import itertools
+import collections
 
 
 def mergesort_J(alist):
@@ -336,7 +337,95 @@ class PriorityQueue(object):
 
 
 def solve_skyline(mlist):
-    return []
+    """ Solve the skyline problem.
+
+    :param mlist: list of buildings in format (start, end, height).
+    :return: List of end points
+    """
+
+    Point = collections.namedtuple('Point', ['x', 'y'])
+
+    def buildings_to_endpoints(building):
+        """ Convert (start, end, height) tuple to (start_point, end_point).
+        start_point and end_point are corners of the building.
+
+        :param building: (start, end, height) tuple
+        :return:
+        """
+        start, end, height = building
+        return Point(start, height), Point(end, 0)
+
+    def skyline(shapes):
+        """ Recursively solve the skyline problem.
+
+        :param shapes: list of shapes. Each shape is a list of multiple points.
+        :return: list of points for the skyline.
+        """
+        if len(shapes) <= 1:
+            return shapes
+
+        med = len(shapes)/2
+        left = skyline(shapes[:med])
+        right = skyline(shapes[med:])
+        return merge(left, right)
+
+    def merge(left, right):
+        out = []
+        lidx = 0
+        ridx = 0
+        staging = None
+
+        while lidx < len(left) and ridx < len(right):
+            if left[lidx][0].x < right[ridx][0].x:
+                merge_item(out, left[lidx], staging)
+                lidx += 1
+            else:
+                # merge right
+                merge_item(out, right[ridx], staging)
+                ridx += 1
+
+        while lidx < len(left):
+            # merge left
+            merge_item(out, left[lidx], staging)
+            lidx += 1
+
+        while ridx < len(right):
+            # merge right
+            merge_item(out, right[ridx], staging)
+            ridx += 1
+
+        # merge the last staging
+        if staging is not None:
+            out.extend(staging)
+
+        return out
+
+    def merge_item(out, shape, staging):
+        if staging is None:
+            staging = shape
+        else:
+            new_staging = overlap(staging, shape)
+            if new_staging is None:
+                # No overlapping
+                out.extend(staging)
+                staging = shape
+            else:
+                staging = new_staging
+
+        return staging
+
+    def overlap(shape1, shape2):
+        """ Check if two shapes are overlapping. Return combined shape if overlapped.
+
+        :param shape1: list of points for shape1
+        :param shape2: list of points for shape2
+        :return: The combined shape, None if the two shapes are not overlapping.
+        """
+        # TODO
+        return shape1
+
+    endpoints = [buildings_to_endpoints(building) for building in mlist]
+    return skyline(endpoints)
 
 
 def heap_sort(mlist):
