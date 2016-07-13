@@ -1,5 +1,6 @@
 
 import heapq
+import itertools
 
 
 def merge_sorted_lists(*lists):
@@ -132,3 +133,67 @@ def solve_skyline(mlist):
     :return: List of end points
     """
     return []
+
+
+class SkylineTracker(object):
+
+    REMOVED = "<removed-building>"
+
+    def __init__(self):
+        self.heap = []
+        self.entries = {}
+        self.counter = itertools.count()
+
+    def add_building(self, building, height=0):
+        """ Add building into the max heap.
+
+        :param building: building ID
+        :param height: height
+        :return:
+        """
+        if building in self.entries:
+            self.remove_building(building)
+
+        count = next(self.counter)
+        # weight = -height since heapq is a min-heap
+        entry = [-height, count, building]
+        self.entries[building] = entry
+        heapq.heappush(self.heap, entry)
+        pass
+
+    def remove_building(self, building):
+        """ Mark the given building as REMOVED.
+
+        Do this to avoid breaking heap-invariance of the internal heap.
+
+        :param building: building ID
+        :return:
+        """
+        entry = self.entries[building]
+        entry[-1] = SkylineTracker.REMOVED
+        pass
+
+    def pop_building(self):
+        """ Get highest building.
+
+        :return: Highest building
+        """
+        while self.heap:
+            height, count, building = heapq.heappop(self.heap)
+            if building is not SkylineTracker.REMOVED:
+                del self.entries[building]
+                return -height, building
+        raise KeyError("The priority queue is empty")
+
+    def peek_building(self):
+        """ Get highest building.
+
+        :return: Highest building
+        """
+        while self.heap:
+            height, count, building = self.heap[0]
+            if building is SkylineTracker.REMOVED:
+                heapq.heappop(self.heap)
+            else:
+                return -height, building
+

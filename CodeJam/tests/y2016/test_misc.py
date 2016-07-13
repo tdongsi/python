@@ -22,7 +22,6 @@ class TestSkyline(unittest.TestCase):
         buildings = [(1, 5, 11), (2, 7, 6), (3, 9, 13), (12, 16, 7), (14, 25, 3), (19, 22, 18), (23, 29, 13), (24, 28, 4)]
         skyline = [(1, 11), (3, 13), (9, 0), (12, 7), (16, 3), (19, 18), (22, 3), (23, 13), (29, 0)]
         self.assertEqual(ms.solve_skyline(buildings), skyline)
-
         pass
 
     def test_corner_cases(self):
@@ -30,6 +29,12 @@ class TestSkyline(unittest.TestCase):
         buildings = [(2, 5, 5), (2, 5, 9)]
         skyline = [(2, 9), (5, 0)]
         self.assertEqual(ms.solve_skyline(buildings), skyline)
+
+        # One building is right next to the other
+        buildings = [(2, 5, 5), (5, 8, 8)]
+        skyline = [(2, 5), (5, 8), (8, 0)]
+        self.assertEqual(ms.solve_skyline(buildings), skyline)
+        pass
 
 
 class TestCode(unittest.TestCase):
@@ -78,6 +83,40 @@ class TestCode(unittest.TestCase):
         self.assertEqual(expected, ms.combine_intervals(mlist))
 
         pass
+
+
+class TestSkylineTracker(unittest.TestCase):
+
+    def test_output(self):
+        """ Test SkylineTracker based on PriorityQueue tests.
+
+        :return:
+        """
+
+        queue = ms.SkylineTracker()
+        queue.add_building("Write code", 5)
+        queue.add_building("Write spec", 7)
+        queue.add_building("Create tests", 3)
+        queue.add_building("Write user docs", 1)
+
+        print queue
+
+        task = queue.pop_building()
+        self.assertEqual(task[1], "Write spec")
+
+        # Update priority of "Create tests"
+        queue.add_building("Create tests", 6)
+        print queue
+        task = queue.pop_building()
+        self.assertEqual(task[1], "Create tests")
+
+        # Remove task "Write user docs"
+        queue.remove_building("Write user docs")
+        print queue
+
+        task = queue.pop_building()
+        self.assertEqual(task[1], "Write code")
+        print queue
 
 
 class TestMisc(unittest.TestCase):
