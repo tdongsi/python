@@ -378,43 +378,9 @@ def overlap_pts(shape1, shape2):
     :param shape2: list of points for shape2
     :return: The combined shape, None if the two shapes are not overlapping.
     """
+    out = []
 
-    set1 = set(shape1)
-
-    # Assume shape1 is before shape2
-    if shape1[0].x > shape2[0].x:
-        shape1, shape2 = shape2, shape1
-
-    if shape1[-1].x < shape2[0].x:
-        # no overlapping
-        return None
-
-    income = shape1[:]
-    income.extend(shape2)
-    income.sort()
-    outcome = []
-    cur1 = 0
-    cur2 = 0
-    curmax = 0
-
-    for point in income:
-        if point in set1:
-            if point.y > cur2:
-                outcome.append(point)
-            elif cur2 != curmax:
-                outcome.append(Point(point.x, cur2))
-
-            cur1 = point.y
-            curmax = max(cur1, cur2)
-        else:
-            if point.y > cur1:
-                outcome.append(point)
-            elif cur1 != curmax:
-                outcome.append(Point(point.x, cur1))
-            cur2 = point.y
-            curmax = max(cur1, cur2)
-
-    return outcome
+    return out
 
 
 def solve_skyline(mlist):
@@ -440,61 +406,20 @@ def solve_skyline(mlist):
         :param shapes: list of shapes. Each shape is a list of multiple points.
         :return: list of points for the skyline.
         """
-        if len(shapes) <= 1:
+        if len(shapes) <= 2:
             return shapes
 
-        med = len(shapes)/2
+        building = len(shapes)/2
+        med = building/2
+        med *= 2
         left = skyline(shapes[:med])
         right = skyline(shapes[med:])
-        return merge(left, right)
+        return overlap_pts(left, right)
 
-    def merge(left, right):
-        out = []
-        lidx = 0
-        ridx = 0
-        staging = None
-
-        while lidx < len(left) and ridx < len(right):
-            if left[lidx][0].x < right[ridx][0].x:
-                merge_item(out, left[lidx], staging)
-                lidx += 1
-            else:
-                # merge right
-                merge_item(out, right[ridx], staging)
-                ridx += 1
-
-        while lidx < len(left):
-            # merge left
-            merge_item(out, left[lidx], staging)
-            lidx += 1
-
-        while ridx < len(right):
-            # merge right
-            merge_item(out, right[ridx], staging)
-            ridx += 1
-
-        # merge the last staging
-        if staging is not None:
-            out.extend(staging)
-
-        return out
-
-    def merge_item(out, shape, staging):
-        if staging is None:
-            staging = shape
-        else:
-            new_staging = overlap(staging, shape)
-            if new_staging is None:
-                # No overlapping
-                out.extend(staging)
-                staging = shape
-            else:
-                staging = new_staging
-
-        return staging
-
-    endpoints = [buildings_to_endpoints(building) for building in mlist]
-    return skyline(endpoints)
+    endpoints = []
+    for building in mlist:
+        endpoints.extend(buildings_to_endpoints(building))
+    return [(pt.x, pt.y) for pt in skyline(endpoints)]
 
 
 def heap_sort(mlist):
