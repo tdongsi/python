@@ -95,3 +95,12 @@ def overlap(interval1, interval2):
         return interval1[0], max(interval1[1], interval2[1])
     else:
         return None
+
+
+def solve_skyline(mlist):
+    """ Solve the skyline problem.
+
+    :param mlist: list of buildings in format (start, end, height).
+    :return: List of end points
+    """
+    return []

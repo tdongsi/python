@@ -339,6 +339,24 @@ class PriorityQueue(object):
 Point = collections.namedtuple('Point', ['x', 'y'])
 
 
+def overlap_rect(shape1, shape2):
+    """ Check if two shapes are overlapping. Return combined shape if overlapped.
+
+    :param shape1: list of rects for shape1
+    :param shape2: list of rects for shape2
+    :return: The combined shape, None if the two shapes are not overlapping.
+    """
+
+    # Assume shape1 is before shape2
+    if shape1[0][0].x > shape2[0][0].x:
+        shape1, shape2 = shape2, shape1
+
+    if shape1[-1][1].x < shape2[0][0].x:
+        # no overlapping
+        return None
+    # TODO
+
+
 def overlap_pts(shape1, shape2):
     """ Check if two shapes are overlapping. Return combined shape if overlapped.
 

@@ -4,6 +4,34 @@ import practice.y2016.dp as dp
 import practice.y2016.misc as ms
 
 
+class TestSkyline(unittest.TestCase):
+
+    def test_inout(self):
+        buildings = [(2, 9, 10), (3, 6, 15), (5, 12, 12), (13, 16, 10), (13, 16, 10), (15, 17, 5)]
+        skyline = [(2, 10), (3, 15), (6, 12), (12, 0), (13, 10), (16, 5), (17, 0)]
+        self.assertEqual(ms.solve_skyline(buildings), skyline)
+
+        buildings = [(2, 9, 10), (3, 7, 15), (5, 12, 12), (15, 20, 10), (19, 24, 8)]
+        skyline = [(2, 10), (3, 15), (7, 12), (12, 0), (15, 10), (20, 8), (24, 0)]
+        self.assertEqual(ms.solve_skyline(buildings), skyline)
+
+        buildings = [(1,11,5), (2,6,7), (3,13,9), (12,7,16), (14,3,25), (19,18,22), (23,13,29), (24,4,28)]
+        skyline = [(1, 11), (3, 13), (9, 0), (12, 7), (16, 3), (19, 18), (22, 3), (25, 0)]
+        self.assertEqual(ms.solve_skyline(buildings), skyline)
+
+        buildings = [(1, 5, 11), (2, 7, 6), (3, 9, 13), (12, 16, 7), (14, 25, 3), (19, 22, 18), (23, 29, 13), (24, 28, 4)]
+        skyline = [(1, 11), (3, 13), (9, 0), (12, 7), (16, 3), (19, 18), (22, 3), (23, 13), (29, 0)]
+        self.assertEqual(ms.solve_skyline(buildings), skyline)
+
+        pass
+
+    def test_corner_cases(self):
+        # One building completely overlap on the other
+        buildings = [(2, 5, 5), (2, 5, 9)]
+        skyline = [(2, 9), (5, 0)]
+        self.assertEqual(ms.solve_skyline(buildings), skyline)
+
+
 class TestCode(unittest.TestCase):
 
     def test_merge_k_lists(self):
