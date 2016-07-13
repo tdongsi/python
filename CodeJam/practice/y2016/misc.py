@@ -132,7 +132,56 @@ def solve_skyline(mlist):
     :param mlist: list of buildings in format (start, end, height).
     :return: List of end points
     """
-    return []
+
+    skyline = []
+    cur_height = 0
+    pq = SkylineTracker()
+    events = []
+    START = "start"
+    END = "end"
+
+    for idx in range(len(mlist)):
+        start, end, height = mlist[idx]
+        events.append((start, idx, START))
+        events.append((end, idx, END))
+
+    events.sort()
+
+    for event in events:
+        print skyline
+        x, idx, label = event
+        height = mlist[idx][2]
+
+        if label == START:
+            pq.add_building(idx, height)
+            after, _ = pq.peek_building()
+            if after != cur_height:
+                skyline.append((x, after))
+                cur_height = after
+        elif label == END:
+            pq.remove_building(idx)
+            tuple = pq.peek_building()
+            after = 0
+            if tuple is not None:
+                after = tuple[0]
+            if after != cur_height:
+                skyline.append((x, after))
+                cur_height = after
+
+    # merge skyline points with same x
+    staging = skyline[0]
+    out = []
+    for idx in range(1, len(skyline)):
+        if staging[0] != skyline[idx][0]:
+            out.append(staging)
+            staging = skyline[idx]
+        else:
+            new_staging = (staging[0], max(staging[1], skyline[idx][1]))
+            staging = new_staging
+    # append the last point
+    out.append(staging)
+
+    return out
 
 
 class SkylineTracker(object):
