@@ -7,12 +7,10 @@ import practice.y2016.misc as ms
 class TestSkyline(unittest.TestCase):
 
     def test_debug(self):
-        """ Test case from http://www.geeksforgeeks.org/divide-and-conquer-set-7-the-skyline-problem/
-        """
-        buildings_wrong = [(1,11,5), (2,6,7), (3,13,9), (12,7,16), (14,3,25), (19,18,22), (23,13,29), (24,4,28)]
-        buildings = [(building[0], building[2], building[1]) for building in buildings_wrong]
-        skyline = [(1, 11), (3, 13), (9, 0), (12, 7), (16, 3), (19, 18), (22, 3), (23, 13), (29, 0)]
+        buildings = [(2, 5, 5), (5, 8, 8), (2, 8, 3)]
+        skyline = [(2, 5), (5, 8), (8, 0)]
         self.assertEqual(ms.solve_skyline(buildings), skyline)
+        pass
 
     def test_inout(self):
         buildings = [(2, 9, 10), (3, 6, 15), (5, 12, 12), (13, 16, 10), (13, 16, 10), (15, 17, 5)]
@@ -24,6 +22,13 @@ class TestSkyline(unittest.TestCase):
         self.assertEqual(ms.solve_skyline(buildings), skyline)
 
         buildings = [(1, 5, 11), (2, 7, 6), (3, 9, 13), (12, 16, 7), (14, 25, 3), (19, 22, 18), (23, 29, 13), (24, 28, 4)]
+        skyline = [(1, 11), (3, 13), (9, 0), (12, 7), (16, 3), (19, 18), (22, 3), (23, 13), (29, 0)]
+        self.assertEqual(ms.solve_skyline(buildings), skyline)
+
+        """ Test case from http://www.geeksforgeeks.org/divide-and-conquer-set-7-the-skyline-problem/
+        """
+        buildings_wrong = [(1,11,5), (2,6,7), (3,13,9), (12,7,16), (14,3,25), (19,18,22), (23,13,29), (24,4,28)]
+        buildings = [(building[0], building[2], building[1]) for building in buildings_wrong]
         skyline = [(1, 11), (3, 13), (9, 0), (12, 7), (16, 3), (19, 18), (22, 3), (23, 13), (29, 0)]
         self.assertEqual(ms.solve_skyline(buildings), skyline)
         pass

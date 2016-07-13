@@ -155,19 +155,16 @@ def solve_skyline(mlist):
 
         if label == START:
             pq.add_building(idx, height)
-            after, _ = pq.peek_building()
-            if after != cur_height:
-                skyline.append((x, after))
-                cur_height = after
         elif label == END:
             pq.remove_building(idx)
-            tuple = pq.peek_building()
-            after = 0
-            if tuple is not None:
-                after = tuple[0]
-            if after != cur_height:
-                skyline.append((x, after))
-                cur_height = after
+
+        tuple = pq.peek_building()
+        after = 0
+        if tuple is not None:
+            after = tuple[0]
+        if after != cur_height:
+            skyline.append((x, after))
+            cur_height = after
 
     # merge skyline points with same x
     print skyline
