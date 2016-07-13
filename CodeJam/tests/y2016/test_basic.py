@@ -2,6 +2,7 @@
 import unittest
 import random
 
+import practice.y2016.basic as basic
 from practice.y2016.basic import solve_skyline as solve_skyline
 
 from practice.y2016.basic import mergesort_J as do_sort
@@ -89,6 +90,22 @@ class TestBasic(unittest.TestCase):
 
 
 class TestSkyline(unittest.TestCase):
+
+    def test_overlap(self):
+        first = [(1, 4), (3, 6), (9, 5), (11, 0)]
+        second = [(2, 3), (6, 8), (8, 4), (10, 7), (12, 0)]
+        out = [(1, 4), (3, 6), (6, 8), (8, 6), (9, 5), (10, 7), (12, 0)]
+        out_shape = [basic.Point(e[0], e[1]) for e in out]
+
+        shape1 = [basic.Point(e[0], e[1]) for e in first]
+        shape2 = [basic.Point(e[0], e[1]) for e in second]
+        self.assertEqual(out_shape, basic.overlap(shape1, shape2))
+
+        shape1 = [basic.Point(e[0], e[1]) for e in second]
+        shape2 = [basic.Point(e[0], e[1]) for e in first]
+        self.assertEqual(out_shape, basic.overlap(shape1, shape2))
+        pass
+
 
     def test_inout(self):
         buildings = [(2, 9, 10), (3, 6, 15), (5, 12, 12), (13, 16, 10), (13, 16, 10), (15, 17, 5)]

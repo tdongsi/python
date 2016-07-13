@@ -336,14 +336,59 @@ class PriorityQueue(object):
         return "[%s]" % ", ".join(temp)
 
 
+Point = collections.namedtuple('Point', ['x', 'y'])
+
+
+def overlap(shape1, shape2):
+    """ Check if two shapes are overlapping. Return combined shape if overlapped.
+
+    :param shape1: list of points for shape1
+    :param shape2: list of points for shape2
+    :return: The combined shape, None if the two shapes are not overlapping.
+    """
+
+    # Assume shape1 is before shape2
+    if shape1[0].x > shape2[0].x:
+        shape1, shape2 = shape2, shape1
+
+    if shape1[-1].x < shape2[0].x:
+        # no overlapping
+        return None
+
+    income = shape1[:]
+    income.extend(shape2)
+    income.sort()
+    outcome = []
+    cur1 = 0
+    cur2 = 0
+    curmax = 0
+
+    for point in income:
+        if point in shape1:
+            if point.y > cur2:
+                outcome.append(point)
+            elif cur2 != curmax:
+                outcome.append(Point(point.x, cur2))
+
+            cur1 = point.y
+            curmax = max(cur1, cur2)
+        else:
+            if point.y > cur1:
+                outcome.append(point)
+            elif cur1 != curmax:
+                outcome.append(Point(point.x, cur1))
+            cur2 = point.y
+            curmax = max(cur1, cur2)
+
+    return outcome
+
+
 def solve_skyline(mlist):
     """ Solve the skyline problem.
 
     :param mlist: list of buildings in format (start, end, height).
     :return: List of end points
     """
-
-    Point = collections.namedtuple('Point', ['x', 'y'])
 
     def buildings_to_endpoints(building):
         """ Convert (start, end, height) tuple to (start_point, end_point).
@@ -413,16 +458,6 @@ def solve_skyline(mlist):
                 staging = new_staging
 
         return staging
-
-    def overlap(shape1, shape2):
-        """ Check if two shapes are overlapping. Return combined shape if overlapped.
-
-        :param shape1: list of points for shape1
-        :param shape2: list of points for shape2
-        :return: The combined shape, None if the two shapes are not overlapping.
-        """
-        # TODO
-        return shape1
 
     endpoints = [buildings_to_endpoints(building) for building in mlist]
     return skyline(endpoints)
