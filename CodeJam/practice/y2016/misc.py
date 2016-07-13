@@ -127,7 +127,7 @@ def combine_intervals(alist):
 
 
 def solve_skyline(mlist):
-    """ Solve the skyline problem.
+    """ Solve the Skyline problem.
 
     :param mlist: list of buildings in format (start, end, height).
     :return: List of end points
@@ -147,8 +147,9 @@ def solve_skyline(mlist):
 
     events.sort()
 
+    # Add and remove buildings into a priority-queue (SkylineTracker) for each event.
     for event in events:
-        print skyline
+        # print skyline
         x, idx, label = event
         height = mlist[idx][2]
 
@@ -169,6 +170,7 @@ def solve_skyline(mlist):
                 cur_height = after
 
     # merge skyline points with same x
+    print skyline
     staging = skyline[0]
     out = []
     for idx in range(1, len(skyline)):
@@ -185,6 +187,9 @@ def solve_skyline(mlist):
 
 
 class SkylineTracker(object):
+    """ Supporting class for solving Skyline problem.
+    A heap-based priority-queue for buildings.
+    """
 
     REMOVED = "<removed-building>"
 
