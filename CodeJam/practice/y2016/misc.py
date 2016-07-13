@@ -157,12 +157,12 @@ def solve_skyline(mlist):
         for e in buildings:
             idx, label = e
             if label == START:
-                pq.add_building(idx, mlist[idx][2])
+                pq.add(idx, mlist[idx][2])
             elif label == END:
-                pq.remove_building(idx)
+                pq.remove(idx)
 
         # after processing all buildings for a x-coordinate "key", check the highest building
-        tuple = pq.peek_building()
+        tuple = pq.peek()
         after = 0
         if tuple is not None:
             after = tuple[0]
@@ -178,14 +178,14 @@ class SkylineTracker(object):
     A heap-based priority-queue for buildings.
     """
 
-    REMOVED = "<removed-building>"
+    REMOVED = "<REMOVED>"
 
     def __init__(self):
         self.heap = []
         self.entries = {}
         self.counter = itertools.count()
 
-    def add_building(self, building, height=0):
+    def add(self, building, height=0):
         """ Add building into the max heap.
 
         :param building: building ID
@@ -193,7 +193,7 @@ class SkylineTracker(object):
         :return:
         """
         if building in self.entries:
-            self.remove_building(building)
+            self.remove(building)
 
         count = next(self.counter)
         # weight = -height since heapq is a min-heap
@@ -202,7 +202,7 @@ class SkylineTracker(object):
         heapq.heappush(self.heap, entry)
         pass
 
-    def remove_building(self, building):
+    def remove(self, building):
         """ Mark the given building as REMOVED.
 
         Do this to avoid breaking heap-invariance of the internal heap.
@@ -214,7 +214,7 @@ class SkylineTracker(object):
         entry[-1] = SkylineTracker.REMOVED
         pass
 
-    def pop_building(self):
+    def pop(self):
         """ Get highest building.
 
         :return: Highest building
@@ -226,7 +226,7 @@ class SkylineTracker(object):
                 return -height, building
         raise KeyError("The priority queue is empty")
 
-    def peek_building(self):
+    def peek(self):
         """ Get highest building.
 
         :return: Highest building
@@ -239,4 +239,8 @@ class SkylineTracker(object):
                 return -height, building
 
         return None
+
+    def __str__(self):
+        temp = [str(e) for e in self.heap if e[-1] is not SkylineTracker.REMOVED]
+        return "[%s]" % ", ".join(temp)
 

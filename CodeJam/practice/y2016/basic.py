@@ -289,16 +289,16 @@ def reverse_words(inputs):
 
 class PriorityQueue(object):
 
-    REMOVED = "<removed-task>"
+    REMOVED = "<REMOVED>"
 
     def __init__(self):
         self.heap = []
         self.entries = {}
         self.counter = itertools.count()
 
-    def add_task(self, task, priority=0):
+    def add(self, task, priority=0):
         if task in self.entries:
-            self.remove_task(task)
+            self.remove(task)
 
         count = next(self.counter)
         # weight = -priority since heapq is a min-heap
@@ -307,7 +307,7 @@ class PriorityQueue(object):
         heapq.heappush(self.heap, entry)
         pass
 
-    def remove_task(self, task):
+    def remove(self, task):
         """ Mark the given task as REMOVED.
 
         Do this to avoid breaking heap-invariance of the internal heap.
@@ -319,7 +319,7 @@ class PriorityQueue(object):
         entry[-1] = PriorityQueue.REMOVED
         pass
 
-    def pop_task(self):
+    def pop(self):
         """ Get task with highest priority.
 
         :return: Task with highest priority
@@ -330,6 +330,20 @@ class PriorityQueue(object):
                 del self.entries[task]
                 return task
         raise KeyError("The priority queue is empty")
+
+    def peek(self):
+        """ Check task with highest priority, without removing.
+
+        :return: Task with highest priority
+        """
+        while self.heap:
+            weight, count, task = self.heap[0]
+            if task is PriorityQueue.REMOVED:
+                heapq.heappop(self.heap)
+            else:
+                return -weight, task
+
+        return None
 
     def __str__(self):
         temp = [str(e) for e in self.heap if e[-1] is not PriorityQueue.REMOVED]

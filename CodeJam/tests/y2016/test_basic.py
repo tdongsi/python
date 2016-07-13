@@ -138,27 +138,27 @@ class TestPriorityQueue(unittest.TestCase):
     def test_output(self):
 
         queue = PriorityQueue()
-        queue.add_task("Write code", 5)
-        queue.add_task("Write spec", 7)
-        queue.add_task("Create tests", 3)
-        queue.add_task("Write user docs", 1)
+        queue.add("Write code", 5)
+        queue.add("Write spec", 7)
+        queue.add("Create tests", 3)
+        queue.add("Write user docs", 1)
 
         print queue
 
-        task = queue.pop_task()
+        task = queue.pop()
         self.assertEqual(task, "Write spec")
 
         # Update priority of "Create tests"
-        queue.add_task("Create tests", 6)
+        queue.add("Create tests", 6)
         print queue
-        task = queue.pop_task()
+        task = queue.pop()
         self.assertEqual(task, "Create tests")
 
         # Remove task "Write user docs"
-        queue.remove_task("Write user docs")
+        queue.remove("Write user docs")
         print queue
 
-        task = queue.pop_task()
+        task = queue.pop()
         self.assertEqual(task, "Write code")
         print queue
 

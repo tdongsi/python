@@ -111,32 +111,32 @@ class TestSkylineTracker(unittest.TestCase):
         """
 
         queue = ms.SkylineTracker()
-        queue.add_building("Write code", 5)
-        self.assertEqual((5, "Write code"), queue.peek_building())
-        queue.add_building("Write spec", 7)
-        self.assertEqual((7, "Write spec"), queue.peek_building())
-        queue.add_building("Create tests", 3)
-        self.assertEqual((7, "Write spec"), queue.peek_building())
-        queue.add_building("Write user docs", 1)
-        self.assertEqual((7, "Write spec"), queue.peek_building())
+        queue.add("Write code", 5)
+        self.assertEqual((5, "Write code"), queue.peek())
+        queue.add("Write spec", 7)
+        self.assertEqual((7, "Write spec"), queue.peek())
+        queue.add("Create tests", 3)
+        self.assertEqual((7, "Write spec"), queue.peek())
+        queue.add("Write user docs", 1)
+        self.assertEqual((7, "Write spec"), queue.peek())
 
-        task = queue.pop_building()
+        task = queue.pop()
         self.assertEqual(task[1], "Write spec")
-        self.assertEqual((5, "Write code"), queue.peek_building())
+        self.assertEqual((5, "Write code"), queue.peek())
 
         # Update priority of "Create tests"
-        queue.add_building("Create tests", 6)
-        self.assertEqual((6, "Create tests"), queue.peek_building())
-        task = queue.pop_building()
+        queue.add("Create tests", 6)
+        self.assertEqual((6, "Create tests"), queue.peek())
+        task = queue.pop()
         self.assertEqual(task[1], "Create tests")
 
         # Remove task "Write user docs"
-        queue.remove_building("Write user docs")
-        self.assertEqual((5, "Write code"), queue.peek_building())
+        queue.remove("Write user docs")
+        self.assertEqual((5, "Write code"), queue.peek())
 
-        task = queue.pop_building()
+        task = queue.pop()
         self.assertEqual(task[1], "Write code")
-        self.assertEqual(None, queue.peek_building())
+        self.assertEqual(None, queue.peek())
 
 
 class TestMisc(unittest.TestCase):
