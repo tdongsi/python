@@ -197,3 +197,5 @@ class SkylineTracker(object):
             else:
                 return -height, building
 
+        return None
+
