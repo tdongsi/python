@@ -1,6 +1,7 @@
 
 import heapq
 import itertools
+from collections import defaultdict
 
 
 def merge_sorted_lists(*lists):
@@ -136,51 +137,40 @@ def solve_skyline(mlist):
     skyline = []
     cur_height = 0
     pq = SkylineTracker()
-    events = []
+    events = defaultdict(list)
     START = "start"
     END = "end"
 
     for idx in range(len(mlist)):
         start, end, height = mlist[idx]
-        events.append((start, idx, START))
-        events.append((end, idx, END))
+        events[start].append((idx, START))
+        events[end].append((idx, END))
 
-    events.sort()
+    # k_events is the ordered list of x-coordinates where buildings start or end (events)
+    k_events = sorted(events.keys())
 
     # Add and remove buildings into a priority-queue (SkylineTracker) for each event.
-    for event in events:
+    for key in k_events:
         # print skyline
-        x, idx, label = event
-        height = mlist[idx][2]
+        buildings = events[key]
 
-        if label == START:
-            pq.add_building(idx, height)
-        elif label == END:
-            pq.remove_building(idx)
+        for e in buildings:
+            idx, label = e
+            if label == START:
+                pq.add_building(idx, mlist[idx][2])
+            elif label == END:
+                pq.remove_building(idx)
 
+        # after processing all buildings for a x-coordinate "key", check the highest building
         tuple = pq.peek_building()
         after = 0
         if tuple is not None:
             after = tuple[0]
         if after != cur_height:
-            skyline.append((x, after))
+            skyline.append((key, after))
             cur_height = after
 
-    # merge skyline points with same x
-    print skyline
-    staging = skyline[0]
-    out = []
-    for idx in range(1, len(skyline)):
-        if staging[0] != skyline[idx][0]:
-            out.append(staging)
-            staging = skyline[idx]
-        else:
-            new_staging = (staging[0], max(staging[1], skyline[idx][1]))
-            staging = new_staging
-    # append the last point
-    out.append(staging)
-
-    return out
+    return skyline
 
 
 class SkylineTracker(object):
