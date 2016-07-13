@@ -99,11 +99,11 @@ class TestSkyline(unittest.TestCase):
 
         shape1 = [basic.Point(e[0], e[1]) for e in first]
         shape2 = [basic.Point(e[0], e[1]) for e in second]
-        self.assertEqual(out_shape, basic.overlap(shape1, shape2))
+        self.assertEqual(out_shape, basic.overlap_pts(shape1, shape2))
 
         shape1 = [basic.Point(e[0], e[1]) for e in second]
         shape2 = [basic.Point(e[0], e[1]) for e in first]
-        self.assertEqual(out_shape, basic.overlap(shape1, shape2))
+        self.assertEqual(out_shape, basic.overlap_pts(shape1, shape2))
         pass
 
 
