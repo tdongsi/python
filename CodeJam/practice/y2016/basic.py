@@ -328,7 +328,7 @@ class PriorityQueue(object):
             weight, count, task = heapq.heappop(self.heap)
             if task is not PriorityQueue.REMOVED:
                 del self.entries[task]
-                return task
+                return -weight, task
         raise KeyError("The priority queue is empty")
 
     def peek(self):

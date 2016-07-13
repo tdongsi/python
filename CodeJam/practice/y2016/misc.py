@@ -2,6 +2,7 @@
 import heapq
 import itertools
 from collections import defaultdict
+from practice.y2016.basic import PriorityQueue
 
 
 def merge_sorted_lists(*lists):
@@ -136,7 +137,7 @@ def solve_skyline(mlist):
 
     skyline = []
     cur_height = 0
-    pq = SkylineTracker()
+    pq = PriorityQueue()
     events = defaultdict(list)
     START = "start"
     END = "end"
@@ -161,7 +162,7 @@ def solve_skyline(mlist):
             elif label == END:
                 pq.remove(idx)
 
-        # after processing all buildings for a x-coordinate "key", check the highest building
+        # after processing all buildings for a x-coordinate "key", check the current highest building
         tuple = pq.peek()
         after = 0
         if tuple is not None:
