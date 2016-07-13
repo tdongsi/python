@@ -379,6 +379,56 @@ def overlap_pts(shape1, shape2):
     :return: The combined shape, None if the two shapes are not overlapping.
     """
     out = []
+    cur_y = 0
+    lidx = 0
+    ridx = 0
+    l_y = 0
+    r_y = 0
+
+    while lidx < len(shape1) and ridx < len(shape2):
+        if shape1[lidx].x < shape2[ridx].x:
+            cur_x = shape1[lidx].x
+            l_y = shape1[lidx].y
+            if max(l_y, r_y) != cur_y:
+                cur_y = max(l_y, r_y)
+                out.append(Point(cur_x, cur_y))
+            lidx += 1
+
+        elif shape1[lidx].x > shape2[ridx].x:
+            cur_x = shape2[ridx].x
+            r_y = shape2[ridx].y
+            if max(l_y, r_y) != cur_y:
+                cur_y = max(l_y, r_y)
+                out.append(Point(cur_x, cur_y))
+            ridx += 1
+
+        else:
+            # shape1[lidx].x == shape2[ridx].x
+            cur_x = shape1[lidx].x
+            l_y = shape1[lidx].y
+            r_y = shape2[ridx].y
+            max_y = max(l_y, r_y)
+            if max_y != cur_y:
+                cur_y = max_y
+                out.append(Point(cur_x, cur_y))
+                lidx += 1
+                ridx += 1
+
+    while lidx < len(shape1):
+        cur_x = shape1[lidx].x
+        l_y = shape1[lidx].y
+        if max(l_y, r_y) != cur_y:
+            cur_y = max(l_y, r_y)
+            out.append(Point(cur_x, cur_y))
+        lidx += 1
+
+    while ridx < len(shape2):
+        cur_x = shape2[ridx].x
+        r_y = shape2[ridx].y
+        if max(l_y, r_y) != cur_y:
+            cur_y = max(l_y, r_y)
+            out.append(Point(cur_x, cur_y))
+        ridx += 1
 
     return out
 

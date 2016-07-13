@@ -98,6 +98,12 @@ class TestSkyline(unittest.TestCase):
         self.assertEqual(out_shape, basic.overlap_pts(shape1, shape2))
         return out_shape
 
+    def test_debug(self):
+        first = [(1, 4), (3, 6), (9, 5), (11, 0)]
+        second = [(2, 3), (6, 8), (8, 4), (10, 7), (12, 0)]
+        out = [(1, 4), (3, 6), (6, 8), (8, 6), (9, 5), (10, 7), (12, 0)]
+        self.check(first, second, out)
+
     def test_overlap(self):
         first = [(1, 4), (3, 6), (9, 5), (11, 0)]
         second = [(2, 3), (6, 8), (8, 4), (10, 7), (12, 0)]
@@ -123,8 +129,9 @@ class TestSkyline(unittest.TestCase):
         skyline = [(2, 10), (3, 15), (7, 12), (12, 0), (15, 10), (20, 8), (24, 0)]
         self.assertEqual(solve_skyline(buildings), skyline)
 
-        buildings = [(1,11,5), (2,6,7), (3,13,9), (12,7,16), (14,3,25), (19,18,22), (23,13,29), (24,4,28)]
-        skyline = [(1, 11), (3, 13), (9, 0), (12, 7), (16, 3), (19, 18), (22, 3), (25, 0)]
+        buildings_wrong = [(1,11,5), (2,6,7), (3,13,9), (12,7,16), (14,3,25), (19,18,22), (23,13,29), (24,4,28)]
+        buildings = [(building[0], building[2], building[1]) for building in buildings_wrong]
+        skyline = [(1, 11), (3, 13), (9, 0), (12, 7), (16, 3), (19, 18), (22, 3), (23, 13), (29, 0)]
         self.assertEqual(solve_skyline(buildings), skyline)
 
         buildings = [(1, 5, 11), (2, 7, 6), (3, 9, 13), (12, 16, 7), (14, 25, 3), (19, 22, 18), (23, 29, 13), (24, 28, 4)]
