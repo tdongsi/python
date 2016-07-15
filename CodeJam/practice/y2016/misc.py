@@ -150,7 +150,7 @@ def solve_skyline(mlist):
     # k_events is the ordered list of x-coordinates where buildings start or end (events)
     k_events = sorted(events.keys())
 
-    # Add and remove buildings into a priority-queue (SkylineTracker) for each event.
+    # Add and remove buildings into a priority-queue for each event.
     for key in k_events:
         # print skyline
         buildings = events[key]
@@ -163,13 +163,13 @@ def solve_skyline(mlist):
                 pq.remove(idx)
 
         # after processing all buildings for a x-coordinate "key", check the current highest building
-        tuple = pq.peek()
-        after = 0
-        if tuple is not None:
-            after = tuple[0]
-        if after != cur_height:
-            skyline.append((key, after))
-            cur_height = after
+        temp = pq.peek()
+        new_height = 0
+        if temp is not None:
+            new_height = temp[0]
+        if new_height != cur_height:
+            skyline.append((key, new_height))
+            cur_height = new_height
 
     return skyline
 
