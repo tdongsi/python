@@ -1,29 +1,7 @@
 
 import heapq
 import itertools
-
-
-def binary_search_June(alist, item, start=0, end=None):
-    if end is None:
-        end = len(alist)
-
-    if start == end:
-        # empty list
-        return -1
-    elif start == end-1:
-        # singleton list
-        if alist[start] == item:
-            return start
-        else:
-            return -1
-    else:
-        med = (start+end) // 2
-        if alist[med] == item:
-            return med
-        elif alist[med] > item:
-            return binary_search_June(alist, item, start, med)
-        else:
-            return binary_search_June(alist, item, med+1, end)
+import collections
 
 
 def insertion_sort(mlist):
@@ -40,35 +18,6 @@ def insertion_sort(mlist):
         mlist[pos] = cur
 
     return mlist
-
-
-def mergesort_June(mlist):
-
-    def merge(left, right):
-
-        out = []
-        idx1 = 0
-        idx2 = 0
-
-        while idx1 < len(left) and idx2 < len(right):
-            if left[idx1] < right[idx2]:
-                out.append(left[idx1])
-                idx1 += 1
-            else:
-                out.append(right[idx2])
-                idx2 += 1
-
-        out.extend(left[idx1:])
-        out.extend(right[idx2:])
-        return out
-
-    if len(mlist) <= 1:
-        return mlist
-    else:
-        mid = len(mlist)/2
-        left = mergesort_June(mlist[:mid])
-        right = mergesort_June(mlist[mid:])
-        return merge(left, right)
 
 
 def rotate(matrix):
@@ -232,55 +181,167 @@ def reverse_words(inputs):
 
 class PriorityQueue(object):
 
-    REMOVED = "<removed-task>"
+    _REMOVED = "<REMOVED>"
 
     def __init__(self):
         self.heap = []
         self.entries = {}
         self.counter = itertools.count()
 
-    def add_task(self, task, priority=0):
+    def add(self, task, priority=0):
+        """Add a new task or update the priority of an existing task"""
         if task in self.entries:
-            self.remove_task(task)
+            self.remove(task)
 
         count = next(self.counter)
-        # weight = -priority since heapq is a min-heap
+        # weight = -priority since heap is a min-heap
         entry = [-priority, count, task]
         self.entries[task] = entry
         heapq.heappush(self.heap, entry)
         pass
 
-    def remove_task(self, task):
+    def remove(self, task):
         """ Mark the given task as REMOVED.
 
         Do this to avoid breaking heap-invariance of the internal heap.
-
-        :param task:
-        :return:
         """
         entry = self.entries[task]
-        entry[-1] = PriorityQueue.REMOVED
+        entry[-1] = PriorityQueue._REMOVED
         pass
 
-    def pop_task(self):
+    def pop(self):
         """ Get task with highest priority.
 
-        :return: Task with highest priority
+        :return: Priority, Task with highest priority
         """
         while self.heap:
             weight, count, task = heapq.heappop(self.heap)
-            if task is not PriorityQueue.REMOVED:
+            if task is not PriorityQueue._REMOVED:
                 del self.entries[task]
-                return task
+                return -weight, task
         raise KeyError("The priority queue is empty")
 
+    def peek(self):
+        """ Check task with highest priority, without removing.
+
+        :return: Priority, Task with highest priority
+        """
+        while self.heap:
+            weight, count, task = self.heap[0]
+            if task is PriorityQueue._REMOVED:
+                heapq.heappop(self.heap)
+            else:
+                return -weight, task
+
+        return None
+
     def __str__(self):
-        temp = [str(e) for e in self.heap if e[-1] is not PriorityQueue.REMOVED]
+        temp = [str(e) for e in self.heap if e[-1] is not PriorityQueue._REMOVED]
         return "[%s]" % ", ".join(temp)
 
 
+Point = collections.namedtuple('Point', ['x', 'y'])
+
+
+def merge_skyline(shape1, shape2):
+    """ Check if two shapes are overlapping. Return combined shape if overlapped.
+
+    :param shape1: list of points for shape1
+    :param shape2: list of points for shape2
+    :return: The combined shape, None if the two shapes are not overlapping.
+    """
+    out = []
+    cur_y = 0
+    lidx = 0
+    ridx = 0
+    l_y = 0
+    r_y = 0
+
+    while lidx < len(shape1) and ridx < len(shape2):
+        if shape1[lidx].x < shape2[ridx].x:
+            cur_x = shape1[lidx].x
+            l_y = shape1[lidx].y
+            if max(l_y, r_y) != cur_y:
+                cur_y = max(l_y, r_y)
+                out.append(Point(cur_x, cur_y))
+            lidx += 1
+
+        elif shape1[lidx].x > shape2[ridx].x:
+            cur_x = shape2[ridx].x
+            r_y = shape2[ridx].y
+            if max(l_y, r_y) != cur_y:
+                cur_y = max(l_y, r_y)
+                out.append(Point(cur_x, cur_y))
+            ridx += 1
+
+        else:
+            # shape1[lidx].x == shape2[ridx].x
+            cur_x = shape1[lidx].x
+            l_y = shape1[lidx].y
+            r_y = shape2[ridx].y
+            max_y = max(l_y, r_y)
+            if max_y != cur_y:
+                cur_y = max_y
+                out.append(Point(cur_x, cur_y))
+                lidx += 1
+                ridx += 1
+
+    while lidx < len(shape1):
+        cur_x = shape1[lidx].x
+        l_y = shape1[lidx].y
+        if max(l_y, r_y) != cur_y:
+            cur_y = max(l_y, r_y)
+            out.append(Point(cur_x, cur_y))
+        lidx += 1
+
+    while ridx < len(shape2):
+        cur_x = shape2[ridx].x
+        r_y = shape2[ridx].y
+        if max(l_y, r_y) != cur_y:
+            cur_y = max(l_y, r_y)
+            out.append(Point(cur_x, cur_y))
+        ridx += 1
+
+    return out
+
+
 def solve_skyline(mlist):
-    return []
+    """ Solve the skyline problem.
+
+    :param mlist: list of buildings in format (start, end, height).
+    :return: List of end points
+    """
+
+    def buildings_to_endpoints(building):
+        """ Convert (start, end, height) tuple to (start_point, end_point).
+        start_point and end_point are corners of the building.
+
+        :param building: (start, end, height) tuple
+        :return:
+        """
+        start, end, height = building
+        return Point(start, height), Point(end, 0)
+
+    def skyline(shapes):
+        """ Recursively solve the skyline problem.
+
+        :param shapes: list of shapes. Each shape is a list of multiple points.
+        :return: list of points for the skyline.
+        """
+        if len(shapes) <= 2:
+            return shapes
+
+        building = len(shapes)/2
+        med = building/2
+        med *= 2
+        left = skyline(shapes[:med])
+        right = skyline(shapes[med:])
+        return merge_skyline(left, right)
+
+    endpoints = []
+    for building in mlist:
+        endpoints.extend(buildings_to_endpoints(building))
+    return [(pt.x, pt.y) for pt in skyline(endpoints)]
 
 
 def heap_sort(mlist):
