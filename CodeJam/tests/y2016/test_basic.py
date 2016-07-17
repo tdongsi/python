@@ -5,10 +5,10 @@ import random
 import practice.y2016.basic as basic
 from practice.y2016.basic import solve_skyline as solve_skyline
 
-from practice.y2016.basic import mergesort_J as do_sort
+from practice.y2016.basic import merge_sort as do_sort
 from practice.y2016.basic import PriorityQueue as PriorityQueue
 
-from practice.y2016.basic import binary_search_June as binary_search
+from practice.y2016.basic import binary_search as binary_search
 from practice.y2016.basic import atoi as atoi
 from practice.y2016.basic import reverse_words
 from practice.y2016.basic import spiral_list
@@ -95,7 +95,7 @@ class TestSkyline(unittest.TestCase):
         out_shape = [basic.Point(e[0], e[1]) for e in out]
         shape1 = [basic.Point(e[0], e[1]) for e in first]
         shape2 = [basic.Point(e[0], e[1]) for e in second]
-        self.assertEqual(out_shape, basic.overlap_pts(shape1, shape2))
+        self.assertEqual(out_shape, basic.merge_skyline(shape1, shape2))
         return out_shape
 
     def test_debug(self):

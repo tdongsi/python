@@ -4,85 +4,6 @@ import itertools
 import collections
 
 
-def mergesort_J(alist):
-    if len(alist) <= 1:
-        return alist
-
-    med = len(alist)/2
-    left = mergesort_J(alist[:med])
-    right = mergesort_J(alist[med:])
-    return merge(left, right)
-
-
-def merge(left, right):
-    lidx = 0
-    ridx = 0
-    out = []
-    while lidx < len(left) and ridx < len(right):
-        if left[lidx] < right[ridx]:
-            out.append(left[lidx])
-            lidx += 1
-        else:
-            out.append(right[ridx])
-            ridx += 1
-
-    out.extend(left[lidx:])
-    out.extend(right[ridx:])
-    return out
-
-
-def quicksort_July(alist, lo=0, hi=None):
-    if hi is None:
-        hi = len(alist)
-
-    if lo == hi:
-        # empty list
-        return alist
-    elif lo == hi-1:
-        # singleton list
-        return alist
-    else:
-        pivot = partition(alist, lo, hi)
-        quicksort_July(alist, lo, pivot)
-        quicksort_July(alist, pivot+1, hi)
-        return alist
-
-
-def partition(alist, lo, hi):
-
-    pivot = alist[hi-1]
-    j = lo
-    for i in range(lo, hi-1):
-        if alist[i] < pivot:
-            alist[j], alist[i] = alist[i], alist[j]
-            j += 1
-    alist[j], alist[hi-1] = alist[hi-1], alist[j]
-    return j
-
-
-def binary_search_June(alist, item, start=0, end=None):
-    if end is None:
-        end = len(alist)
-
-    if start == end:
-        # empty list
-        return -1
-    elif start == end-1:
-        # singleton list
-        if alist[start] == item:
-            return start
-        else:
-            return -1
-    else:
-        med = (start+end) // 2
-        if alist[med] == item:
-            return med
-        elif alist[med] > item:
-            return binary_search_June(alist, item, start, med)
-        else:
-            return binary_search_June(alist, item, med+1, end)
-
-
 def insertion_sort(mlist):
     if len(mlist) <= 1:
         return mlist
@@ -97,35 +18,6 @@ def insertion_sort(mlist):
         mlist[pos] = cur
 
     return mlist
-
-
-def mergesort_June(mlist):
-
-    def merge(left, right):
-
-        out = []
-        idx1 = 0
-        idx2 = 0
-
-        while idx1 < len(left) and idx2 < len(right):
-            if left[idx1] < right[idx2]:
-                out.append(left[idx1])
-                idx1 += 1
-            else:
-                out.append(right[idx2])
-                idx2 += 1
-
-        out.extend(left[idx1:])
-        out.extend(right[idx2:])
-        return out
-
-    if len(mlist) <= 1:
-        return mlist
-    else:
-        mid = len(mlist)/2
-        left = mergesort_June(mlist[:mid])
-        right = mergesort_June(mlist[mid:])
-        return merge(left, right)
 
 
 def rotate(matrix):
@@ -351,25 +243,7 @@ class PriorityQueue(object):
 Point = collections.namedtuple('Point', ['x', 'y'])
 
 
-def overlap_rect(shape1, shape2):
-    """ Check if two shapes are overlapping. Return combined shape if overlapped.
-
-    :param shape1: list of rects for shape1
-    :param shape2: list of rects for shape2
-    :return: The combined shape, None if the two shapes are not overlapping.
-    """
-
-    # Assume shape1 is before shape2
-    if shape1[0][0].x > shape2[0][0].x:
-        shape1, shape2 = shape2, shape1
-
-    if shape1[-1][1].x < shape2[0][0].x:
-        # no overlapping
-        return None
-    # TODO
-
-
-def overlap_pts(shape1, shape2):
+def merge_skyline(shape1, shape2):
     """ Check if two shapes are overlapping. Return combined shape if overlapped.
 
     :param shape1: list of points for shape1
@@ -462,7 +336,7 @@ def solve_skyline(mlist):
         med *= 2
         left = skyline(shapes[:med])
         right = skyline(shapes[med:])
-        return overlap_pts(left, right)
+        return merge_skyline(left, right)
 
     endpoints = []
     for building in mlist:
