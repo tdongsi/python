@@ -1,6 +1,23 @@
 
 import heapq
 import itertools
+import collections
+
+
+def insertion_sort(mlist):
+    if len(mlist) <= 1:
+        return mlist
+
+    for i in xrange(1, len(mlist)):
+        pos = i
+        cur = mlist[i]
+
+        while pos > 0 and cur < mlist[pos-1]:
+            mlist[pos] = mlist[pos-1]
+            pos -= 1
+        mlist[pos] = cur
+
+    return mlist
 
 
 def rotate(matrix):
@@ -76,36 +93,9 @@ def mergesort(mlist):
     return merge(first, second)
 
 
-def quicksort2(mlist, lo=0, hi=None):
-    """ Quick-sort algorithm with in-place implementation.
+def quicksort2(mlist):
+    """ Conceptual Quick-sort algorithm (not in-place).
     """
-    def partition(mlist, lo, hi):
-        i = lo
-        pivot = mlist[hi-1]
-        for j in range(lo, hi-1):
-            if mlist[j] < pivot:
-                mlist[i], mlist[j] = mlist[j], mlist[i]
-                i += 1
-        mlist[i], mlist[hi-1] = mlist[hi-1], mlist[i]
-        return i
-
-    if hi is None:
-        hi = len(mlist)
-
-    if lo == hi:
-        return mlist
-    elif lo == hi-1:
-        return mlist
-
-    p = partition(mlist, lo, hi)
-    quicksort2(mlist, lo, p)
-    quicksort2(mlist, p+1, hi)
-
-    return mlist
-
-
-def quicksort(mlist):
-
     if len(mlist) <= 1:
         return mlist
 
@@ -114,49 +104,72 @@ def quicksort(mlist):
     right = [e for e in mlist if e >= pivot]
     right.remove(pivot)
 
-    result = quicksort(left)
+    result = quicksort2(left)
     result.append(pivot)
-    result.extend(quicksort(right))
+    result.extend(quicksort2(right))
     return result
 
 
-def merge_sort(mlist):
+def quicksort(mlist, lo=0, hi=None):
 
-    def _merge_sort(start, end):
-        if start == end:  # empty list
-            return []
-        elif start == end-1:  # singleton list
-            return mlist[start:end]
-        else:
-            med = (start+end)/2
-            first = _merge_sort(start, med)
-            second = _merge_sort(med, end)
-            return _merge(first, second)
+    def partition(alist, lo, hi):
+        pivot = alist[hi - 1]
+        idx = lo
 
-    def _merge(first, second):
-        idx1 = 0
-        idx2 = 0
-        li = []
+        for i in range(lo, hi-1):
+            if alist[i] < pivot:
+                alist[i], alist[idx] = alist[idx], alist[i]
+                idx += 1
+        # move the pivot
+        alist[idx], alist[hi - 1] = alist[hi - 1], alist[idx]
+        return idx
 
-        while idx1 < len(first) and idx2 < len(second):
-            if first[idx1] < second[idx2]:
-                li.append(first[idx1])
-                idx1 += 1
-            else:
-                li.append(second[idx2])
-                idx2 += 1
 
-        if idx1 < len(first):
-            li.extend(first[idx1:])
-        if idx2 < len(second):
-            li.extend(second[idx2:])
+    if hi is None:
+        hi = len(mlist)
 
-        return li
-
-    if len(mlist) == 0 or len(mlist) == 1:
+    if lo == hi:
+        # empty list
+        return mlist
+    elif lo == hi-1:
+        # singleton list
         return mlist
     else:
-        return _merge_sort(0, len(mlist))
+        p = partition(mlist, lo, hi)
+        quicksort(mlist, lo, p)
+        quicksort(mlist, p+1, hi)
+        return mlist
+
+    pass
+
+
+def merge_sort(mlist):
+    def _merge(left, right):
+        alist = []
+        l_idx = 0
+        r_idx = 0
+
+        while l_idx < len(left) and r_idx < len(right):
+            if left[l_idx] < right[r_idx]:
+                alist.append(left[l_idx])
+                l_idx += 1
+            else:
+                alist.append(right[r_idx])
+                r_idx += 1
+
+        # append the rest
+        alist.extend(left[l_idx:])
+        alist.extend(right[r_idx:])
+
+        return alist
+
+    if len(mlist) <= 1:
+        return mlist
+    else:
+        med = len(mlist) // 2
+        left = merge_sort(mlist[:med])
+        right = merge_sort(mlist[med:])
+        return _merge(left, right)
 
 
 def reverse_words(inputs):
@@ -168,62 +181,172 @@ def reverse_words(inputs):
 
 class PriorityQueue(object):
 
-    REMOVED = "<removed-task>"
+    _REMOVED = "<REMOVED>"
 
     def __init__(self):
         self.heap = []
         self.entries = {}
         self.counter = itertools.count()
 
-    def add_task(self, task, priority=0):
+    def add(self, task, priority=0):
+        """Add a new task or update the priority of an existing task"""
         if task in self.entries:
-            self.remove_task(task)
+            self.remove(task)
 
         count = next(self.counter)
-        # weight = -priority since heapq is a min-heap
+        # weight = -priority since heap is a min-heap
         entry = [-priority, count, task]
         self.entries[task] = entry
         heapq.heappush(self.heap, entry)
         pass
 
-    def remove_task(self, task):
+    def remove(self, task):
         """ Mark the given task as REMOVED.
 
         Do this to avoid breaking heap-invariance of the internal heap.
-
-        :param task:
-        :return:
         """
         entry = self.entries[task]
-        entry[-1] = PriorityQueue.REMOVED
+        entry[-1] = PriorityQueue._REMOVED
         pass
 
-    def pop_task(self):
+    def pop(self):
         """ Get task with highest priority.
 
-        :return: Task with highest priority
+        :return: Priority, Task with highest priority
         """
         while self.heap:
             weight, count, task = heapq.heappop(self.heap)
-            if task is not PriorityQueue.REMOVED:
+            if task is not PriorityQueue._REMOVED:
                 del self.entries[task]
-                return task
+                return -weight, task
         raise KeyError("The priority queue is empty")
 
+    def peek(self):
+        """ Check task with highest priority, without removing.
+
+        :return: Priority, Task with highest priority
+        """
+        while self.heap:
+            weight, count, task = self.heap[0]
+            if task is PriorityQueue._REMOVED:
+                heapq.heappop(self.heap)
+            else:
+                return -weight, task
+
+        return None
+
     def __str__(self):
-        temp = [str(e) for e in self.heap if e[-1] is not PriorityQueue.REMOVED]
+        temp = [str(e) for e in self.heap if e[-1] is not PriorityQueue._REMOVED]
         return "[%s]" % ", ".join(temp)
 
 
+Point = collections.namedtuple('Point', ['x', 'y'])
+
+
+def merge_skyline(shape1, shape2):
+    """ Check if two shapes are overlapping. Return combined shape if overlapped.
+
+    :param shape1: list of points for shape1
+    :param shape2: list of points for shape2
+    :return: The combined shape, None if the two shapes are not overlapping.
+    """
+    out = []
+    cur_y = 0
+    lidx = 0
+    ridx = 0
+    l_y = 0
+    r_y = 0
+
+    while lidx < len(shape1) and ridx < len(shape2):
+        if shape1[lidx].x < shape2[ridx].x:
+            cur_x = shape1[lidx].x
+            l_y = shape1[lidx].y
+            if max(l_y, r_y) != cur_y:
+                cur_y = max(l_y, r_y)
+                out.append(Point(cur_x, cur_y))
+            lidx += 1
+
+        elif shape1[lidx].x > shape2[ridx].x:
+            cur_x = shape2[ridx].x
+            r_y = shape2[ridx].y
+            if max(l_y, r_y) != cur_y:
+                cur_y = max(l_y, r_y)
+                out.append(Point(cur_x, cur_y))
+            ridx += 1
+
+        else:
+            # shape1[lidx].x == shape2[ridx].x
+            cur_x = shape1[lidx].x
+            l_y = shape1[lidx].y
+            r_y = shape2[ridx].y
+            max_y = max(l_y, r_y)
+            if max_y != cur_y:
+                cur_y = max_y
+                out.append(Point(cur_x, cur_y))
+                lidx += 1
+                ridx += 1
+
+    while lidx < len(shape1):
+        cur_x = shape1[lidx].x
+        l_y = shape1[lidx].y
+        if max(l_y, r_y) != cur_y:
+            cur_y = max(l_y, r_y)
+            out.append(Point(cur_x, cur_y))
+        lidx += 1
+
+    while ridx < len(shape2):
+        cur_x = shape2[ridx].x
+        r_y = shape2[ridx].y
+        if max(l_y, r_y) != cur_y:
+            cur_y = max(l_y, r_y)
+            out.append(Point(cur_x, cur_y))
+        ridx += 1
+
+    return out
+
+
 def solve_skyline(mlist):
-    return []
+    """ Solve the skyline problem.
+
+    :param mlist: list of buildings in format (start, end, height).
+    :return: List of end points
+    """
+
+    def buildings_to_endpoints(building):
+        """ Convert (start, end, height) tuple to (start_point, end_point).
+        start_point and end_point are corners of the building.
+
+        :param building: (start, end, height) tuple
+        :return:
+        """
+        start, end, height = building
+        return Point(start, height), Point(end, 0)
+
+    def skyline(shapes):
+        """ Recursively solve the skyline problem.
+
+        :param shapes: list of shapes. Each shape is a list of multiple points.
+        :return: list of points for the skyline.
+        """
+        if len(shapes) <= 2:
+            return shapes
+
+        building = len(shapes)/2
+        med = building/2
+        med *= 2
+        left = skyline(shapes[:med])
+        right = skyline(shapes[med:])
+        return merge_skyline(left, right)
+
+    endpoints = []
+    for building in mlist:
+        endpoints.extend(buildings_to_endpoints(building))
+    return [(pt.x, pt.y) for pt in skyline(endpoints)]
 
 
 def heap_sort(mlist):
-    heap = []
-    for e in mlist:
-        heapq.heappush(heap, e)
-    return [heapq.heappop(heap) for i in xrange(len(mlist))]
+    heapq.heapify(mlist)
+    return [heapq.heappop(mlist) for e in range(len(mlist))]
 
 
 def binary_search(mlist, item):
@@ -257,69 +380,6 @@ def binary_search(mlist, item):
         return -1
     else:
         return _bin_search(0, len(mlist))
-
-
-def bin_search(mlist, num, start=0, end=None):
-    """ Binary search.
-
-    :param mlist:
-    :param num:
-    :return: -1 if num is not found in the list
-    """
-    if start < 0:
-        raise ValueError("start cannot be negative")
-    if end is None:
-        end = len(mlist)
-
-    if start == end:
-        # empty sublist
-        return -1
-
-    if start == end-1:
-        # singleton sublist
-        if mlist[start] == num:
-            return start
-        else:
-            return -1
-
-    med = (start + end) // 2
-    if mlist[med] == num:
-        return med
-    elif mlist[med] > num:
-        return bin_search(mlist, num, start, med)
-    else:
-        return bin_search(mlist, num, med+1, end)
-
-
-def bin_search_old(mlist, num):
-    """ Binary search.
-
-    :param mlist:
-    :param num:
-    :return: -1 if num is not found in the list
-    """
-
-    def _bin_search(mlist, num, start, end):
-        if start == end:
-            # empty sublist
-            return -1
-
-        if start == end-1:
-            # singleton sublist
-            if mlist[start] == num:
-                return start
-            else:
-                return -1
-
-        med = (start + end) // 2
-        if mlist[med] == num:
-            return med
-        elif mlist[med] > num:
-            return _bin_search(mlist, num, start, med)
-        else:
-            return _bin_search(mlist, num, med+1, end)
-
-    return _bin_search(mlist, num, 0, len(mlist))
 
 
 def atoi(sinput):
