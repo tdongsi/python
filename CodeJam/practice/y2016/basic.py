@@ -93,6 +93,44 @@ def mergesort(mlist):
     return merge(first, second)
 
 
+def quicksort3(mlist, lo=0, hi=None):
+
+    def partition3(mlist, lo, hi):
+        pivot = mlist[hi-1]
+
+        idx1 = lo
+        for i in range(lo, hi-1):
+            if mlist[i] < pivot:
+                mlist[i], mlist[idx1] = mlist[idx1], mlist[i]
+                idx1 += 1
+
+        idx2 = idx1
+        for i in range(idx1, hi-1):
+            if mlist[i] == pivot:
+                mlist[i], mlist[idx2] = mlist[idx2], mlist[i]
+                idx2 += 1
+
+        # move the pivot
+        mlist[idx2], mlist[hi - 1] = mlist[hi - 1], mlist[idx2]
+
+        return idx1, idx2
+
+    if hi is None:
+        hi = len(mlist)
+
+    if lo == hi:
+        # empty list
+        return mlist
+    elif lo == hi - 1:
+        # singleton list
+        return mlist
+    else:
+        p, q = partition3(mlist, lo, hi)
+        quicksort(mlist, lo, p)
+        quicksort(mlist, q + 1, hi)
+        return mlist
+
+
 def quicksort2(mlist):
     """ Conceptual Quick-sort algorithm (not in-place).
     """
