@@ -94,8 +94,18 @@ def mergesort(mlist):
 
 
 def quicksort3(mlist, lo=0, hi=None):
+    """ Quick-sort using three-way partition strategy.
+
+    See comment below to see when to use three-way partition strategy and this sorting.
+    """
 
     def partition3(mlist, lo, hi):
+        """ In-place three-way partition of the list will return [< pivot] [== pivot] [> pivot]
+
+        The two-way partition ([< pivot] [>= pivot]) seen in previous quicksort has the following degenerate cases:
+         1. Almost sorted lists. -> Defense: Use random swaps to scramble the lists before sorting.
+         2. Almost equal items. -> Defense: Use this three-way partition strategy.
+        """
         pivot = mlist[hi-1]
 
         idx1 = lo
@@ -110,7 +120,7 @@ def quicksort3(mlist, lo=0, hi=None):
                 mlist[i], mlist[idx2] = mlist[idx2], mlist[i]
                 idx2 += 1
 
-        # move the pivot
+        # move the pivot to the right partition
         mlist[idx2], mlist[hi - 1] = mlist[hi - 1], mlist[idx2]
 
         return idx1, idx2
