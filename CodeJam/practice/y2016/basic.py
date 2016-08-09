@@ -141,6 +141,37 @@ def quicksort3(mlist, lo=0, hi=None):
         return mlist
 
 
+def find_median(mlist):
+    def partition(alist, lo, hi):
+        pivot = alist[hi - 1]
+        idx = lo
+
+        for i in range(lo, hi-1):
+            if alist[i] < pivot:
+                alist[i], alist[idx] = alist[idx], alist[i]
+                idx += 1
+        # move the pivot
+        alist[idx], alist[hi - 1] = alist[hi - 1], alist[idx]
+        return idx
+
+    def find_kth(mlist, k, lo, hi):
+        if lo == hi:
+            # empty list
+            return None
+        elif lo == hi-1:
+            # singleton list
+            return mlist[lo] if k==lo else None
+        else:
+            p = partition(mlist, lo, hi)
+            if p == k:
+                return mlist[p]
+            elif p < k:
+                return find_kth(mlist, k, p+1, hi)
+            else:
+                return find_kth(mlist, k, lo, p)
+
+    return find_kth(mlist, len(mlist)/2, 0, len(mlist))
+
 def quicksort2(mlist):
     """ Conceptual Quick-sort algorithm (not in-place).
     """
