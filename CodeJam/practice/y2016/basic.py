@@ -142,6 +142,8 @@ def quicksort3(mlist, lo=0, hi=None):
 
 
 def find_median(mlist):
+    """ Find the median of a given list of numbers.
+    """
     def partition(alist, lo, hi):
         pivot = alist[hi - 1]
         idx = lo
@@ -160,7 +162,7 @@ def find_median(mlist):
             return None
         elif lo == hi-1:
             # singleton list
-            return mlist[lo] if k==lo else None
+            return mlist[lo] if k == lo else None
         else:
             p = partition(mlist, lo, hi)
             if p == k:
@@ -169,8 +171,18 @@ def find_median(mlist):
                 return find_kth(mlist, k, p+1, hi)
             else:
                 return find_kth(mlist, k, lo, p)
+        pass
 
-    return find_kth(mlist, len(mlist)/2, 0, len(mlist))
+    length = len(mlist)
+
+    if length % 2 == 1:
+        # if odd length
+        return find_kth(mlist, length/2, 0, length)
+    else:
+        # if length is even
+        first = find_kth(mlist, length/2-1, 0, length)
+        second = find_kth(mlist, length/2, 0, length)
+        return (first+second)/2.0
 
 def quicksort2(mlist):
     """ Conceptual Quick-sort algorithm (not in-place).
