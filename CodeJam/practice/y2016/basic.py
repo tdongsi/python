@@ -174,6 +174,8 @@ def find_median(mlist):
         pass
 
     length = len(mlist)
+    if length == 0:
+        return None
 
     if length % 2 == 1:
         # if odd length

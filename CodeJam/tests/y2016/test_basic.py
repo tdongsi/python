@@ -66,6 +66,15 @@ class TestSorting(unittest.TestCase):
 
 class TestBasic(unittest.TestCase):
 
+    def test_median(self):
+        self.assertEqual(basic.find_median([1, 5, 2]), 2)
+        self.assertEqual(basic.find_median([-5, -1, -3]), -3)
+        self.assertEqual(basic.find_median([8, 2, 7,  6]), 6.5)
+
+        self.assertEqual(basic.find_median([3]), 3)
+        self.assertEqual(basic.find_median([]), None)
+        pass
+
     def test_reverse_words(self):
         self.assertEqual(reverse_words("Hello World"), "World Hello")
         self.assertEqual(reverse_words("I Love You"), "You Love I")
