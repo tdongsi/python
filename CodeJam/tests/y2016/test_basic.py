@@ -24,11 +24,13 @@ class TestSearch(unittest.TestCase):
              'F': set(['C', 'E'])}
 
     def test_dfs(self):
-        search = basic.bfs(self.graph, 'A')
+        search = basic.dfs(self.graph, 'A')
         self.assertEqual(search, ['A', 'B', 'D', 'E', 'F', 'C'])
         pass
 
     def test_bfs(self):
+        search = basic.bfs(self.graph, 'A')
+        self.assertEqual(search, ['A', 'C', 'B', 'F', 'E', 'D'])
         pass
 
 
