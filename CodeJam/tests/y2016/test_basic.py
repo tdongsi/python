@@ -5,7 +5,7 @@ import random
 import practice.y2016.basic as basic
 from practice.y2016.basic import solve_skyline as solve_skyline
 
-from practice.y2016.basic import merge_sort as do_sort
+from practice.y2016.basic import quicksort3 as do_sort
 from practice.y2016.basic import PriorityQueue as PriorityQueue
 
 from practice.y2016.basic import binary_search as binary_search
@@ -77,10 +77,21 @@ class TestSorting(unittest.TestCase):
         self.assertEqual(do_sort([2, 3, 5, 7, 4, 2, 6, 1]), [1, 2, 2, 3, 4, 5, 6, 7])
         self.assertEqual(do_sort([2, 2]), [2, 2])
         self.assertEqual(do_sort([1, 2, 1]), [1, 1, 2])
+        self.assertEqual(do_sort([2, 3, 1, 2, 2, 4, 3, 1]), [1, 1, 2, 2, 2, 3, 3, 4])
+        self.assertEqual(do_sort([2, 1]), [1, 2])
         pass
 
 
 class TestBasic(unittest.TestCase):
+
+    def test_median(self):
+        self.assertEqual(basic.find_median([1, 5, 2]), 2)
+        self.assertEqual(basic.find_median([-5, -1, -3]), -3)
+        self.assertEqual(basic.find_median([8, 2, 7,  6]), 6.5)
+
+        self.assertEqual(basic.find_median([3]), 3)
+        self.assertEqual(basic.find_median([]), None)
+        pass
 
     def test_reverse_words(self):
         self.assertEqual(reverse_words("Hello World"), "World Hello")
