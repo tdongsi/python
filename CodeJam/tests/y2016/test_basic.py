@@ -14,6 +14,24 @@ from practice.y2016.basic import reverse_words
 from practice.y2016.basic import spiral_list
 
 
+class TestSearch(unittest.TestCase):
+
+    graph = {'A': set(['B', 'C']),
+             'B': set(['A', 'D', 'E']),
+             'C': set(['A', 'F']),
+             'D': set(['B']),
+             'E': set(['B', 'F']),
+             'F': set(['C', 'E'])}
+
+    def test_dfs(self):
+        search = basic.bfs(self.graph, 'A')
+        self.assertEqual(search, ['A', 'B', 'D', 'E', 'F', 'C'])
+        pass
+
+    def test_bfs(self):
+        pass
+
+
 class TestSpiralPrint(unittest.TestCase):
 
     def test_corner(self):

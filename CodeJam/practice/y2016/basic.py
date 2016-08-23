@@ -496,3 +496,23 @@ def atoi(sinput):
         total = -total
 
     return total
+
+
+def bfs(graph, start):
+    """ Simple breadth first search.
+
+    :param graph: a dict that map a node to a set of its neighbor.
+    :param start: starting node
+    :return:
+    """
+    visited = []
+    stack = [start]
+
+    while stack:
+        ele = stack.pop()
+        if ele not in visited:
+            visited.append(ele)
+            stack.extend(graph[ele] - set(visited))
+
+    return visited
+
