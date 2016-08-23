@@ -498,12 +498,12 @@ def atoi(sinput):
     return total
 
 
-def bfs(graph, start):
-    """ Simple breadth first search.
+def dfs(graph, start):
+    """ Simple depth first search.
 
     :param graph: a dict that map a node to a set of its neighbor.
     :param start: starting node
-    :return:
+    :return: ordered list of visited nodes.
     """
     visited = []
     stack = [start]
@@ -516,3 +516,22 @@ def bfs(graph, start):
 
     return visited
 
+
+def bfs(graph, start):
+    """ Simple breadth first search.
+
+    :param graph: a dict that map a node to a set of its neighbor.
+    :param start: starting node
+    :return: ordered list of visited nodes.
+    """
+
+    visited = []
+    queue = collections.deque([start])
+
+    while queue:
+        ele = queue.popleft()
+        if ele not in visited:
+            visited.append(ele)
+            queue.extend(graph[ele] - set(visited))
+
+    return visited
