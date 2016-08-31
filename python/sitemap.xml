@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+<loc>http://tdongsi.github.io/python/blog/2016/08/31/tutorial-more-about-quick-sort/</loc>
+<lastmod>2016-08-31T21:48:49-07:00</lastmod>
+</url>
+<url>
+<loc>http://tdongsi.github.io/python/blog/2016/08/30/tutorial-sorting-algorithms/</loc>
+<lastmod>2016-08-30T21:23:48-07:00</lastmod>
+</url>
+<url>
+<loc>http://tdongsi.github.io/python/blog/archives/</loc>
+</url>
+<url>
+<loc>http://tdongsi.github.io/python/</loc>
+</url>
+<url>
+<loc>http://tdongsi.github.io/python/blog/categories/tutorial/</loc>
+</url>
+<url>
+<loc>http://tdongsi.github.io/python/blog/categories/algorithm/</loc>
+</url>
+</urlset>

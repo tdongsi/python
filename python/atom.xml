@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Personal Interview Notes]]></title>
+  <link href="http://tdongsi.github.io/python/atom.xml" rel="self"/>
+  <link href="http://tdongsi.github.io/python/"/>
+  <updated>2016-08-31T01:00:41-07:00</updated>
+  <id>http://tdongsi.github.io/python/</id>
+  <author>
+    <name><![CDATA[Cuong Dong-Si]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Tutorial: More About Quick Sort]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2016/08/31/tutorial-more-about-quick-sort/"/>
+    <updated>2016-08-31T21:48:49-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2016/08/31/tutorial-more-about-quick-sort</id>
+    <content type="html"><![CDATA[<p>This post discuses more about partition algorithms used in Quick Sort and its runtime.
+Partition algorithms are also used to efficiently find certain groups of the list, also known as &ldquo;Quick Select&rdquo;.</p>
+
+<!-- more -->
+
+
+<h3>Three-way partitions</h3>
+
+<p>Discussion</p>
+
+<h3>Quick Select</h3>
+
+<h4>Find median</h4>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Tutorial: Sorting Algorithms]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2016/08/30/tutorial-sorting-algorithms/"/>
+    <updated>2016-08-30T21:23:48-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2016/08/30/tutorial-sorting-algorithms</id>
+    <content type="html"><![CDATA[<p>Quick overview and implementations of the most common sorting algorithms.</p>
+
+<!-- more -->
+
+
+<h3>Sorting algorithms</h3>
+
+<h3>Merge Sort</h3>
+
+<h3>Quick Sort</h3>
+
+<h3>Heap Sort</h3>
+
+<h3>Select Sort</h3>
+
+<h3>Radix Sort</h3>
+
+<h3>Testing sorting algorithms</h3>
+]]></content>
+  </entry>
+  
+</feed>

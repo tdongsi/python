@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Personal Interview Notes]]></title>
+  <link href="http://tdongsi.github.io/python/atom.xml" rel="self"/>
+  <link href="http://tdongsi.github.io/python/"/>
+  <updated>2016-08-30T21:19:12-07:00</updated>
+  <id>http://tdongsi.github.io/python/</id>
+  <author>
+    <name><![CDATA[Cuong Dong-Si]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+</feed>
