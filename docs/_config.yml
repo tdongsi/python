@@ -29,7 +29,7 @@ email:
 root: /python
 permalink: /blog/:year/:month/:day/:title/
 source: source
-destination: public/python
+destination: public
 plugins: plugins
 code_dir: download/code
 category_dir: blog/categories
