@@ -93,6 +93,99 @@ def mergesort(mlist):
     return merge(first, second)
 
 
+def quicksort3(mlist, lo=0, hi=None):
+    """ Quick-sort using three-way partition strategy.
+
+    See comment below to see when to use three-way partition strategy and this sorting.
+    """
+
+    def partition3(mlist, lo, hi):
+        """ In-place three-way partition of the list will return [< pivot] [== pivot] [> pivot]
+
+        The two-way partition ([< pivot] [>= pivot]) seen in previous quicksort has the following degenerate cases:
+         1. Almost sorted lists. -> Defense: Use random swaps to scramble the lists before sorting.
+         2. Almost equal items. -> Defense: Use this three-way partition strategy.
+        """
+        pivot = mlist[hi-1]
+
+        idx1 = lo
+        for i in range(lo, hi-1):
+            if mlist[i] < pivot:
+                mlist[i], mlist[idx1] = mlist[idx1], mlist[i]
+                idx1 += 1
+
+        idx2 = idx1
+        for i in range(idx1, hi-1):
+            if mlist[i] == pivot:
+                mlist[i], mlist[idx2] = mlist[idx2], mlist[i]
+                idx2 += 1
+
+        # move the pivot to the right partition
+        mlist[idx2], mlist[hi - 1] = mlist[hi - 1], mlist[idx2]
+
+        return idx1, idx2
+
+    if hi is None:
+        hi = len(mlist)
+
+    if lo == hi:
+        # empty list
+        return mlist
+    elif lo == hi - 1:
+        # singleton list
+        return mlist
+    else:
+        p, q = partition3(mlist, lo, hi)
+        quicksort(mlist, lo, p)
+        quicksort(mlist, q + 1, hi)
+        return mlist
+
+
+def find_median(mlist):
+    """ Find the median of a given list of numbers.
+    """
+    def partition(alist, lo, hi):
+        pivot = alist[hi - 1]
+        idx = lo
+
+        for i in range(lo, hi-1):
+            if alist[i] < pivot:
+                alist[i], alist[idx] = alist[idx], alist[i]
+                idx += 1
+        # move the pivot
+        alist[idx], alist[hi - 1] = alist[hi - 1], alist[idx]
+        return idx
+
+    def find_kth(mlist, k, lo, hi):
+        if lo == hi:
+            # empty list
+            return None
+        elif lo == hi-1:
+            # singleton list
+            return mlist[lo] if k == lo else None
+        else:
+            p = partition(mlist, lo, hi)
+            if p == k:
+                return mlist[p]
+            elif p < k:
+                return find_kth(mlist, k, p+1, hi)
+            else:
+                return find_kth(mlist, k, lo, p)
+        pass
+
+    length = len(mlist)
+    if length == 0:
+        return None
+
+    if length % 2 == 1:
+        # if odd length
+        return find_kth(mlist, length/2, 0, length)
+    else:
+        # if length is even
+        first = find_kth(mlist, length/2-1, 0, length)
+        second = find_kth(mlist, length/2, 0, length)
+        return (first+second)/2.0
+
 def quicksort2(mlist):
     """ Conceptual Quick-sort algorithm (not in-place).
     """
@@ -403,3 +496,42 @@ def atoi(sinput):
         total = -total
 
     return total
+
+
+def dfs(graph, start):
+    """ Simple depth first search.
+
+    :param graph: a dict that map a node to a set of its neighbor.
+    :param start: starting node
+    :return: ordered list of visited nodes.
+    """
+    visited = []
+    stack = [start]
+
+    while stack:
+        ele = stack.pop()
+        if ele not in visited:
+            visited.append(ele)
+            stack.extend(graph[ele] - set(visited))
+
+    return visited
+
+
+def bfs(graph, start):
+    """ Simple breadth first search.
+
+    :param graph: a dict that map a node to a set of its neighbor.
+    :param start: starting node
+    :return: ordered list of visited nodes.
+    """
+
+    visited = []
+    queue = collections.deque([start])
+
+    while queue:
+        ele = queue.popleft()
+        if ele not in visited:
+            visited.append(ele)
+            queue.extend(graph[ele] - set(visited))
+
+    return visited
