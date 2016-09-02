@@ -6,6 +6,8 @@ comments: true
 categories: 
 - Tutorial
 - Algorithm
+- Addepar
+- TODO
 ---
 
 This post discuses more about partition algorithms used in Quick Sort and its runtime. 
