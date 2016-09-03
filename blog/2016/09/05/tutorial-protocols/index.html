@@ -1,0 +1,311 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Tutorial: Protocols - Personal Interview Notes</title>
+  <meta name="author" content="Cuong Dong-Si">
+
+  
+  <meta name="description" content="Python uses &ldquo;duck typing&rdquo;.
+It does not have interfaces like Java to enforce certain behaviors:
+Iterable iterface means that you can &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://tdongsi.github.io/python/blog/2016/09/05/tutorial-protocols/">
+  <link href="/python/favicon.png" rel="icon">
+  <link href="/python/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Personal Interview Notes" type="application/atom+xml">
+  <script src="/python/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/python/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body    class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/python/">Personal Interview Notes</a></h1>
+  
+    <h2>Neither success or failure is ever final.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="tdongsi.github.io/python">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/python/">Blog Home</a></li>
+  <li><a href="/python/blog/archives">Archives</a></li>
+  <li><a href="http://tdongsi.github.io/SqlTests/syllabus/">Syllabus</a></li>
+  <li><a href="http://tdongsi.github.io">Personal Home</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Tutorial: Protocols</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-09-05T23:50:24-07:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>11:50 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Python uses &ldquo;duck typing&rdquo;.
+It does not have interfaces like Java to enforce certain behaviors:
+<code>Iterable</code> iterface means that you can iterate an object of that class in a <code>for each</code> loop.
+In Python, to do that, you have to override magic functions like <code>__iter__</code> to achieve some behaviors.
+Each behavior is called &ldquo;protocol&rdquo; in this post since some involves overriding multiple magic funtions.</p>
+
+<!-- Reference:
+Evernote: "OOP in Python"
+-->
+
+
+
+
+<!--more-->
+
+
+<h3>Iterator</h3>
+
+<p>Here, <code>__iter__</code> just returns self, an object that has the function next(), which (when called) either returns a value or raises a StopIteration exception.
+We’ve actually already met several iterators in disguise; in particular, <code>enumerate</code> is an iterator.
+To drive home the point, here’s a simple reimplementation of <code>enumerate</code>:</p>
+
+<figure class='code'><figcaption><span>Implement enumerator() as iterator</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&gt;&gt;&gt;</span> <span class="k">class</span> <span class="nc">my_enumerate</span><span class="p">:</span>
+</span><span class='line'><span class="o">...</span>   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">some_iter</span><span class="p">):</span>
+</span><span class='line'><span class="o">...</span>      <span class="bp">self</span><span class="o">.</span><span class="n">some_iter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">some_iter</span><span class="p">)</span>
+</span><span class='line'><span class="o">...</span>      <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+</span><span class='line'><span class="o">...</span>
+</span><span class='line'><span class="o">...</span>   <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'><span class="o">...</span>      <span class="k">return</span> <span class="bp">self</span>
+</span><span class='line'><span class="o">...</span>
+</span><span class='line'><span class="o">...</span>   <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'><span class="o">...</span>      <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">some_iter</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+</span><span class='line'><span class="o">...</span>      <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'><span class="o">...</span>      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="n">val</span>
+</span><span class='line'><span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">my_enumerate</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">]):</span>
+</span><span class='line'><span class="o">...</span>   <span class="k">print</span> <span class="n">n</span><span class="p">,</span> <span class="n">val</span>
+</span><span class='line'><span class="mi">0</span> <span class="n">a</span>
+</span><span class='line'><span class="mi">1</span> <span class="n">b</span>
+</span><span class='line'><span class="mi">2</span> <span class="n">c</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Generator and Iterator protocol</h4>
+
+<p>It is also much easier to write routines like enumerate as a generator than as an iterator:</p>
+
+<figure class='code'><figcaption><span>Implement enumerate() using generator</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">gen_enumerate</span><span class="p">(</span><span class="n">some_iter</span><span class="p">):</span>
+</span><span class='line'><span class="o">...</span>   <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'><span class="o">...</span>   <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">some_iter</span><span class="p">:</span>
+</span><span class='line'><span class="o">...</span>      <span class="k">yield</span> <span class="n">count</span><span class="p">,</span> <span class="n">val</span>
+</span><span class='line'><span class="o">...</span>      <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>But you can do things with generators that you couldn’t do with finite lists.
+Consider two full implementation of Eratosthenes’ Sieve for finding prime numbers.
+Full discussion is <a href="http://intermediate-and-advanced-software-carpentry.readthedocs.io/en/latest/idiomatic-python.html">here</a>.
+Most of these are from &ldquo;Python tutorial&rdquo;.</p>
+
+<h3>Container</h3>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Cuong Dong-Si</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2016-09-05T23:50:24-07:00'><span class='date'><span class='date-month'>Sep</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>11:50 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/python/blog/categories/python/'>python</a>, <a class='category' href='/python/blog/categories/todo/'>todo</a>, <a class='category' href='/python/blog/categories/tutorial/'>tutorial</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://tdongsi.github.io/python/blog/2016/09/05/tutorial-protocols/" data-via="" data-counturl="http://tdongsi.github.io/python/blog/2016/09/05/tutorial-protocols/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/python/blog/2016/09/02/tutorial-basic-algorithms/" title="Previous Post: Tutorial: Basic algorithms">&laquo; Tutorial: Basic algorithms</a>
+      
+      
+        <a class="basic-alignment right" href="/python/blog/2016/09/17/tutorial-bfs-and-dfs/" title="Next Post: Tutorial: BFS and DFS">Tutorial: BFS and DFS &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+    <h1>About This Blog</h1>
+    <p>Random interview experience and lessons.</p>
+</section><section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/python/blog/2016/09/17/tutorial-bfs-and-dfs/">Tutorial: BFS and DFS</a>
+      </li>
+    
+      <li class="post">
+        <a href="/python/blog/2016/09/05/tutorial-protocols/">Tutorial: Protocols</a>
+      </li>
+    
+      <li class="post">
+        <a href="/python/blog/2016/09/02/tutorial-basic-algorithms/">Tutorial: Basic Algorithms</a>
+      </li>
+    
+      <li class="post">
+        <a href="/python/blog/2016/08/31/tutorial-more-about-quick-sort/">Tutorial: More About Quick Sort</a>
+      </li>
+    
+      <li class="post">
+        <a href="/python/blog/2016/08/30/tutorial-sorting-algorithms/">Tutorial: Sorting Algorithms</a>
+      </li>
+    
+      <li class="post">
+        <a href="/python/blog/2016/07/02/python-quick-recap/">Python Quick Recap</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/python/blog/categories/addepar/'>addepar (1)</a></li><li><a href='/python/blog/categories/algorithm/'>algorithm (4)</a></li><li><a href='/python/blog/categories/datastructure/'>datastructure (1)</a></li><li><a href='/python/blog/categories/python/'>python (2)</a></li><li><a href='/python/blog/categories/todo/'>todo (6)</a></li><li><a href='/python/blog/categories/tutorial/'>tutorial (5)</a></li></ul>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2016 - Cuong Dong-Si -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

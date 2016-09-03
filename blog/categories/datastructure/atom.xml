@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Datastructure | Personal Interview Notes]]></title>
+  <link href="http://tdongsi.github.io/python/blog/categories/datastructure/atom.xml" rel="self"/>
+  <link href="http://tdongsi.github.io/python/"/>
+  <updated>2016-09-03T02:10:04-07:00</updated>
+  <id>http://tdongsi.github.io/python/</id>
+  <author>
+    <name><![CDATA[Cuong Dong-Si]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Tutorial: BFS and DFS]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2016/09/17/tutorial-bfs-and-dfs/"/>
+    <updated>2016-09-17T15:47:11-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2016/09/17/tutorial-bfs-and-dfs</id>
+    <content type="html"><![CDATA[<p><a href="http://eddmann.com/posts/depth-first-search-and-breadth-first-search-in-python/">http://eddmann.com/posts/depth-first-search-and-breadth-first-search-in-python/</a></p>
+]]></content>
+  </entry>
+  
+</feed>

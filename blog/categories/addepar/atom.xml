@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Addepar | Personal Interview Notes]]></title>
+  <link href="http://tdongsi.github.io/python/blog/categories/addepar/atom.xml" rel="self"/>
+  <link href="http://tdongsi.github.io/python/"/>
+  <updated>2016-09-03T02:10:04-07:00</updated>
+  <id>http://tdongsi.github.io/python/</id>
+  <author>
+    <name><![CDATA[Cuong Dong-Si]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Tutorial: More About Quick Sort]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2016/08/31/tutorial-more-about-quick-sort/"/>
+    <updated>2016-08-31T21:48:49-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2016/08/31/tutorial-more-about-quick-sort</id>
+    <content type="html"><![CDATA[<p>This post discuses more about partition algorithms used in Quick Sort and its runtime.
+Partition algorithms are also used to efficiently find certain groups of the list, also known as &ldquo;Quick Select&rdquo;.</p>
+
+<!-- more -->
+
+
+<h3>Three-way partitions</h3>
+
+<p>Discussion</p>
+
+<h3>Quick Select</h3>
+
+<h4>Find median</h4>
+]]></content>
+  </entry>
+  
+</feed>
