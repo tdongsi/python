@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Tutorial | Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/blog/categories/tutorial/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2016-09-03T02:10:04-07:00</updated>
+  <updated>2016-09-15T21:27:46-07:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -157,6 +157,8 @@ Partition algorithms are also used to efficiently find certain groups of the lis
     <id>http://tdongsi.github.io/python/blog/2016/08/30/tutorial-sorting-algorithms</id>
     <content type="html"><![CDATA[<p>Quick overview and implementations of the most common sorting algorithms.</p>
 
+<p>Most updated implementations are in <a href="https://github.com/tdongsi/python/blob/master/CodeJam/practice/y2016/basic.py">this Python module</a>.</p>
+
 <!-- more -->
 
 
@@ -164,9 +166,10 @@ Partition algorithms are also used to efficiently find certain groups of the lis
 
 <p>TODO: Overview of sorting algorithms and their Big-O.</p>
 
-<h4>How to approach sorting</h4>
+<h4>How to approach sorting questions</h4>
 
-<p>Asking clarifying questions is key: sorting a very large list of integers can have different approach, depending on its input size, data structure, numeric range and distribution.</p>
+<p>Simply using quick-sort for any sorting in algorithmic questions could fail you, since it shows inexperience.
+Asking clarifying questions is key: sorting a very large list of integers can have different approach, depending on its input size, data structure, numeric range and distribution.</p>
 
 <ul>
 <li>Small range: O(n) with array-based map.</li>
@@ -175,7 +178,7 @@ Partition algorithms are also used to efficiently find certain groups of the lis
 </ul>
 
 
-<p>Example: &ldquo;Design an algorithm to sort a list&rdquo;.</p>
+<p><strong>Example</strong>: &ldquo;Design an algorithm to sort a list&rdquo;.</p>
 
 <ul>
 <li>What kind of list? Array list or linked list? Array list.</li>
@@ -186,17 +189,139 @@ Partition algorithms are also used to efficiently find certain groups of the lis
 </ul>
 
 
+<p>Based on the answers above, the best solution is to use an array of size 200 to keep count of customers for a given age.
+Size 200 is chosen because the oldest person is less than 200 years old.
+You can see that the space and time complexity is much different from Merge-Sort when you know characteristics of input data.</p>
+
 <h3>Merge Sort</h3>
+
+<pre><code class="python">def merge_sort(mlist):
+    def _merge(left, right):
+        alist = []
+        l_idx = 0
+        r_idx = 0
+
+        while l_idx &lt; len(left) and r_idx &lt; len(right):
+            if left[l_idx] &lt; right[r_idx]:
+                alist.append(left[l_idx])
+                l_idx += 1
+            else:
+                alist.append(right[r_idx])
+                r_idx += 1
+
+        # append the rest
+        alist.extend(left[l_idx:])
+        alist.extend(right[r_idx:])
+
+        return alist
+
+    if len(mlist) &lt;= 1:
+        return mlist
+    else:
+        med = len(mlist) // 2
+        left = merge_sort(mlist[:med])
+        right = merge_sort(mlist[med:])
+        return _merge(left, right)
+</code></pre>
 
 <h3>Quick Sort</h3>
 
+<p>One important characteristic of Quick Sort is in-place.
+Naive implementation tends to ignore this, focusing on its divide-and-conquer strategy.
+The standard implementation is as follows, but see <a href="/blog/2016/08/31/tutorial-more-about-quick-sort/">this post</a> for more details.</p>
+
+<pre><code class="python">def quicksort(mlist, lo=0, hi=None):
+
+    def partition(alist, lo, hi):
+        pivot = alist[hi - 1]
+        idx = lo
+
+        for i in range(lo, hi-1):
+            if alist[i] &lt; pivot:
+                alist[i], alist[idx] = alist[idx], alist[i]
+                idx += 1
+        # move the pivot
+        alist[idx], alist[hi - 1] = alist[hi - 1], alist[idx]
+        return idx
+
+
+    if hi is None:
+        hi = len(mlist)
+
+    if lo == hi:
+        # empty list
+        return mlist
+    elif lo == hi-1:
+        # singleton list
+        return mlist
+    else:
+        p = partition(mlist, lo, hi)
+        quicksort(mlist, lo, p)
+        quicksort(mlist, p+1, hi)
+        return mlist
+</code></pre>
+
 <h3>Heap Sort</h3>
 
-<h3>Select Sort</h3>
+<p>Straight from <code>heapq</code> module&rsquo;s documentation.</p>
+
+<pre><code class="python">def heap_sort(mlist):
+    heapq.heapify(mlist)
+    return [heapq.heappop(mlist) for e in range(len(mlist))]
+</code></pre>
+
+<h3>Insertion Sort</h3>
+
+<pre><code class="python">def insertion_sort(mlist):
+    if len(mlist) &lt;= 1:
+        return mlist
+
+    for i in xrange(1, len(mlist)):
+        pos = i
+        cur = mlist[i]
+
+        while pos &gt; 0 and cur &lt; mlist[pos-1]:
+            mlist[pos] = mlist[pos-1]
+            pos -= 1
+        mlist[pos] = cur
+
+    return mlist
+</code></pre>
 
 <h3>Radix Sort</h3>
 
+<p>TODO</p>
+
 <h3>Testing sorting algorithms</h3>
+
+<p>Codes to verify your sorting algorithm.</p>
+
+<pre><code class="python">import your_module.your_sort_impl as do_sort
+
+class TestSorting(unittest.TestCase):
+
+    def test_sort(self):
+        # import sorting function as do_sort
+        for i in xrange(1, 20):
+            # Do it 5 times
+            expected = range(i)
+            for i in xrange(5):
+                mlist = expected[:]
+                random.shuffle(mlist)
+                # print mlist
+                self.assertEqual(do_sort(mlist), expected)
+
+        pass
+
+    def test_same_element(self):
+
+        self.assertEqual(do_sort([2, 3, 5, 7, 4, 2, 6, 1]), [1, 2, 2, 3, 4, 5, 6, 7])
+        self.assertEqual(do_sort([2, 2]), [2, 2])
+        self.assertEqual(do_sort([1, 2, 1]), [1, 1, 2])
+        self.assertEqual(do_sort([2, 3, 1, 2, 2, 4, 3, 1]), [1, 1, 2, 2, 2, 3, 3, 4])
+        self.assertEqual(do_sort([2, 1]), [1, 2])
+        pass
+</code></pre>
 ]]></content>
   </entry>
   
