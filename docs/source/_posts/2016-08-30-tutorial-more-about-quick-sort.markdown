@@ -17,9 +17,107 @@ Partition algorithms are also used to efficiently find certain groups of the lis
 
 ### Three-way partitions
 
-Discussion
+TODO: Discussion
+
+``` python
+def quicksort3(mlist, lo=0, hi=None):
+    """ Quick-sort using three-way partition strategy.
+    """
+
+    def partition3(mlist, lo, hi):
+        """ In-place three-way partition of the list will return [< pivot] [== pivot] [> pivot]
+
+        The two-way partition ([< pivot] [>= pivot]) seen in previous quicksort has the following degenerate cases:
+         1. Almost sorted lists. -> Defense: Use random swaps to scramble the lists before sorting.
+         2. Almost equal items. -> Defense: Use this three-way partition strategy.
+        """
+        pivot = mlist[hi-1]
+
+        idx1 = lo
+        for i in range(lo, hi-1):
+            if mlist[i] < pivot:
+                mlist[i], mlist[idx1] = mlist[idx1], mlist[i]
+                idx1 += 1
+
+        idx2 = idx1
+        for i in range(idx1, hi-1):
+            if mlist[i] == pivot:
+                mlist[i], mlist[idx2] = mlist[idx2], mlist[i]
+                idx2 += 1
+
+        # move the pivot to the right partition
+        mlist[idx2], mlist[hi - 1] = mlist[hi - 1], mlist[idx2]
+
+        return idx1, idx2
+
+    if hi is None:
+        hi = len(mlist)
+
+    if lo == hi:
+        # empty list
+        return mlist
+    elif lo == hi - 1:
+        # singleton list
+        return mlist
+    else:
+        p, q = partition3(mlist, lo, hi)
+        quicksort(mlist, lo, p)
+        quicksort(mlist, q + 1, hi)
+        return mlist
+```
 
 ### Quick Select
 
+TODO: Discussion.
+
 #### Find median
 
+Find median is a special case of finding k-th largest item. 
+You still have to implement finding k-th largest helper function.
+
+``` python
+def find_median(mlist):
+    """ Find the median of a given list of numbers.
+    """
+    def partition(alist, lo, hi):
+        pivot = alist[hi - 1]
+        idx = lo
+
+        for i in range(lo, hi-1):
+            if alist[i] < pivot:
+                alist[i], alist[idx] = alist[idx], alist[i]
+                idx += 1
+        # move the pivot
+        alist[idx], alist[hi - 1] = alist[hi - 1], alist[idx]
+        return idx
+
+    def find_kth(mlist, k, lo, hi):
+        if lo == hi:
+            # empty list
+            return None
+        elif lo == hi-1:
+            # singleton list
+            return mlist[lo] if k == lo else None
+        else:
+            p = partition(mlist, lo, hi)
+            if p == k:
+                return mlist[p]
+            elif p < k:
+                return find_kth(mlist, k, p+1, hi)
+            else:
+                return find_kth(mlist, k, lo, p)
+        pass
+
+    length = len(mlist)
+    if length == 0:
+        return None
+
+    if length % 2 == 1:
+        # if odd length
+        return find_kth(mlist, length/2, 0, length)
+    else:
+        # if length is even
+        first = find_kth(mlist, length/2-1, 0, length)
+        second = find_kth(mlist, length/2, 0, length)
+        return (first+second)/2.0
+```
