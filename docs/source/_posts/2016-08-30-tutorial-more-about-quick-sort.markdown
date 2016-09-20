@@ -15,9 +15,22 @@ Partition algorithms are also used to efficiently find certain groups of the lis
 
 <!-- more -->
 
-### Three-way partitions
+### Discussion of Quick-sort runtime
 
-TODO: Discussion
+The Quick-sort algorithm has a very serious weakness: O(n^2) runtime in the worst-case scenarios. 
+Because of this weakness, it should not used in any large-scale applications with arbitrary inputs.
+This section discusses when those worst-case scenarios happen and how we can limit the chance of those scenarios.
+Before going into details, it should be noted that worst-case scenarios cannot be avoided, and those scenarios depend on the partition strategy that Quick-sort uses.
+To find the worst-case scenarios for a partition strategy, find a class of inputs such that after each partition, only one item is moved to either side of the pivot.
+
+In the standard two-way partition strategy ("< pivot" and ">= pivot") shown in [this post](/blog/2016/08/30/tutorial-sorting-algorithms/), it has the O(n^2) runtime when the input list is sorted (Quiz: in which direction?).
+One simple way to work around that problem is to shuffle the input list (by swapping random elements).
+Shuffling the list can be done in O(n) time and should has no effect to overall O(nlogn) sorting runtime. 
+
+However, even with shuffling, the worst-case scenario happens when the input list has many repeated items.
+One way to work around that is to three-way partition as shown below, only proceed with the "<" and ">" partitions, and ignoring "=" partition. 
+
+### Three-way partitions
 
 ``` python
 def quicksort3(mlist, lo=0, hi=None):
