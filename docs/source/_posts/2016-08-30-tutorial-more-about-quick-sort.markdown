@@ -7,7 +7,6 @@ categories:
 - Tutorial
 - Algorithm
 - Addepar
-- TODO
 ---
 
 This post discuses more about partition algorithms used in Quick Sort and its runtime. 
@@ -29,8 +28,9 @@ Shuffling the list can be done in O(n) time and should has no effect to overall 
 
 However, even with shuffling, the worst-case scenario happens when the input list has many repeated items.
 One way to work around that is to three-way partition as shown below, only proceed with the "<" and ">" partitions, and ignoring "=" partition. 
+This Quick-sort partition is usually the one used in most libraries and typically very fast in practice.
 
-### Three-way partitions
+#### Three-way partitions
 
 ``` python
 def quicksort3(mlist, lo=0, hi=None):
@@ -81,12 +81,16 @@ def quicksort3(mlist, lo=0, hi=None):
 
 ### Quick Select
 
-TODO: Discussion.
+Sometimes, interview questions will involve "order statistics", such as finding k-th smallest element in an array.
+To do this, you select a random pivot and partition the array as you would in the Quicksort algorithm.
+Then, based on the index of the pivot element, you know which half of the array contains the desired element.
+For example: k=10 and n=20, if the first half contains 5 elements, then you should ignore the first half, and recursively process the second half with k=4 and n=14.
+The runtime of this algorithm is O(n), not O(n log n), since the recursive call is only on one half of the array.
 
 #### Find median
 
-Find median is a special case of finding k-th largest item. 
-You still have to implement finding k-th largest helper function.
+Find median is a special case of finding k-th smallest item. 
+You still have to implement finding k-th smallest helper function.
 
 ``` python
 def find_median(mlist):
