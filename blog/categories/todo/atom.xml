@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Todo | Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/blog/categories/todo/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2016-09-20T00:07:21-07:00</updated>
+  <updated>2016-09-20T00:08:31-07:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -135,142 +135,6 @@ Most of these are from &ldquo;Python tutorial&rdquo;.</p>
 
 <p>For more advanced binary operations, check <code>bisect</code> module.
 Using <code>bisect</code> module for binary search will be awkward and not recommended in an interview.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Tutorial: More About Quick Sort]]></title>
-    <link href="http://tdongsi.github.io/python/blog/2016/08/31/tutorial-more-about-quick-sort/"/>
-    <updated>2016-08-31T21:48:49-07:00</updated>
-    <id>http://tdongsi.github.io/python/blog/2016/08/31/tutorial-more-about-quick-sort</id>
-    <content type="html"><![CDATA[<p>This post discuses more about partition algorithms used in Quick Sort and its runtime.
-Partition algorithms are also used to efficiently find certain groups of the list, also known as &ldquo;Quick Select&rdquo;.</p>
-
-<!-- more -->
-
-
-<h3>Discussion of Quick-sort runtime</h3>
-
-<p>The Quick-sort algorithm has a very serious weakness: O(n<sup>2</sup>) runtime in the worst-case scenarios.
-Because of this weakness, it should not used in any large-scale applications with arbitrary inputs.
-This section discusses when those worst-case scenarios happen and how we can limit the chance of those scenarios.
-Before going into details, it should be noted that worst-case scenarios cannot be avoided, and those scenarios depend on the partition strategy that Quick-sort uses.
-To find the worst-case scenarios for a partition strategy, find a class of inputs such that after each partition, only one item is moved to either side of the pivot.</p>
-
-<p>In the standard two-way partition strategy (&ldquo;&lt; pivot&rdquo; and &ldquo;>= pivot&rdquo;) shown in <a href="/blog/2016/08/30/tutorial-sorting-algorithms/">this post</a>, it has the O(n<sup>2</sup>) runtime when the input list is sorted (Quiz: in which direction?).
-One simple way to work around that problem is to shuffle the input list (by swapping random elements).
-Shuffling the list can be done in O(n) time and should has no effect to overall O(nlogn) sorting runtime.</p>
-
-<p>However, even with shuffling, the worst-case scenario happens when the input list has many repeated items.
-One way to work around that is to three-way partition as shown below, only proceed with the &ldquo;&lt;&rdquo; and &ldquo;>&rdquo; partitions, and ignoring &ldquo;=&rdquo; partition.
-This Quick-sort partition is usually the one used in most libraries and typically very fast in practice.</p>
-
-<h4>Three-way partitions</h4>
-
-<pre><code class="python">def quicksort3(mlist, lo=0, hi=None):
-    """ Quick-sort using three-way partition strategy.
-    """
-
-    def partition3(mlist, lo, hi):
-        """ In-place three-way partition of the list will return [&lt; pivot] [== pivot] [&gt; pivot]
-
-        The two-way partition ([&lt; pivot] [&gt;= pivot]) seen in previous quicksort has the following degenerate cases:
-         1. Almost sorted lists. -&gt; Defense: Use random swaps to scramble the lists before sorting.
-         2. Almost equal items. -&gt; Defense: Use this three-way partition strategy.
-        """
-        pivot = mlist[hi-1]
-
-        idx1 = lo
-        for i in range(lo, hi-1):
-            if mlist[i] &lt; pivot:
-                mlist[i], mlist[idx1] = mlist[idx1], mlist[i]
-                idx1 += 1
-
-        idx2 = idx1
-        for i in range(idx1, hi-1):
-            if mlist[i] == pivot:
-                mlist[i], mlist[idx2] = mlist[idx2], mlist[i]
-                idx2 += 1
-
-        # move the pivot to the right partition
-        mlist[idx2], mlist[hi - 1] = mlist[hi - 1], mlist[idx2]
-
-        return idx1, idx2
-
-    if hi is None:
-        hi = len(mlist)
-
-    if lo == hi:
-        # empty list
-        return mlist
-    elif lo == hi - 1:
-        # singleton list
-        return mlist
-    else:
-        p, q = partition3(mlist, lo, hi)
-        quicksort(mlist, lo, p)
-        quicksort(mlist, q + 1, hi)
-        return mlist
-</code></pre>
-
-<h3>Quick Select</h3>
-
-<p>Sometimes, interview questions will involve &ldquo;order statistics&rdquo;, such as finding k-th smallest element in an array.
-To do this, you select a random pivot and partition the array as you would in the Quicksort algorithm.
-Then, based on the index of the pivot element, you know which half of the array contains the desired element.
-For example: k=10 and n=20, if the first half contains 5 elements, then you should ignore the first half, and recursively process the second half with k=4 and n=14.
-The runtime of this algorithm is O(n), not O(n log n), since the recursive call is only on one half of the array.</p>
-
-<h4>Find median</h4>
-
-<p>Find median is a special case of finding k-th smallest item.
-You still have to implement finding k-th smallest helper function.</p>
-
-<pre><code class="python">def find_median(mlist):
-    """ Find the median of a given list of numbers.
-    """
-    def partition(alist, lo, hi):
-        pivot = alist[hi - 1]
-        idx = lo
-
-        for i in range(lo, hi-1):
-            if alist[i] &lt; pivot:
-                alist[i], alist[idx] = alist[idx], alist[i]
-                idx += 1
-        # move the pivot
-        alist[idx], alist[hi - 1] = alist[hi - 1], alist[idx]
-        return idx
-
-    def find_kth(mlist, k, lo, hi):
-        if lo == hi:
-            # empty list
-            return None
-        elif lo == hi-1:
-            # singleton list
-            return mlist[lo] if k == lo else None
-        else:
-            p = partition(mlist, lo, hi)
-            if p == k:
-                return mlist[p]
-            elif p &lt; k:
-                return find_kth(mlist, k, p+1, hi)
-            else:
-                return find_kth(mlist, k, lo, p)
-        pass
-
-    length = len(mlist)
-    if length == 0:
-        return None
-
-    if length % 2 == 1:
-        # if odd length
-        return find_kth(mlist, length/2, 0, length)
-    else:
-        # if length is even
-        first = find_kth(mlist, length/2-1, 0, length)
-        second = find_kth(mlist, length/2, 0, length)
-        return (first+second)/2.0
-</code></pre>
 ]]></content>
   </entry>
   
@@ -446,6 +310,27 @@ class TestSorting(unittest.TestCase):
         self.assertEqual(do_sort([2, 1]), [1, 2])
         pass
 </code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Python Quick Recap]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2016/07/02/python-quick-recap/"/>
+    <updated>2016-07-02T00:23:27-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2016/07/02/python-quick-recap</id>
+    <content type="html"><![CDATA[<p>What to review before a Python interview.</p>
+
+<!--more-->
+
+
+<h3>Basic</h3>
+
+<ol>
+<li><a href="https://docs.python.org/2.7/tutorial/">Python tutorial</a>: especially <a href="https://docs.python.org/2.7/tutorial/classes.html">&ldquo;Classes&rdquo;</a> and two <a href="https://docs.python.org/2.7/tutorial/stdlib.html">&ldquo;Brief Tour of Standard Library&rdquo;</a> sections.</li>
+<li><a href="https://pyformat.info/">String format</a> if you expect lots of string processing.</li>
+<li><a href="/blog/2016/09/05/tutorial-protocols/">Protocols</a>.</li>
+</ol>
+
 ]]></content>
   </entry>
   
