@@ -70,7 +70,8 @@ def create_config_file(filename, query_generator):
     config.queries = query_generator
 
     with open(filename, 'w') as config_file:
-        json.dump(config, config_file, default=lambda o: o.__dict__[Config.ODICT], indent=4)
+        json.dump(config, config_file, default=lambda o: vars(o)[Config.ODICT], indent=4)
+        #json.dump(config, config_file, default=vars, indent=4)
 
 
 def ordered_config_file(filename, query_generator):
@@ -97,7 +98,7 @@ def main():
     FILE_NAME = "hive_vertica_count.json"
     query_generator = generate_count_queries()
     create_config_file(FILE_NAME, query_generator)
-    #ordered_config_file(FILE_NAME, query_generator)
+    # ordered_config_file(FILE_NAME, query_generator)
 
 
 if __name__ == "__main__":
