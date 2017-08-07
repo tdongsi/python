@@ -6,7 +6,6 @@ comments: true
 categories: 
 - Tutorial
 - Algorithm
-- TODO
 ---
 
 Quick overview and implementations of the most common sorting algorithms.
@@ -28,6 +27,11 @@ Most updated implementations are in [this Python module](https://github.com/tdon
 | **Radix sort** | O(w * n) / O(w * n) | O(1) | Yes/Yes (some variants) |  Not comparison-sort. *w -> log n* for arbitrary range. |
 
 <br>
+
+Note that **insertion sort** still has its place even though it is not a `O(n * log n)` algorithm. 
+It is shown in practice that "insertion sort" is faster than other sorting algorithms for sufficiently small, mostly sorted lists. 
+A common application of "insertion sort" is in **merge sort** implementations where 
+"merge sort" calls its own internal "insertion sort" to sort small enough sub-lists before merging (instead of keeping recursing to singleton lists).
 
 #### How to approach sorting questions
 
@@ -151,7 +155,37 @@ def insertion_sort(mlist):
 
 ### Radix Sort
 
-TODO
+NOTE: This implementation is copied from [here](http://www.geekviewpoint.com/python/sorting/radixsort). Add your own.
+
+``` python Radix sort
+def radixsort( aList ):
+  RADIX = 10
+  maxLength = False
+  tmp , placement = -1, 1
+ 
+  while not maxLength:
+    maxLength = True
+    # declare and initialize buckets
+    buckets = [list() for _ in range( RADIX )]
+ 
+    # split aList between lists
+    for  i in aList:
+      tmp = i / placement
+      buckets[tmp % RADIX].append( i )
+      if maxLength and tmp > 0:
+        maxLength = False
+ 
+    # empty lists into aList array
+    a = 0
+    for b in range( RADIX ):
+      buck = buckets[b]
+      for i in buck:
+        aList[a] = i
+        a += 1
+ 
+    # move to next digit
+    placement *= RADIX
+```
 
 ### Testing sorting algorithms
 
