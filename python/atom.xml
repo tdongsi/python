@@ -1,0 +1,833 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Personal Interview Notes]]></title>
+  <link href="http://tdongsi.github.io/python/atom.xml" rel="self"/>
+  <link href="http://tdongsi.github.io/python/"/>
+  <updated>2017-08-06T18:14:45-07:00</updated>
+  <id>http://tdongsi.github.io/python/</id>
+  <author>
+    <name><![CDATA[Cuong Dong-Si]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Tutorial: BFS and DFS]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2016/09/17/tutorial-bfs-and-dfs/"/>
+    <updated>2016-09-17T15:47:11-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2016/09/17/tutorial-bfs-and-dfs</id>
+    <content type="html"><![CDATA[<p><a href="http://eddmann.com/posts/depth-first-search-and-breadth-first-search-in-python/">http://eddmann.com/posts/depth-first-search-and-breadth-first-search-in-python/</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Tutorial: Protocols]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2016/09/05/tutorial-protocols/"/>
+    <updated>2016-09-05T23:50:24-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2016/09/05/tutorial-protocols</id>
+    <content type="html"><![CDATA[<p>Python uses &ldquo;duck typing&rdquo;.
+It does not have interfaces like Java to enforce certain behaviors:
+<code>Iterable</code> iterface means that you can iterate an object of that class in a <code>for each</code> loop.
+In Python, to do that, you have to override magic functions like <code>__iter__</code> to achieve some behaviors.
+Each behavior is called &ldquo;protocol&rdquo; in this post since some involves overriding multiple magic funtions.</p>
+
+<!-- Reference:
+Evernote: "OOP in Python"
+-->
+
+
+
+
+<!--more-->
+
+
+<h3>Iterator</h3>
+
+<p>Here, <code>__iter__</code> just returns self, an object that has the function next(), which (when called) either returns a value or raises a StopIteration exception.
+We’ve actually already met several iterators in disguise; in particular, <code>enumerate</code> is an iterator.
+To drive home the point, here’s a simple reimplementation of <code>enumerate</code>:</p>
+
+<figure class='code'><figcaption><span>Implement enumerator() as iterator</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&gt;&gt;&gt;</span> <span class="k">class</span> <span class="nc">my_enumerate</span><span class="p">:</span>
+</span><span class='line'><span class="o">...</span>   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">some_iter</span><span class="p">):</span>
+</span><span class='line'><span class="o">...</span>      <span class="bp">self</span><span class="o">.</span><span class="n">some_iter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">some_iter</span><span class="p">)</span>
+</span><span class='line'><span class="o">...</span>      <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+</span><span class='line'><span class="o">...</span>
+</span><span class='line'><span class="o">...</span>   <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'><span class="o">...</span>      <span class="k">return</span> <span class="bp">self</span>
+</span><span class='line'><span class="o">...</span>
+</span><span class='line'><span class="o">...</span>   <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'><span class="o">...</span>      <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">some_iter</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+</span><span class='line'><span class="o">...</span>      <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'><span class="o">...</span>      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="n">val</span>
+</span><span class='line'><span class="o">&gt;&gt;&gt;</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">my_enumerate</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">]):</span>
+</span><span class='line'><span class="o">...</span>   <span class="k">print</span> <span class="n">n</span><span class="p">,</span> <span class="n">val</span>
+</span><span class='line'><span class="mi">0</span> <span class="n">a</span>
+</span><span class='line'><span class="mi">1</span> <span class="n">b</span>
+</span><span class='line'><span class="mi">2</span> <span class="n">c</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Generator and Iterator protocol</h4>
+
+<p>It is also much easier to write routines like enumerate as a generator than as an iterator:</p>
+
+<figure class='code'><figcaption><span>Implement enumerate() using generator</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">gen_enumerate</span><span class="p">(</span><span class="n">some_iter</span><span class="p">):</span>
+</span><span class='line'><span class="o">...</span>   <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'><span class="o">...</span>   <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">some_iter</span><span class="p">:</span>
+</span><span class='line'><span class="o">...</span>      <span class="k">yield</span> <span class="n">count</span><span class="p">,</span> <span class="n">val</span>
+</span><span class='line'><span class="o">...</span>      <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>But you can do things with generators that you couldn’t do with finite lists.
+Consider two full implementation of Eratosthenes’ Sieve for finding prime numbers.
+Full discussion is <a href="http://intermediate-and-advanced-software-carpentry.readthedocs.io/en/latest/idiomatic-python.html">here</a>.
+Most of these are from &ldquo;Python tutorial&rdquo;.</p>
+
+<h3>Container</h3>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Tutorial: Basic Algorithms]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2016/09/02/tutorial-basic-algorithms/"/>
+    <updated>2016-09-02T01:04:37-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2016/09/02/tutorial-basic-algorithms</id>
+    <content type="html"><![CDATA[<p>For sorting algorithms, see <a href="http://tdongsi.github.io/python/blog/2016/08/30/tutorial-sorting-algorithms/">this post</a>.</p>
+
+<!--more-->
+
+
+<h3>Binary search</h3>
+
+<figure class='code'><figcaption><span>Binary search</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">binary_search</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot; Binary search</span>
+</span><span class='line'>
+</span><span class='line'><span class="sd">    :param mlist: sorted list in ascending order</span>
+</span><span class='line'><span class="sd">    :param item:</span>
+</span><span class='line'><span class="sd">    :return: index of item in list. -1 if not found.</span>
+</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">_bin_search</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">start</span> <span class="o">==</span> <span class="n">end</span><span class="p">:</span>
+</span><span class='line'>            <span class="c"># empty</span>
+</span><span class='line'>            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</span><span class='line'>        <span class="k">elif</span> <span class="n">start</span> <span class="o">==</span> <span class="n">end</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+</span><span class='line'>            <span class="c"># singleton</span>
+</span><span class='line'>            <span class="k">if</span> <span class="n">mlist</span><span class="p">[</span><span class="n">start</span><span class="p">]</span> <span class="o">==</span> <span class="n">item</span><span class="p">:</span>
+</span><span class='line'>                <span class="k">return</span> <span class="n">start</span>
+</span><span class='line'>            <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>                <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</span><span class='line'>        <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">med</span> <span class="o">=</span> <span class="p">(</span><span class="n">start</span><span class="o">+</span><span class="n">end</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+</span><span class='line'>            <span class="k">if</span> <span class="n">mlist</span><span class="p">[</span><span class="n">med</span><span class="p">]</span> <span class="o">==</span> <span class="n">item</span><span class="p">:</span>
+</span><span class='line'>                <span class="k">return</span> <span class="n">med</span>
+</span><span class='line'>            <span class="k">elif</span> <span class="n">mlist</span><span class="p">[</span><span class="n">med</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">item</span><span class="p">:</span>
+</span><span class='line'>                <span class="k">return</span> <span class="n">_bin_search</span><span class="p">(</span><span class="n">med</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+</span><span class='line'>            <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>                <span class="k">return</span> <span class="n">_bin_search</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">med</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mlist</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+</span><span class='line'>    <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">_bin_search</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">mlist</span><span class="p">))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>For more advanced binary operations, check <code>bisect</code> module.
+Using <code>bisect</code> module for binary search will be awkward and not recommended in an interview.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Tutorial: More About Quick Sort]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2016/08/31/tutorial-more-about-quick-sort/"/>
+    <updated>2016-08-31T21:48:49-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2016/08/31/tutorial-more-about-quick-sort</id>
+    <content type="html"><![CDATA[<p>This post discuses more about partition algorithms used in Quick Sort and its runtime.
+Partition algorithms are also used to efficiently find certain groups of the list, also known as &ldquo;Quick Select&rdquo;.</p>
+
+<!-- more -->
+
+
+<h3>Discussion of Quick-sort runtime</h3>
+
+<p>The Quick-sort algorithm has a very serious weakness: O(n<sup>2</sup>) runtime in the worst-case scenarios.
+Because of this weakness, it should not used in any large-scale applications with arbitrary inputs.
+This section discusses when those worst-case scenarios happen and how we can limit the chance of those scenarios.
+Before going into details, it should be noted that worst-case scenarios cannot be avoided, and those scenarios depend on the partition strategy that Quick-sort uses.
+To find the worst-case scenarios for a partition strategy, find a class of inputs such that after each partition, only one item is moved to either side of the pivot.</p>
+
+<p>In the standard two-way partition strategy (&ldquo;&lt; pivot&rdquo; and &ldquo;>= pivot&rdquo;) shown in <a href="http://tdongsi.github.io/python/blog/2016/08/30/tutorial-sorting-algorithms/">this post</a>, it has the O(n<sup>2</sup>) runtime when the input list is sorted (Quiz: in which direction?).
+One simple way to work around that problem is to shuffle the input list (by swapping random elements).
+Shuffling the list can be done in O(n) time and should has no effect to overall O(nlogn) sorting runtime.</p>
+
+<p>However, even with shuffling, the worst-case scenario happens when the input list has many repeated items.
+One way to work around that is to three-way partition as shown below, only proceed with the &ldquo;&lt;&rdquo; and &ldquo;>&rdquo; partitions, and ignoring &ldquo;=&rdquo; partition.
+This Quick-sort partition is usually the one used in most libraries and typically very fast in practice.</p>
+
+<h4>Three-way partitions</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">quicksort3</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">lo</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot; Quick-sort using three-way partition strategy.</span>
+</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">partition3</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">):</span>
+</span><span class='line'>        <span class="sd">&quot;&quot;&quot; In-place three-way partition of the list will return [&lt; pivot] [== pivot] [&gt; pivot]</span>
+</span><span class='line'>
+</span><span class='line'><span class="sd">        The two-way partition ([&lt; pivot] [&gt;= pivot]) seen in previous quicksort has the following degenerate cases:</span>
+</span><span class='line'><span class="sd">         1. Almost sorted lists. -&gt; Defense: Use random swaps to scramble the lists before sorting.</span>
+</span><span class='line'><span class="sd">         2. Almost equal items. -&gt; Defense: Use this three-way partition strategy.</span>
+</span><span class='line'><span class="sd">        &quot;&quot;&quot;</span>
+</span><span class='line'>        <span class="n">pivot</span> <span class="o">=</span> <span class="n">mlist</span><span class="p">[</span><span class="n">hi</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">idx1</span> <span class="o">=</span> <span class="n">lo</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+</span><span class='line'>            <span class="k">if</span> <span class="n">mlist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">pivot</span><span class="p">:</span>
+</span><span class='line'>                <span class="n">mlist</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">mlist</span><span class="p">[</span><span class="n">idx1</span><span class="p">]</span> <span class="o">=</span> <span class="n">mlist</span><span class="p">[</span><span class="n">idx1</span><span class="p">],</span> <span class="n">mlist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</span><span class='line'>                <span class="n">idx1</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">idx2</span> <span class="o">=</span> <span class="n">idx1</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">idx1</span><span class="p">,</span> <span class="n">hi</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+</span><span class='line'>            <span class="k">if</span> <span class="n">mlist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">pivot</span><span class="p">:</span>
+</span><span class='line'>                <span class="n">mlist</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">mlist</span><span class="p">[</span><span class="n">idx2</span><span class="p">]</span> <span class="o">=</span> <span class="n">mlist</span><span class="p">[</span><span class="n">idx2</span><span class="p">],</span> <span class="n">mlist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</span><span class='line'>                <span class="n">idx2</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c"># move the pivot to the right partition</span>
+</span><span class='line'>        <span class="n">mlist</span><span class="p">[</span><span class="n">idx2</span><span class="p">],</span> <span class="n">mlist</span><span class="p">[</span><span class="n">hi</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">mlist</span><span class="p">[</span><span class="n">hi</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">mlist</span><span class="p">[</span><span class="n">idx2</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="n">idx1</span><span class="p">,</span> <span class="n">idx2</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="n">hi</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">hi</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mlist</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="n">lo</span> <span class="o">==</span> <span class="n">hi</span><span class="p">:</span>
+</span><span class='line'>        <span class="c"># empty list</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">mlist</span>
+</span><span class='line'>    <span class="k">elif</span> <span class="n">lo</span> <span class="o">==</span> <span class="n">hi</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class='line'>        <span class="c"># singleton list</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">mlist</span>
+</span><span class='line'>    <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">partition3</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">quicksort</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">quicksort</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">q</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">hi</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">mlist</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Quick Select</h3>
+
+<p>Sometimes, interview questions will involve &ldquo;order statistics&rdquo;, such as finding k-th smallest element in an array.
+To do this, you select a random pivot and partition the array as you would in the Quicksort algorithm.
+Then, based on the index of the pivot element, you know which half of the array contains the desired element.
+For example: k=10 and n=20, if the first half contains 5 elements, then you should ignore the first half, and recursively process the second half with k=4 and n=14.
+The runtime of this algorithm is O(n), not O(n log n), since the recursive call is only on one half of the array.</p>
+
+<h4>Find median</h4>
+
+<p>Find median is a special case of finding k-th smallest item.
+You still have to implement finding k-th smallest helper function.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">find_median</span><span class="p">(</span><span class="n">mlist</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot; Find the median of a given list of numbers.</span>
+</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">partition</span><span class="p">(</span><span class="n">alist</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">pivot</span> <span class="o">=</span> <span class="n">alist</span><span class="p">[</span><span class="n">hi</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+</span><span class='line'>        <span class="n">idx</span> <span class="o">=</span> <span class="n">lo</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+</span><span class='line'>            <span class="k">if</span> <span class="n">alist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">pivot</span><span class="p">:</span>
+</span><span class='line'>                <span class="n">alist</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">alist</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">alist</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">alist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</span><span class='line'>                <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>        <span class="c"># move the pivot</span>
+</span><span class='line'>        <span class="n">alist</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">alist</span><span class="p">[</span><span class="n">hi</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">alist</span><span class="p">[</span><span class="n">hi</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">alist</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">idx</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">find_kth</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">lo</span> <span class="o">==</span> <span class="n">hi</span><span class="p">:</span>
+</span><span class='line'>            <span class="c"># empty list</span>
+</span><span class='line'>            <span class="k">return</span> <span class="bp">None</span>
+</span><span class='line'>        <span class="k">elif</span> <span class="n">lo</span> <span class="o">==</span> <span class="n">hi</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+</span><span class='line'>            <span class="c"># singleton list</span>
+</span><span class='line'>            <span class="k">return</span> <span class="n">mlist</span><span class="p">[</span><span class="n">lo</span><span class="p">]</span> <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="n">lo</span> <span class="k">else</span> <span class="bp">None</span>
+</span><span class='line'>        <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">p</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">)</span>
+</span><span class='line'>            <span class="k">if</span> <span class="n">p</span> <span class="o">==</span> <span class="n">k</span><span class="p">:</span>
+</span><span class='line'>                <span class="k">return</span> <span class="n">mlist</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+</span><span class='line'>            <span class="k">elif</span> <span class="n">p</span> <span class="o">&lt;</span> <span class="n">k</span><span class="p">:</span>
+</span><span class='line'>                <span class="k">return</span> <span class="n">find_kth</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">p</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">hi</span><span class="p">)</span>
+</span><span class='line'>            <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>                <span class="k">return</span> <span class="n">find_kth</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">pass</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mlist</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">length</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">return</span> <span class="bp">None</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="n">length</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class='line'>        <span class="c"># if odd length</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">find_kth</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">length</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>        <span class="c"># if length is even</span>
+</span><span class='line'>        <span class="n">first</span> <span class="o">=</span> <span class="n">find_kth</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">length</span><span class="o">/</span><span class="mi">2</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">second</span> <span class="o">=</span> <span class="n">find_kth</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">length</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">return</span> <span class="p">(</span><span class="n">first</span><span class="o">+</span><span class="n">second</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Tutorial: Sorting Algorithms]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2016/08/30/tutorial-sorting-algorithms/"/>
+    <updated>2016-08-30T21:23:48-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2016/08/30/tutorial-sorting-algorithms</id>
+    <content type="html"><![CDATA[<p>Quick overview and implementations of the most common sorting algorithms.</p>
+
+<p>Most updated implementations are in <a href="https://github.com/tdongsi/python/blob/master/CodeJam/practice/y2016/basic.py">this Python module</a>.</p>
+
+<!-- more -->
+
+
+<h3>Sorting algorithms</h3>
+
+<h3>Overview of space/time complexity</h3>
+
+<table>
+<thead>
+<tr>
+<th> </th>
+<th> Time Complexity (Avg/Worst) </th>
+<th> Space Complexity </th>
+<th> In-place/Stable? </th>
+<th> Notes </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td> <strong>Heapsort</strong> </td>
+<td>  O(n * log n) / O(n * log n) </td>
+<td> O(1) </td>
+<td> Yes/No </td>
+<td> NA </td>
+</tr>
+<tr>
+<td> <strong>Mergesort</strong> </td>
+<td> O(n * log n) / O(n * log n).</td>
+<td> O(n) </td>
+<td> No/Yes </td>
+<td> Space O(1) for doubly-linked list. </td>
+</tr>
+<tr>
+<td> <strong>Quicksort</strong> </td>
+<td> O(n * log n) / O(n * n) </td>
+<td> O(1) </td>
+<td> Yes/No </td>
+<td> It is stable for linked-list. </td>
+</tr>
+<tr>
+<td> <strong>Insertion sort</strong> </td>
+<td> O(n * n) / O(n * n) </td>
+<td> O(1) </td>
+<td> Yes/Yes </td>
+<td> Adaptive: quick for largely sorted list. Online. Efficient for small lists. </td>
+</tr>
+<tr>
+<td> <strong>Radix sort</strong> </td>
+<td> O(w * n) / O(w * n) </td>
+<td> O(1) </td>
+<td> Yes/Yes (some variants) </td>
+<td>  Not comparison-sort. <em>w -> log n</em> for arbitrary range. </td>
+</tr>
+</tbody>
+</table>
+
+
+<p><br></p>
+
+<p>Note that <strong>insertion sort</strong> still has its place even though it is not a <code>O(n * log n)</code> algorithm. It is shown in practice that &ldquo;insertion sort&rdquo; is faster than other sorting algorithms for sufficiently small, mostly sorted lists. A common application of &ldquo;insertion sort&rdquo; is in <strong>merge sort</strong> implementations where &ldquo;merge sort&rdquo; calls its own internal &ldquo;insertion sort&rdquo; to sort small enough sub-lists before merging (instead of keeping recursing to singleton lists).</p>
+
+<h4>How to approach sorting questions</h4>
+
+<p>Simply using quick-sort for any sorting in algorithmic questions could fail you, since it shows inexperience.
+Asking clarifying questions is key: sorting a very large list of integers can have different approach, depending on its input size, data structure, numeric range and distribution.</p>
+
+<ul>
+<li>Small range: O(n) with array-based map.</li>
+<li>Medium range: O(wn) with radix sort.</li>
+<li>Arbitrary number: O(n log n)</li>
+</ul>
+
+
+<p><strong>Example</strong>: &ldquo;Design an algorithm to sort a list&rdquo;.</p>
+
+<ul>
+<li>What kind of list? Array list or linked list? Array list.</li>
+<li>What data in it? Numbers or characters or strings? Numbers.</li>
+<li>Are numbers integers? Yes.</li>
+<li>What range of numbers? Are they IDs or values of something? Ages of customers.</li>
+<li>How many numbers? One million.</li>
+</ul>
+
+
+<p>Based on the answers above, the best solution is to use an array of size 200 to keep count of customers for a given age.
+Size 200 is chosen because the oldest person is less than 200 years old.
+You can see that the space and time complexity is much different from Merge-Sort when you know characteristics of input data.</p>
+
+<h3>Merge Sort</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">merge_sort</span><span class="p">(</span><span class="n">mlist</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">_merge</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">alist</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class='line'>        <span class="n">l_idx</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>        <span class="n">r_idx</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">while</span> <span class="n">l_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">left</span><span class="p">)</span> <span class="ow">and</span> <span class="n">r_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">right</span><span class="p">):</span>
+</span><span class='line'>            <span class="k">if</span> <span class="n">left</span><span class="p">[</span><span class="n">l_idx</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">right</span><span class="p">[</span><span class="n">r_idx</span><span class="p">]:</span>
+</span><span class='line'>                <span class="n">alist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">left</span><span class="p">[</span><span class="n">l_idx</span><span class="p">])</span>
+</span><span class='line'>                <span class="n">l_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>            <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>                <span class="n">alist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">right</span><span class="p">[</span><span class="n">r_idx</span><span class="p">])</span>
+</span><span class='line'>                <span class="n">r_idx</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c"># append the rest</span>
+</span><span class='line'>        <span class="n">alist</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">left</span><span class="p">[</span><span class="n">l_idx</span><span class="p">:])</span>
+</span><span class='line'>        <span class="n">alist</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">right</span><span class="p">[</span><span class="n">r_idx</span><span class="p">:])</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="n">alist</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mlist</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">mlist</span>
+</span><span class='line'>    <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">med</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mlist</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+</span><span class='line'>        <span class="n">left</span> <span class="o">=</span> <span class="n">merge_sort</span><span class="p">(</span><span class="n">mlist</span><span class="p">[:</span><span class="n">med</span><span class="p">])</span>
+</span><span class='line'>        <span class="n">right</span> <span class="o">=</span> <span class="n">merge_sort</span><span class="p">(</span><span class="n">mlist</span><span class="p">[</span><span class="n">med</span><span class="p">:])</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">_merge</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Quick Sort</h3>
+
+<p>One important characteristic of Quick Sort is in-place.
+Naive implementation tends to ignore this, focusing on its divide-and-conquer strategy.
+The standard implementation is as follows, but see <a href="http://tdongsi.github.io/python/blog/2016/08/31/tutorial-more-about-quick-sort/">this post</a> for more details.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">quicksort</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">lo</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">partition</span><span class="p">(</span><span class="n">alist</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">pivot</span> <span class="o">=</span> <span class="n">alist</span><span class="p">[</span><span class="n">hi</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+</span><span class='line'>        <span class="n">idx</span> <span class="o">=</span> <span class="n">lo</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+</span><span class='line'>            <span class="k">if</span> <span class="n">alist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">pivot</span><span class="p">:</span>
+</span><span class='line'>                <span class="n">alist</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">alist</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">alist</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">alist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</span><span class='line'>                <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>        <span class="c"># move the pivot</span>
+</span><span class='line'>        <span class="n">alist</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">alist</span><span class="p">[</span><span class="n">hi</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">alist</span><span class="p">[</span><span class="n">hi</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">alist</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">idx</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="n">hi</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">hi</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mlist</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="n">lo</span> <span class="o">==</span> <span class="n">hi</span><span class="p">:</span>
+</span><span class='line'>        <span class="c"># empty list</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">mlist</span>
+</span><span class='line'>    <span class="k">elif</span> <span class="n">lo</span> <span class="o">==</span> <span class="n">hi</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+</span><span class='line'>        <span class="c"># singleton list</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">mlist</span>
+</span><span class='line'>    <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">p</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">quicksort</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">quicksort</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">p</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">hi</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">mlist</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Heap Sort</h3>
+
+<p>Straight from <code>heapq</code> module&rsquo;s documentation.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">heap_sort</span><span class="p">(</span><span class="n">mlist</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">heapq</span><span class="o">.</span><span class="n">heapify</span><span class="p">(</span><span class="n">mlist</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">[</span><span class="n">heapq</span><span class="o">.</span><span class="n">heappop</span><span class="p">(</span><span class="n">mlist</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mlist</span><span class="p">))]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Insertion Sort</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">insertion_sort</span><span class="p">(</span><span class="n">mlist</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mlist</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">mlist</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">mlist</span><span class="p">)):</span>
+</span><span class='line'>        <span class="n">pos</span> <span class="o">=</span> <span class="n">i</span>
+</span><span class='line'>        <span class="n">cur</span> <span class="o">=</span> <span class="n">mlist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">while</span> <span class="n">pos</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">cur</span> <span class="o">&lt;</span> <span class="n">mlist</span><span class="p">[</span><span class="n">pos</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+</span><span class='line'>            <span class="n">mlist</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">mlist</span><span class="p">[</span><span class="n">pos</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span><span class='line'>            <span class="n">pos</span> <span class="o">-=</span> <span class="mi">1</span>
+</span><span class='line'>        <span class="n">mlist</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">cur</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">mlist</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Radix Sort</h3>
+
+<p>NOTE: This implementation is copied from <a href="http://www.geekviewpoint.com/python/sorting/radixsort">here</a>. Add your own.</p>
+
+<figure class='code'><figcaption><span>Radix sort</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">radixsort</span><span class="p">(</span> <span class="n">aList</span> <span class="p">):</span>
+</span><span class='line'>  <span class="n">RADIX</span> <span class="o">=</span> <span class="mi">10</span>
+</span><span class='line'>  <span class="n">maxLength</span> <span class="o">=</span> <span class="bp">False</span>
+</span><span class='line'>  <span class="n">tmp</span> <span class="p">,</span> <span class="n">placement</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">while</span> <span class="ow">not</span> <span class="n">maxLength</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">maxLength</span> <span class="o">=</span> <span class="bp">True</span>
+</span><span class='line'>    <span class="c"># declare and initialize buckets</span>
+</span><span class='line'>    <span class="n">buckets</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span> <span class="n">RADIX</span> <span class="p">)]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># split aList between lists</span>
+</span><span class='line'>    <span class="k">for</span>  <span class="n">i</span> <span class="ow">in</span> <span class="n">aList</span><span class="p">:</span>
+</span><span class='line'>      <span class="n">tmp</span> <span class="o">=</span> <span class="n">i</span> <span class="o">/</span> <span class="n">placement</span>
+</span><span class='line'>      <span class="n">buckets</span><span class="p">[</span><span class="n">tmp</span> <span class="o">%</span> <span class="n">RADIX</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">i</span> <span class="p">)</span>
+</span><span class='line'>      <span class="k">if</span> <span class="n">maxLength</span> <span class="ow">and</span> <span class="n">tmp</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">maxLength</span> <span class="o">=</span> <span class="bp">False</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># empty lists into aList array</span>
+</span><span class='line'>    <span class="n">a</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span> <span class="n">RADIX</span> <span class="p">):</span>
+</span><span class='line'>      <span class="n">buck</span> <span class="o">=</span> <span class="n">buckets</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
+</span><span class='line'>      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">buck</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">aList</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+</span><span class='line'>        <span class="n">a</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># move to next digit</span>
+</span><span class='line'>    <span class="n">placement</span> <span class="o">*=</span> <span class="n">RADIX</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Testing sorting algorithms</h3>
+
+<p>Codes to verify your sorting algorithm.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">your_module.your_sort_impl</span> <span class="kn">as</span> <span class="nn">do_sort</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">TestSorting</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">test_sort</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="c"># import sorting function as do_sort</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">20</span><span class="p">):</span>
+</span><span class='line'>            <span class="c"># Do it 5 times</span>
+</span><span class='line'>            <span class="n">expected</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</span><span class='line'>            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+</span><span class='line'>                <span class="n">mlist</span> <span class="o">=</span> <span class="n">expected</span><span class="p">[:]</span>
+</span><span class='line'>                <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">mlist</span><span class="p">)</span>
+</span><span class='line'>                <span class="c"># print mlist</span>
+</span><span class='line'>                <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">do_sort</span><span class="p">(</span><span class="n">mlist</span><span class="p">),</span> <span class="n">expected</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">pass</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">test_same_element</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">do_sort</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">])</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">do_sort</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">do_sort</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">do_sort</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">do_sort</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+</span><span class='line'>        <span class="k">pass</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Python Quick Recap]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2016/07/02/python-quick-recap/"/>
+    <updated>2016-07-02T00:23:27-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2016/07/02/python-quick-recap</id>
+    <content type="html"><![CDATA[<p>What to review before a Python interview.</p>
+
+<!--more-->
+
+
+<h3>Basic</h3>
+
+<ol>
+<li><a href="https://docs.python.org/2.7/tutorial/">Python tutorial</a>: especially <a href="https://docs.python.org/2.7/tutorial/classes.html">&ldquo;Classes&rdquo;</a> and two <a href="https://docs.python.org/2.7/tutorial/stdlib.html">&ldquo;Brief Tour of Standard Library&rdquo;</a> sections.</li>
+<li><a href="https://pyformat.info/">String format</a> if you expect lots of string processing.</li>
+<li><a href="http://tdongsi.github.io/python/blog/2016/09/05/tutorial-protocols/">Protocols</a>.</li>
+</ol>
+
+]]></content>
+  </entry>
+  
+</feed>

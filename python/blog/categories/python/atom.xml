@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Python | Personal Interview Notes]]></title>
+  <link href="http://tdongsi.github.io/python/blog/categories/python/atom.xml" rel="self"/>
+  <link href="http://tdongsi.github.io/python/"/>
+  <updated>2017-08-06T18:14:45-07:00</updated>
+  <id>http://tdongsi.github.io/python/</id>
+  <author>
+    <name><![CDATA[Cuong Dong-Si]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Tutorial: Protocols]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2016/09/05/tutorial-protocols/"/>
+    <updated>2016-09-05T23:50:24-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2016/09/05/tutorial-protocols</id>
+    <content type="html"><![CDATA[<p>Python uses &ldquo;duck typing&rdquo;.
+It does not have interfaces like Java to enforce certain behaviors:
+<code>Iterable</code> iterface means that you can iterate an object of that class in a <code>for each</code> loop.
+In Python, to do that, you have to override magic functions like <code>__iter__</code> to achieve some behaviors.
+Each behavior is called &ldquo;protocol&rdquo; in this post since some involves overriding multiple magic funtions.</p>
+
+<!-- Reference:
+Evernote: "OOP in Python"
+-->
+
+
+
+
+<!--more-->
+
+
+<h3>Iterator</h3>
+
+<p>Here, <code>__iter__</code> just returns self, an object that has the function next(), which (when called) either returns a value or raises a StopIteration exception.
+We’ve actually already met several iterators in disguise; in particular, <code>enumerate</code> is an iterator.
+To drive home the point, here’s a simple reimplementation of <code>enumerate</code>:</p>
+
+<pre><code class="python Implement enumerator() as iterator">&gt;&gt;&gt; class my_enumerate:
+...   def __init__(self, some_iter):
+...      self.some_iter = iter(some_iter)
+...      self.count = -1
+...
+...   def __iter__(self):
+...      return self
+...
+...   def next(self):
+...      val = self.some_iter.next()
+...      self.count += 1
+...      return self.count, val
+&gt;&gt;&gt; for n, val in my_enumerate(['a', 'b', 'c']):
+...   print n, val
+0 a
+1 b
+2 c
+</code></pre>
+
+<h4>Generator and Iterator protocol</h4>
+
+<p>It is also much easier to write routines like enumerate as a generator than as an iterator:</p>
+
+<pre><code class="python Implement enumerate() using generator">&gt;&gt;&gt; def gen_enumerate(some_iter):
+...   count = 0
+...   for val in some_iter:
+...      yield count, val
+...      count += 1
+</code></pre>
+
+<p>But you can do things with generators that you couldn’t do with finite lists.
+Consider two full implementation of Eratosthenes’ Sieve for finding prime numbers.
+Full discussion is <a href="http://intermediate-and-advanced-software-carpentry.readthedocs.io/en/latest/idiomatic-python.html">here</a>.
+Most of these are from &ldquo;Python tutorial&rdquo;.</p>
+
+<h3>Container</h3>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Python Quick Recap]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2016/07/02/python-quick-recap/"/>
+    <updated>2016-07-02T00:23:27-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2016/07/02/python-quick-recap</id>
+    <content type="html"><![CDATA[<p>What to review before a Python interview.</p>
+
+<!--more-->
+
+
+<h3>Basic</h3>
+
+<ol>
+<li><a href="https://docs.python.org/2.7/tutorial/">Python tutorial</a>: especially <a href="https://docs.python.org/2.7/tutorial/classes.html">&ldquo;Classes&rdquo;</a> and two <a href="https://docs.python.org/2.7/tutorial/stdlib.html">&ldquo;Brief Tour of Standard Library&rdquo;</a> sections.</li>
+<li><a href="https://pyformat.info/">String format</a> if you expect lots of string processing.</li>
+<li><a href="/blog/2016/09/05/tutorial-protocols/">Protocols</a>.</li>
+</ol>
+
+]]></content>
+  </entry>
+  
+</feed>
