@@ -4,7 +4,7 @@
   <title><![CDATA[Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2017-08-06T18:20:37-07:00</updated>
+  <updated>2017-08-07T00:36:44-07:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -12,6 +12,91 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Requests Cookbook]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2017/08/06/requests-cookbook/"/>
+    <updated>2017-08-06T23:17:25-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2017/08/06/requests-cookbook</id>
+    <content type="html"><![CDATA[<p><code>requests</code> module is a simple HTTP client library in Python.</p>
+
+<!-- more -->
+
+
+<h3>SSL authentication</h3>
+
+<figure class='code'><figcaption><span>SSL authentication</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">test_kafka</span><span class="p">(</span><span class="n">my_cert</span><span class="p">,</span> <span class="n">my_key</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot; Top level function to test_kafka.</span>
+</span><span class='line'>
+</span><span class='line'><span class="sd">    :param my_cert: path to certificate.</span>
+</span><span class='line'><span class="sd">    :param my_key: path to private key corresponding to the certificate.</span>
+</span><span class='line'><span class="sd">    :return:</span>
+</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">ZOOKEEPER_EP</span> <span class="o">=</span> <span class="s">&#39;https://kafka-prd.corp.net:9090&#39;</span>
+</span><span class='line'>    <span class="n">IOT_NAMESPACE</span> <span class="o">=</span> <span class="s">&#39;test&#39;</span>
+</span><span class='line'>    <span class="n">SALESFORCE_CA</span> <span class="o">=</span> <span class="s">&#39;download/ca.crt&#39;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">s</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">s</span><span class="o">.</span><span class="n">verify</span> <span class="o">=</span> <span class="n">SALESFORCE_CA</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">test_namespace</span><span class="p">():</span>
+</span><span class='line'>        <span class="sd">&quot;&quot;&quot; Test querying kafka namespace.</span>
+</span><span class='line'>
+</span><span class='line'><span class="sd">        Basically: curl -k -E ./kafka.p12:password &quot;https://kafka.prd:9090/namespaces/test&quot;</span>
+</span><span class='line'><span class="sd">        &quot;&quot;&quot;</span>
+</span><span class='line'>        <span class="n">NAMESPACE_PATH</span> <span class="o">=</span> <span class="s">&#39;/namespaces&#39;</span>
+</span><span class='line'>        <span class="n">endpoint</span> <span class="o">=</span> <span class="n">ZOOKEEPER_EP</span> <span class="o">+</span> <span class="n">NAMESPACE_PATH</span> <span class="o">+</span> <span class="s">&#39;/&#39;</span> <span class="o">+</span> <span class="n">IOT_NAMESPACE</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;GET: </span><span class="si">%s</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">r</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">cert</span><span class="o">=</span><span class="p">(</span><span class="n">my_cert</span><span class="p">,</span> <span class="n">my_key</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Response: </span><span class="si">%s</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</span><span class='line'>        <span class="c"># print json.dumps(data, indent=4)</span>
+</span><span class='line'>        <span class="c"># Print namespace</span>
+</span><span class='line'>        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;ID: </span><span class="si">%s</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+</span><span class='line'>        <span class="k">pass</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">test_namespace</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Tutorial: BFS and DFS]]></title>
