@@ -16,7 +16,7 @@ Most updated implementations are in [this Python module](https://github.com/tdon
 
 ### Sorting algorithms
 
-### Overview of space/time complexity
+#### Overview of space/time complexity
 
 | | Time Complexity (Avg/Worst) | Space Complexity | In-place/Stable? | Notes |
 | --- | --- | --- | --- | --- |
