@@ -11,6 +11,18 @@ categories:
 
 <!-- more -->
 
+### Example: BART parking
+
+The problem is discussed [here](http://tdongsi.github.io/blog/2016/10/30/automated-downloading-bart-parking-permits/).
+The `requests`'s code snippets can be found [here](https://github.com/tdongsi/bart-parking/blob/develop/python/bart.py).
+
+Featuring:
+
+* Login with CSRF protection
+* Cookie retrieval and usage
+* Binary download and saved to file.
+
+
 ### SSL authentication
 
 ``` python SSL authentication
