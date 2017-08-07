@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Algorithm | Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/blog/categories/algorithm/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2017-08-06T18:15:08-07:00</updated>
+  <updated>2017-08-06T18:20:37-07:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -222,7 +222,7 @@ You still have to implement finding k-th smallest helper function.</p>
 
 <h3>Sorting algorithms</h3>
 
-<h3>Overview of space/time complexity</h3>
+<h4>Overview of space/time complexity</h4>
 
 <table>
 <thead>
@@ -276,7 +276,10 @@ You still have to implement finding k-th smallest helper function.</p>
 
 <p><br></p>
 
-<p>Note that <strong>insertion sort</strong> still has its place even though it is not a <code>O(n * log n)</code> algorithm. It is shown in practice that &ldquo;insertion sort&rdquo; is faster than other sorting algorithms for sufficiently small, mostly sorted lists. A common application of &ldquo;insertion sort&rdquo; is in <strong>merge sort</strong> implementations where &ldquo;merge sort&rdquo; calls its own internal &ldquo;insertion sort&rdquo; to sort small enough sub-lists before merging (instead of keeping recursing to singleton lists).</p>
+<p>Note that <strong>insertion sort</strong> still has its place even though it is not a <code>O(n * log n)</code> algorithm.
+It is shown in practice that &ldquo;insertion sort&rdquo; is faster than other sorting algorithms for sufficiently small, mostly sorted lists.
+A common application of &ldquo;insertion sort&rdquo; is in <strong>merge sort</strong> implementations where
+&ldquo;merge sort&rdquo; calls its own internal &ldquo;insertion sort&rdquo; to sort small enough sub-lists before merging (instead of keeping recursing to singleton lists).</p>
 
 <h4>How to approach sorting questions</h4>
 
