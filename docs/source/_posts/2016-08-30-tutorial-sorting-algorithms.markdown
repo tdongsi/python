@@ -17,7 +17,17 @@ Most updated implementations are in [this Python module](https://github.com/tdon
 
 ### Sorting algorithms
 
-TODO: Overview of sorting algorithms and their Big-O. 
+### Overview of space/time complexity
+
+| | Time Complexity (Avg/Worst) | Space Complexity | In-place/Stable? | Notes |
+| --- | --- | --- | --- | --- |
+| **Heapsort** |  O(n * log n) / O(n * log n) | O(1) | Yes/No | NA |
+| **Mergesort** | O(n * log n) / O(n * log n).| O(n) | No/Yes | Space O(1) for doubly-linked list. |
+| **Quicksort** | O(n * log n) / O(n * n) | O(1) | Yes/No | It is stable for linked-list. |
+| **Insertion sort** | O(n * n) / O(n * n) | O(1) | Yes/Yes | Adaptive: quick for largely sorted list. Online. Efficient for small lists. |
+| **Radix sort** | O(w * n) / O(w * n) | O(1) | Yes/Yes (some variants) |  Not comparison-sort. *w -> log n* for arbitrary range. |
+
+<br>
 
 #### How to approach sorting questions
 
