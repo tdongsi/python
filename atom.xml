@@ -4,7 +4,7 @@
   <title><![CDATA[Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2017-08-07T00:36:44-07:00</updated>
+  <updated>2017-08-07T00:47:06-07:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -21,6 +21,20 @@
     <content type="html"><![CDATA[<p><code>requests</code> module is a simple HTTP client library in Python.</p>
 
 <!-- more -->
+
+
+<h3>Example: BART parking</h3>
+
+<p>The problem is discussed <a href="http://tdongsi.github.io/blog/2016/10/30/automated-downloading-bart-parking-permits/">here</a>.
+The <code>requests</code>&rsquo;s code snippets can be found <a href="https://github.com/tdongsi/bart-parking/blob/develop/python/bart.py">here</a>.</p>
+
+<p>Featuring:</p>
+
+<ul>
+<li>Login with CSRF protection</li>
+<li>Cookie retrieval and usage</li>
+<li>Binary download and saved to file.</li>
+</ul>
 
 
 <h3>SSL authentication</h3>
