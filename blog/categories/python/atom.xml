@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Python | Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/blog/categories/python/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2017-08-08T17:13:36-07:00</updated>
+  <updated>2017-08-08T17:21:03-07:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -31,7 +31,7 @@ The <code>requests</code>&rsquo;s code snippets can be found <a href="https://gi
 <p>Featuring:</p>
 
 <ul>
-<li>Login with CSRF protection</li>
+<li>Login with CSRF protection (with POST)</li>
 <li>Cookie retrieval and usage</li>
 <li>Binary download and saved to file.</li>
 </ul>
@@ -52,10 +52,13 @@ my_data = {'name': IOT_TOPIC, 'type': '/types/com.prod.emp'}
 my_header = {'Accept': 'application/json', 'Content-Type': 'application/json'}
 
 logger.info('POST: %s', TOPIC_ENDPOINT)
-r = s.post(TOPIC_ENDPOINT, headers=my_header, data=json.dumps(my_data), cert=AJNA_CERTS)
+r = s.post(TOPIC_ENDPOINT, headers=my_header, data=json.dumps(my_data), cert=KAFKA_CERTS)
 </code></pre>
 
-<p>Note that <code>json.dumps</code> is required for POST-ing JSON data.</p>
+<p>Note that <code>json.dumps</code> is required for POST-ing JSON data. The typical service response:</p>
+
+<pre><code class="plain Error message">"exception":"org.springframework.http.converter.HttpMessageNotReadableException","message":"Bad Request"
+</code></pre>
 
 <h3>SSL authentication</h3>
 
@@ -72,7 +75,7 @@ The certificate authority can be optionally specified (<code>s.verify = MY_CA</c
 
     ZOOKEEPER_EP = 'https://kafka-prd.corp.net:9090'
     IOT_NAMESPACE = 'test'
-    SALESFORCE_CA = 'download/ca.crt'
+    MY_CA = 'download/ca.crt'
 
     s = requests.Session()
     s.verify = MY_CA
