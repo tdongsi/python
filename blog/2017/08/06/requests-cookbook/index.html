@@ -107,7 +107,47 @@ The <code>requests</code>&rsquo;s code snippets can be found <a href="https://gi
 </ul>
 
 
+<figure class='code'><figcaption><span>Different payload for POST</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c"># POST /bart/users/login/ HTTP/1.1</span>
+</span><span class='line'><span class="c"># Content-Type: application/x-www-form-urlencoded</span>
+</span><span class='line'><span class="n">HEADERS</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;Referer&quot;</span><span class="p">:</span> <span class="s">&quot;https://www.select-a-spot.com/bart/&quot;</span><span class="p">}</span>
+</span><span class='line'><span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;username&quot;</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span>
+</span><span class='line'>            <span class="s">&quot;password&quot;</span><span class="p">:</span> <span class="n">password</span><span class="p">,</span>
+</span><span class='line'>            <span class="s">&quot;csrfmiddlewaretoken&quot;</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">cookies</span><span class="p">[</span><span class="s">&quot;csrftoken&quot;</span><span class="p">],</span>
+</span><span class='line'>            <span class="s">&quot;login&quot;</span><span class="p">:</span> <span class="s">&quot;Login&quot;</span><span class="p">}</span>
+</span><span class='line'><span class="n">r</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">&quot;https://www.select-a-spot.com/bart/users/login/&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">HEADERS</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">allow_redirects</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># POST /kafka/topic HTTP/1.1</span>
+</span><span class='line'><span class="c"># Content-Type: application/json</span>
+</span><span class='line'><span class="n">my_data</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">IOT_TOPIC</span><span class="p">,</span> <span class="s">&#39;type&#39;</span><span class="p">:</span> <span class="s">&#39;/types/com.prod.emp&#39;</span><span class="p">}</span>
+</span><span class='line'><span class="n">my_header</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;Accept&#39;</span><span class="p">:</span> <span class="s">&#39;application/json&#39;</span><span class="p">,</span> <span class="s">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s">&#39;application/json&#39;</span><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;POST: </span><span class="si">%s</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">TOPIC_ENDPOINT</span><span class="p">)</span>
+</span><span class='line'><span class="n">r</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">TOPIC_ENDPOINT</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">my_header</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">my_data</span><span class="p">),</span> <span class="n">cert</span><span class="o">=</span><span class="n">AJNA_CERTS</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Note that <code>json.dumps</code> is required for POST-ing JSON data.</p>
+
 <h3>SSL authentication</h3>
+
+<p>You can specify your certificate and private key in <code>cert=(my_cert, my_key)</code> as a method parameter.
+The certificate authority can be optionally specified (<code>s.verify = MY_CA</code>) or not (<code>s.verify = False</code>).</p>
 
 <figure class='code'><figcaption><span>SSL authentication</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -156,7 +196,7 @@ The <code>requests</code>&rsquo;s code snippets can be found <a href="https://gi
 </span><span class='line'>    <span class="n">SALESFORCE_CA</span> <span class="o">=</span> <span class="s">&#39;download/ca.crt&#39;</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="n">s</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
-</span><span class='line'>    <span class="n">s</span><span class="o">.</span><span class="n">verify</span> <span class="o">=</span> <span class="n">SALESFORCE_CA</span>
+</span><span class='line'>    <span class="n">s</span><span class="o">.</span><span class="n">verify</span> <span class="o">=</span> <span class="n">MY_CA</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="k">def</span> <span class="nf">test_namespace</span><span class="p">():</span>
 </span><span class='line'>        <span class="sd">&quot;&quot;&quot; Test querying kafka namespace.</span>
