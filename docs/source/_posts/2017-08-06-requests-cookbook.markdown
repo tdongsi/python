@@ -18,12 +18,39 @@ The `requests`'s code snippets can be found [here](https://github.com/tdongsi/ba
 
 Featuring:
 
-* Login with CSRF protection
+* Login with CSRF protection (with POST)
 * Cookie retrieval and usage
 * Binary download and saved to file.
 
+``` python Different payload for POST
+# POST /bart/users/login/ HTTP/1.1
+# Content-Type: application/x-www-form-urlencoded
+HEADERS = {"Referer": "https://www.select-a-spot.com/bart/"}
+params = {"username": username,
+            "password": password,
+            "csrfmiddlewaretoken": r.cookies["csrftoken"],
+            "login": "Login"}
+r = s.post("https://www.select-a-spot.com/bart/users/login/", headers=HEADERS, data=params, allow_redirects=False)
+
+# POST /kafka/topic HTTP/1.1
+# Content-Type: application/json
+my_data = {'name': IOT_TOPIC, 'type': '/types/com.prod.emp'}
+my_header = {'Accept': 'application/json', 'Content-Type': 'application/json'}
+
+logger.info('POST: %s', TOPIC_ENDPOINT)
+r = s.post(TOPIC_ENDPOINT, headers=my_header, data=json.dumps(my_data), cert=KAFKA_CERTS)
+```
+
+Note that `json.dumps` is required for POST-ing JSON data. The typical service response:
+
+``` plain Error message
+"exception":"org.springframework.http.converter.HttpMessageNotReadableException","message":"Bad Request"
+```
 
 ### SSL authentication
+
+You can specify your certificate and private key in `cert=(my_cert, my_key)` as a method parameter.
+The certificate authority can be optionally specified (`s.verify = MY_CA`) or not (`s.verify = False`).
 
 ``` python SSL authentication
 def test_kafka(my_cert, my_key):
@@ -36,10 +63,10 @@ def test_kafka(my_cert, my_key):
 
     ZOOKEEPER_EP = 'https://kafka-prd.corp.net:9090'
     IOT_NAMESPACE = 'test'
-    SALESFORCE_CA = 'download/ca.crt'
+    MY_CA = 'download/ca.crt'
 
     s = requests.Session()
-    s.verify = SALESFORCE_CA
+    s.verify = MY_CA
 
     def test_namespace():
         """ Test querying kafka namespace.
