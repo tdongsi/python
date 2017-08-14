@@ -54,6 +54,9 @@ Python 2.4 provided support to wrap a function in a decorator by pre-pending the
 ...     return x * y
 ```
 
+Note that decorators implemented as functions above are stateless.
+For stateful decorators (e.g., counter), they should be implemented as a class (see [here](http://scottlobdell.me/2015/04/decorators-arguments-python/)).
+
 #### Reference
 
 RECOMMENDED:
