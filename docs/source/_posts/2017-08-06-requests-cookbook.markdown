@@ -88,3 +88,26 @@ def test_kafka(my_cert, my_key):
 
     test_namespace()
 ```
+### Unit testing
+
+You can do unit testing by using `requests-mock` package.
+
+``` plain Installation
+# Only required for Python 2. Mock is part of Python 3.
+pip install -U mock
+
+pip install requests-mock
+```
+
+``` python Example of mocking
+    @requests_mock.mock()    
+    def test_get_env_status(self, m):
+        #Test status code 400 returns False
+        m.get(self.status_endpoint, status_code=404)
+        with mock.patch.dict(os.environ,{'username':'mytempuser', 'password':'temppass'}):
+            self.assertEquals(FlowSnakeEnvironment.get_env_status(self.fsenv_name), None)
+```
+
+#### References
+
+* [PDF doc](https://media.readthedocs.org/pdf/requests-mock/latest/requests-mock.pdf)

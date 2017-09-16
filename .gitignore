@@ -16,3 +16,4 @@ out*.txt
 */.idea
 hive_vertica_count.json
 bff.png
+.idea
