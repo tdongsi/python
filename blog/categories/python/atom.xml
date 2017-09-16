@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Python | Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/blog/categories/python/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2017-08-08T17:21:03-07:00</updated>
+  <updated>2017-09-15T23:25:15-07:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -12,6 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Python 3 Quick Recap]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2017/08/13/python-3-quick-recap/"/>
+    <updated>2017-08-13T23:49:57-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2017/08/13/python-3-quick-recap</id>
+    <content type="html"><![CDATA[
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Requests Cookbook]]></title>
@@ -100,6 +109,31 @@ The certificate authority can be optionally specified (<code>s.verify = MY_CA</c
 
     test_namespace()
 </code></pre>
+
+<h3>Unit testing</h3>
+
+<p>You can do unit testing by using <code>requests-mock</code> package.</p>
+
+<pre><code class="plain Installation"># Only required for Python 2. Mock is part of Python 3.
+pip install -U mock
+
+pip install requests-mock
+</code></pre>
+
+<pre><code class="python Example of mocking">    @requests_mock.mock()    
+    def test_get_env_status(self, m):
+        #Test status code 400 returns False
+        m.get(self.status_endpoint, status_code=404)
+        with mock.patch.dict(os.environ,{'username':'mytempuser', 'password':'temppass'}):
+            self.assertEquals(FlowSnakeEnvironment.get_env_status(self.fsenv_name), None)
+</code></pre>
+
+<h4>References</h4>
+
+<ul>
+<li><a href="https://media.readthedocs.org/pdf/requests-mock/latest/requests-mock.pdf">PDF doc</a></li>
+</ul>
+
 ]]></content>
   </entry>
   
@@ -170,11 +204,13 @@ Most of these are from &ldquo;Python tutorial&rdquo;.</p>
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Python Quick Recap]]></title>
+    <title type="html"><![CDATA[Python 2 Quick Recap]]></title>
     <link href="http://tdongsi.github.io/python/blog/2016/07/02/python-quick-recap/"/>
     <updated>2016-07-02T00:23:27-07:00</updated>
     <id>http://tdongsi.github.io/python/blog/2016/07/02/python-quick-recap</id>
-    <content type="html"><![CDATA[<p>What to review before a Python interview.</p>
+    <content type="html"><![CDATA[<p>What to review before a Python interview.
+This blog post focuses on Python 2.7.
+Python 3 should be discussed in another blog post.</p>
 
 <!--more-->
 
@@ -187,6 +223,60 @@ Most of these are from &ldquo;Python tutorial&rdquo;.</p>
 <li><a href="/blog/2016/09/05/tutorial-protocols/">Protocols</a>.</li>
 </ol>
 
+
+<h3>Python decorator</h3>
+
+<p>Python decorator is a callable that takes a function as argument and returns a replacement function.</p>
+
+<pre><code class="python Example decorator">&gt;&gt;&gt; def outer(some_func):
+...     def inner():
+...         print "before some_func"
+...         ret = some_func() # 1
+...         return ret + 1
+...     return inner
+&gt;&gt;&gt; def foo():
+...     return 1
+&gt;&gt;&gt; decorated = outer(foo) # 2
+&gt;&gt;&gt; decorated()
+before some_func
+2
+</code></pre>
+
+<p>Python 2.4 provided support to wrap a function in a decorator by pre-pending the function definition with a decorator name and the @ symbol.</p>
+
+<pre><code class="python A generic decorator">&gt;&gt;&gt; def logger(func):
+...     def inner(*args, **kwargs): #1
+...         print "Arguments were: %s, %s" % (args, kwargs)
+...         return func(*args, **kwargs) #2
+...     return inner
+
+&gt;&gt;&gt; @logger
+... def foo1(x, y=1):
+...     return x * y
+</code></pre>
+
+<p>Note that decorators implemented as functions above are stateless.
+For stateful decorators (e.g., counter), they should be implemented as a class (see <a href="http://scottlobdell.me/2015/04/decorators-arguments-python/">here</a>).</p>
+
+<h4>Reference</h4>
+
+<p>RECOMMENDED:</p>
+
+<ul>
+<li><a href="http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/">Decorator tutorial</a></li>
+<li><a href="http://scottlobdell.me/2015/04/decorators-arguments-python/">Decorator with arguments</a></li>
+</ul>
+
+
+<p>EXTRA READING:</p>
+
+<ul>
+<li><a href="https://github.com/yihtserns/groovy-decorator">Python-inspired decorator in Groovy</a></li>
+<li><a href="https://wiki.python.org/moin/PythonDecoratorLibrary">Decorator library</a></li>
+</ul>
+
+
+<h3>Python generator</h3>
 ]]></content>
   </entry>
   

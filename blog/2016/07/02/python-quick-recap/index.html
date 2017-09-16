@@ -5,11 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Python Quick Recap - Personal Interview Notes</title>
+  <title>Python 2 Quick Recap - Personal Interview Notes</title>
   <meta name="author" content="Cuong Dong-Si">
 
   
-  <meta name="description" content="What to review before a Python interview. Basic Python tutorial: especially &ldquo;Classes&rdquo; and two &ldquo;Brief Tour of Standard Library&rdquo &hellip;">
+  <meta name="description" content="What to review before a Python interview.
+This blog post focuses on Python 2.7.
+Python 3 should be discussed in another blog post. Basic Python &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -71,7 +73,7 @@
   
   <header>
     
-      <h1 class="entry-title">Python Quick Recap</h1>
+      <h1 class="entry-title">Python 2 Quick Recap</h1>
     
     
       <p class="meta">
@@ -87,7 +89,9 @@
   </header>
 
 
-<div class="entry-content"><p>What to review before a Python interview.</p>
+<div class="entry-content"><p>What to review before a Python interview.
+This blog post focuses on Python 2.7.
+Python 3 should be discussed in another blog post.</p>
 
 <!--more-->
 
@@ -100,6 +104,83 @@
 <li><a href="/python/blog/2016/09/05/tutorial-protocols/">Protocols</a>.</li>
 </ol>
 
+
+<h3>Python decorator</h3>
+
+<p>Python decorator is a callable that takes a function as argument and returns a replacement function.</p>
+
+<figure class='code'><figcaption><span>Example decorator</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">outer</span><span class="p">(</span><span class="n">some_func</span><span class="p">):</span>
+</span><span class='line'><span class="o">...</span>     <span class="k">def</span> <span class="nf">inner</span><span class="p">():</span>
+</span><span class='line'><span class="o">...</span>         <span class="k">print</span> <span class="s">&quot;before some_func&quot;</span>
+</span><span class='line'><span class="o">...</span>         <span class="n">ret</span> <span class="o">=</span> <span class="n">some_func</span><span class="p">()</span> <span class="c"># 1</span>
+</span><span class='line'><span class="o">...</span>         <span class="k">return</span> <span class="n">ret</span> <span class="o">+</span> <span class="mi">1</span>
+</span><span class='line'><span class="o">...</span>     <span class="k">return</span> <span class="n">inner</span>
+</span><span class='line'><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">foo</span><span class="p">():</span>
+</span><span class='line'><span class="o">...</span>     <span class="k">return</span> <span class="mi">1</span>
+</span><span class='line'><span class="o">&gt;&gt;&gt;</span> <span class="n">decorated</span> <span class="o">=</span> <span class="n">outer</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span> <span class="c"># 2</span>
+</span><span class='line'><span class="o">&gt;&gt;&gt;</span> <span class="n">decorated</span><span class="p">()</span>
+</span><span class='line'><span class="n">before</span> <span class="n">some_func</span>
+</span><span class='line'><span class="mi">2</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Python 2.4 provided support to wrap a function in a decorator by pre-pending the function definition with a decorator name and the @ symbol.</p>
+
+<figure class='code'><figcaption><span>A generic decorator</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">logger</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+</span><span class='line'><span class="o">...</span>     <span class="k">def</span> <span class="nf">inner</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> <span class="c">#1</span>
+</span><span class='line'><span class="o">...</span>         <span class="k">print</span> <span class="s">&quot;Arguments were: </span><span class="si">%s</span><span class="s">, </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+</span><span class='line'><span class="o">...</span>         <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="c">#2</span>
+</span><span class='line'><span class="o">...</span>     <span class="k">return</span> <span class="n">inner</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&gt;&gt;&gt;</span> <span class="nd">@logger</span>
+</span><span class='line'><span class="o">...</span> <span class="k">def</span> <span class="nf">foo1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+</span><span class='line'><span class="o">...</span>     <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Note that decorators implemented as functions above are stateless.
+For stateful decorators (e.g., counter), they should be implemented as a class (see <a href="http://scottlobdell.me/2015/04/decorators-arguments-python/">here</a>).</p>
+
+<h4>Reference</h4>
+
+<p>RECOMMENDED:</p>
+
+<ul>
+<li><a href="http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/">Decorator tutorial</a></li>
+<li><a href="http://scottlobdell.me/2015/04/decorators-arguments-python/">Decorator with arguments</a></li>
+</ul>
+
+
+<p>EXTRA READING:</p>
+
+<ul>
+<li><a href="https://github.com/yihtserns/groovy-decorator">Python-inspired decorator in Groovy</a></li>
+<li><a href="https://wiki.python.org/moin/PythonDecoratorLibrary">Decorator library</a></li>
+</ul>
+
+
+<h3>Python generator</h3>
 </div>
 
 
@@ -159,6 +240,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/python/blog/2017/08/13/python-3-quick-recap/">Python 3 Quick Recap</a>
+      </li>
+    
+      <li class="post">
         <a href="/python/blog/2017/08/06/requests-cookbook/">Requests Cookbook</a>
       </li>
     
@@ -183,7 +268,7 @@
       </li>
     
       <li class="post">
-        <a href="/python/blog/2016/07/02/python-quick-recap/">Python Quick Recap</a>
+        <a href="/python/blog/2016/07/02/python-quick-recap/">Python 2 Quick Recap</a>
       </li>
     
   </ul>
@@ -191,7 +276,7 @@
 
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/python/blog/categories/addepar/'>addepar (1)</a></li><li><a href='/python/blog/categories/algorithm/'>algorithm (4)</a></li><li><a href='/python/blog/categories/datastructure/'>datastructure (1)</a></li><li><a href='/python/blog/categories/python/'>python (3)</a></li><li><a href='/python/blog/categories/todo/'>todo (4)</a></li><li><a href='/python/blog/categories/tutorial/'>tutorial (5)</a></li></ul>
+    <ul id="category-list"><li><a href='/python/blog/categories/addepar/'>addepar (1)</a></li><li><a href='/python/blog/categories/algorithm/'>algorithm (4)</a></li><li><a href='/python/blog/categories/datastructure/'>datastructure (1)</a></li><li><a href='/python/blog/categories/python/'>python (4)</a></li><li><a href='/python/blog/categories/todo/'>todo (5)</a></li><li><a href='/python/blog/categories/tutorial/'>tutorial (6)</a></li></ul>
 </section>
 
 

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Tutorial | Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/blog/categories/tutorial/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2017-08-08T17:21:03-07:00</updated>
+  <updated>2017-09-15T23:25:15-07:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -12,6 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Python 3 Quick Recap]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2017/08/13/python-3-quick-recap/"/>
+    <updated>2017-08-13T23:49:57-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2017/08/13/python-3-quick-recap</id>
+    <content type="html"><![CDATA[
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Tutorial: Protocols]]></title>
@@ -523,27 +532,6 @@ class TestSorting(unittest.TestCase):
         self.assertEqual(do_sort([2, 1]), [1, 2])
         pass
 </code></pre>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Python Quick Recap]]></title>
-    <link href="http://tdongsi.github.io/python/blog/2016/07/02/python-quick-recap/"/>
-    <updated>2016-07-02T00:23:27-07:00</updated>
-    <id>http://tdongsi.github.io/python/blog/2016/07/02/python-quick-recap</id>
-    <content type="html"><![CDATA[<p>What to review before a Python interview.</p>
-
-<!--more-->
-
-
-<h3>Basic</h3>
-
-<ol>
-<li><a href="https://docs.python.org/2.7/tutorial/">Python tutorial</a>: especially <a href="https://docs.python.org/2.7/tutorial/classes.html">&ldquo;Classes&rdquo;</a> and two <a href="https://docs.python.org/2.7/tutorial/stdlib.html">&ldquo;Brief Tour of Standard Library&rdquo;</a> sections.</li>
-<li><a href="https://pyformat.info/">String format</a> if you expect lots of string processing.</li>
-<li><a href="/blog/2016/09/05/tutorial-protocols/">Protocols</a>.</li>
-</ol>
-
 ]]></content>
   </entry>
   

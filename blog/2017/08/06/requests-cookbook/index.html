@@ -223,6 +223,44 @@ The certificate authority can be optionally specified (<code>s.verify = MY_CA</c
 </span><span class='line'>    <span class="n">test_namespace</span><span class="p">()</span>
 </span></code></pre></td></tr></table></div></figure>
 
+
+<h3>Unit testing</h3>
+
+<p>You can do unit testing by using <code>requests-mock</code> package.</p>
+
+<figure class='code'><figcaption><span>Installation</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'># Only required for Python 2. Mock is part of Python 3.
+</span><span class='line'>pip install -U mock
+</span><span class='line'>
+</span><span class='line'>pip install requests-mock</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>Example of mocking</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="nd">@requests_mock.mock</span><span class="p">()</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">test_get_env_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
+</span><span class='line'>    <span class="c">#Test status code 400 returns False</span>
+</span><span class='line'>    <span class="n">m</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">status_endpoint</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="o">.</span><span class="n">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,{</span><span class="s">&#39;username&#39;</span><span class="p">:</span><span class="s">&#39;mytempuser&#39;</span><span class="p">,</span> <span class="s">&#39;password&#39;</span><span class="p">:</span><span class="s">&#39;temppass&#39;</span><span class="p">}):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">assertEquals</span><span class="p">(</span><span class="n">FlowSnakeEnvironment</span><span class="o">.</span><span class="n">get_env_status</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fsenv_name</span><span class="p">),</span> <span class="bp">None</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>References</h4>
+
+<ul>
+<li><a href="https://media.readthedocs.org/pdf/requests-mock/latest/requests-mock.pdf">PDF doc</a></li>
+</ul>
+
 </div>
 
 
@@ -266,6 +304,8 @@ The certificate authority can be optionally specified (<code>s.verify = MY_CA</c
         <a class="basic-alignment left" href="/python/blog/2016/09/17/tutorial-bfs-and-dfs/" title="Previous Post: Tutorial: BFS and DFS">&laquo; Tutorial: BFS and DFS</a>
       
       
+        <a class="basic-alignment right" href="/python/blog/2017/08/13/python-3-quick-recap/" title="Next Post: Python 3 quick recap">Python 3 quick recap &raquo;</a>
+      
     </p>
   </footer>
 </article>
@@ -280,6 +320,10 @@ The certificate authority can be optionally specified (<code>s.verify = MY_CA</c
 </section><section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/python/blog/2017/08/13/python-3-quick-recap/">Python 3 Quick Recap</a>
+      </li>
     
       <li class="post">
         <a href="/python/blog/2017/08/06/requests-cookbook/">Requests Cookbook</a>
@@ -306,7 +350,7 @@ The certificate authority can be optionally specified (<code>s.verify = MY_CA</c
       </li>
     
       <li class="post">
-        <a href="/python/blog/2016/07/02/python-quick-recap/">Python Quick Recap</a>
+        <a href="/python/blog/2016/07/02/python-quick-recap/">Python 2 Quick Recap</a>
       </li>
     
   </ul>
@@ -314,7 +358,7 @@ The certificate authority can be optionally specified (<code>s.verify = MY_CA</c
 
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/python/blog/categories/addepar/'>addepar (1)</a></li><li><a href='/python/blog/categories/algorithm/'>algorithm (4)</a></li><li><a href='/python/blog/categories/datastructure/'>datastructure (1)</a></li><li><a href='/python/blog/categories/python/'>python (3)</a></li><li><a href='/python/blog/categories/todo/'>todo (4)</a></li><li><a href='/python/blog/categories/tutorial/'>tutorial (5)</a></li></ul>
+    <ul id="category-list"><li><a href='/python/blog/categories/addepar/'>addepar (1)</a></li><li><a href='/python/blog/categories/algorithm/'>algorithm (4)</a></li><li><a href='/python/blog/categories/datastructure/'>datastructure (1)</a></li><li><a href='/python/blog/categories/python/'>python (4)</a></li><li><a href='/python/blog/categories/todo/'>todo (5)</a></li><li><a href='/python/blog/categories/tutorial/'>tutorial (6)</a></li></ul>
 </section>
 
 

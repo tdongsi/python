@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://tdongsi.github.io/python/blog/2017/08/13/python-3-quick-recap/</loc>
+<lastmod>2017-08-13T23:49:57-07:00</lastmod>
+</url>
+<url>
 <loc>http://tdongsi.github.io/python/blog/2017/08/06/requests-cookbook/</loc>
 <lastmod>2017-08-06T23:17:25-07:00</lastmod>
 </url>
