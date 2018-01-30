@@ -24,6 +24,7 @@ Most updated implementations are in [this Python module](https://github.com/tdon
 | **Mergesort** | O(n * log n) / O(n * log n).| O(n) | No/Yes | Space O(1) for doubly-linked list. |
 | **Quicksort** | O(n * log n) / O(n * n) | O(1) | Yes/No | It is stable for linked-list. |
 | **Insertion sort** | O(n * n) / O(n * n) | O(1) | Yes/Yes | Adaptive: quick for largely sorted list. Online. Efficient for small lists. |
+| **Selection sort** | O(n * n) / O(n * n) | O(1) | Yes/No | Adaptive: similar to Insertion Sort. More comparisons. Less write operations. |
 | **Radix sort** | O(w * n) / O(w * n) | O(1) | Yes/Yes (some variants) |  Not comparison-sort. *w -> log n* for arbitrary range. |
 
 <br>
@@ -32,6 +33,10 @@ Note that **insertion sort** still has its place even though it is not a `O(n * 
 It is shown in practice that "insertion sort" is faster than other sorting algorithms for sufficiently small, mostly sorted lists. 
 A common application of "insertion sort" is in **merge sort** implementations where 
 "merge sort" calls its own internal "insertion sort" to sort small enough sub-lists before merging (instead of keeping recursing to singleton lists).
+
+**Selection sort** seems inferior to **insertion sort** as an O(n^2) sorting algorithm in most cases.
+However, selection sort will perform identically regardless of the order of the array (almost sorted or unsorted), which can be a plus in real-time application.
+While selection sort is preferable to insertion sort in terms of number of writes (Θ(n) swaps versus Ο(n2) swaps), **cycle sort** is the most optimal in "number of write" metric (write can be expensive in some situations).
 
 #### How to approach sorting questions
 
