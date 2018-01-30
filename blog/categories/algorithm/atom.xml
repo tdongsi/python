@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Algorithm | Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/blog/categories/algorithm/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2017-09-15T23:25:15-07:00</updated>
+  <updated>2018-01-30T13:19:20-08:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -264,6 +264,13 @@ You still have to implement finding k-th smallest helper function.</p>
 <td> Adaptive: quick for largely sorted list. Online. Efficient for small lists. </td>
 </tr>
 <tr>
+<td> <strong>Selection sort</strong> </td>
+<td> O(n * n) / O(n * n) </td>
+<td> O(1) </td>
+<td> Yes/No </td>
+<td> Adaptive: similar to Insertion Sort. More comparisons. Less write operations. </td>
+</tr>
+<tr>
 <td> <strong>Radix sort</strong> </td>
 <td> O(w * n) / O(w * n) </td>
 <td> O(1) </td>
@@ -280,6 +287,10 @@ You still have to implement finding k-th smallest helper function.</p>
 It is shown in practice that &ldquo;insertion sort&rdquo; is faster than other sorting algorithms for sufficiently small, mostly sorted lists.
 A common application of &ldquo;insertion sort&rdquo; is in <strong>merge sort</strong> implementations where
 &ldquo;merge sort&rdquo; calls its own internal &ldquo;insertion sort&rdquo; to sort small enough sub-lists before merging (instead of keeping recursing to singleton lists).</p>
+
+<p><strong>Selection sort</strong> seems inferior to <strong>insertion sort</strong> as an O(n<sup>2</sup>) sorting algorithm in most cases.
+However, selection sort will perform identically regardless of the order of the array (almost sorted or unsorted), which can be a plus in real-time application.
+While selection sort is preferable to insertion sort in terms of number of writes (Θ(n) swaps versus Ο(n2) swaps), <strong>cycle sort</strong> is the most optimal in &ldquo;number of write&rdquo; metric (write can be expensive in some situations).</p>
 
 <h4>How to approach sorting questions</h4>
 
