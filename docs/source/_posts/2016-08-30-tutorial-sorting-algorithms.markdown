@@ -25,6 +25,7 @@ Most updated implementations are in [this Python module](https://github.com/tdon
 | **Quicksort** | O(n * log n) / O(n * n) | O(1) | Yes/No | It is stable for linked-list. |
 | **Insertion sort** | O(n * n) / O(n * n) | O(1) | Yes/Yes | Adaptive: quick for largely sorted list. Online. Efficient for small lists. |
 | **Selection sort** | O(n * n) / O(n * n) | O(1) | Yes/No | Adaptive: similar to Insertion Sort. More comparisons. Less write operations. |
+| **Counting sort** | O(n + k) / O(n + k) | O(1) | ?/? |  Not comparison-sort. For small range. |
 | **Radix sort** | O(w * n) / O(w * n) | O(1) | Yes/Yes (some variants) |  Not comparison-sort. *w -> log n* for arbitrary range. |
 
 <br>
@@ -158,38 +159,60 @@ def insertion_sort(mlist):
     return mlist
 ```
 
+### Counting Sort
+
+``` python Counting Sort
+def counting_sort(mlist, k=None, key=None):
+    """Counting sort
+
+    :param mlist: List of items.
+    :param k: Maximum range of key [0,k)
+    :param key: function to get key of item. (for radix sort)
+    :return:
+    """
+    if k is None:
+        k = max(mlist) + 1
+
+    if key is None:
+        key = lambda x: x
+
+    counter = [[] for i in range(k)]
+    for i in range(len(mlist)):
+        counter[key(mlist[i])].append(mlist[i])
+
+    output = []
+    for i in range(k):
+        output.extend(counter[i])
+    return output
+```
+
 ### Radix Sort
 
-NOTE: This implementation is copied from [here](http://www.geekviewpoint.com/python/sorting/radixsort). Add your own.
+Use `counting_sort` in the last section as the subroutine.
 
 ``` python Radix sort
-def radixsort( aList ):
-  RADIX = 10
-  maxLength = False
-  tmp , placement = -1, 1
- 
-  while not maxLength:
-    maxLength = True
-    # declare and initialize buckets
-    buckets = [list() for _ in range( RADIX )]
- 
-    # split aList between lists
-    for  i in aList:
-      tmp = i / placement
-      buckets[tmp % RADIX].append( i )
-      if maxLength and tmp > 0:
-        maxLength = False
- 
-    # empty lists into aList array
-    a = 0
-    for b in range( RADIX ):
-      buck = buckets[b]
-      for i in buck:
-        aList[a] = i
-        a += 1
- 
-    # move to next digit
-    placement *= RADIX
+def radix_sort(mlist, w=None):
+    RADIX = 10
+
+    # Find the max length
+    if w is None:
+        temp = max(mlist)
+        w = 0
+        while temp > 0:
+            w += 1
+            temp //= RADIX
+
+    output = mlist
+    for digit in range(w):
+        def my_key(num):
+            for _ in range(digit):
+                num //= RADIX
+            return num % RADIX
+
+        output = counting_sort(output, RADIX, my_key)
+        # print(output)
+
+    return output
 ```
 
 ### Testing sorting algorithms
