@@ -145,6 +145,13 @@
 <td> Adaptive: similar to Insertion Sort. More comparisons. Less write operations. </td>
 </tr>
 <tr>
+<td> <strong>Counting sort</strong> </td>
+<td> O(n + k) / O(n + k) </td>
+<td> O(1) </td>
+<td> ?/? </td>
+<td>  Not comparison-sort. For small range. </td>
+</tr>
+<tr>
 <td> <strong>Radix sort</strong> </td>
 <td> O(w * n) / O(w * n) </td>
 <td> O(1) </td>
@@ -365,9 +372,58 @@ The standard implementation is as follows, but see <a href="/python/blog/2016/08
 </span></code></pre></td></tr></table></div></figure>
 
 
+<h3>Counting Sort</h3>
+
+<figure class='code'><figcaption><span>Counting Sort</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">counting_sort</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot;Counting sort</span>
+</span><span class='line'>
+</span><span class='line'><span class="sd">    :param mlist: List of items.</span>
+</span><span class='line'><span class="sd">    :param k: Maximum range of key [0,k)</span>
+</span><span class='line'><span class="sd">    :param key: function to get key of item. (for radix sort)</span>
+</span><span class='line'><span class="sd">    :return:</span>
+</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">k</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">k</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">mlist</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">counter</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">)]</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mlist</span><span class="p">)):</span>
+</span><span class='line'>        <span class="n">counter</span><span class="p">[</span><span class="n">key</span><span class="p">(</span><span class="n">mlist</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mlist</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">output</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">counter</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">output</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
 <h3>Radix Sort</h3>
 
-<p>NOTE: This implementation is copied from <a href="http://www.geekviewpoint.com/python/sorting/radixsort">here</a>. Add your own.</p>
+<p>Use <code>counting_sort</code> in the last section as the subroutine.</p>
 
 <figure class='code'><figcaption><span>Radix sort</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -391,38 +447,28 @@ The standard implementation is as follows, but see <a href="/python/blog/2016/08
 <span class='line-number'>20</span>
 <span class='line-number'>21</span>
 <span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">radixsort</span><span class="p">(</span> <span class="n">aList</span> <span class="p">):</span>
-</span><span class='line'>  <span class="n">RADIX</span> <span class="o">=</span> <span class="mi">10</span>
-</span><span class='line'>  <span class="n">maxLength</span> <span class="o">=</span> <span class="bp">False</span>
-</span><span class='line'>  <span class="n">tmp</span> <span class="p">,</span> <span class="n">placement</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">radix_sort</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">RADIX</span> <span class="o">=</span> <span class="mi">10</span>
 </span><span class='line'>
-</span><span class='line'>  <span class="k">while</span> <span class="ow">not</span> <span class="n">maxLength</span><span class="p">:</span>
-</span><span class='line'>    <span class="n">maxLength</span> <span class="o">=</span> <span class="bp">True</span>
-</span><span class='line'>    <span class="c"># declare and initialize buckets</span>
-</span><span class='line'>    <span class="n">buckets</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span> <span class="n">RADIX</span> <span class="p">)]</span>
+</span><span class='line'>    <span class="c"># Find the max length</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">w</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">temp</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">mlist</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">w</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>        <span class="k">while</span> <span class="n">temp</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">w</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>            <span class="n">temp</span> <span class="o">//=</span> <span class="n">RADIX</span>
 </span><span class='line'>
-</span><span class='line'>    <span class="c"># split aList between lists</span>
-</span><span class='line'>    <span class="k">for</span>  <span class="n">i</span> <span class="ow">in</span> <span class="n">aList</span><span class="p">:</span>
-</span><span class='line'>      <span class="n">tmp</span> <span class="o">=</span> <span class="n">i</span> <span class="o">/</span> <span class="n">placement</span>
-</span><span class='line'>      <span class="n">buckets</span><span class="p">[</span><span class="n">tmp</span> <span class="o">%</span> <span class="n">RADIX</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">i</span> <span class="p">)</span>
-</span><span class='line'>      <span class="k">if</span> <span class="n">maxLength</span> <span class="ow">and</span> <span class="n">tmp</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-</span><span class='line'>        <span class="n">maxLength</span> <span class="o">=</span> <span class="bp">False</span>
+</span><span class='line'>    <span class="n">output</span> <span class="o">=</span> <span class="n">mlist</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">digit</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">w</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">def</span> <span class="nf">my_key</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+</span><span class='line'>            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">digit</span><span class="p">):</span>
+</span><span class='line'>                <span class="n">num</span> <span class="o">//=</span> <span class="n">RADIX</span>
+</span><span class='line'>            <span class="k">return</span> <span class="n">num</span> <span class="o">%</span> <span class="n">RADIX</span>
 </span><span class='line'>
-</span><span class='line'>    <span class="c"># empty lists into aList array</span>
-</span><span class='line'>    <span class="n">a</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span class='line'>    <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span> <span class="n">RADIX</span> <span class="p">):</span>
-</span><span class='line'>      <span class="n">buck</span> <span class="o">=</span> <span class="n">buckets</span><span class="p">[</span><span class="n">b</span><span class="p">]</span>
-</span><span class='line'>      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">buck</span><span class="p">:</span>
-</span><span class='line'>        <span class="n">aList</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
-</span><span class='line'>        <span class="n">a</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>        <span class="n">output</span> <span class="o">=</span> <span class="n">counting_sort</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">RADIX</span><span class="p">,</span> <span class="n">my_key</span><span class="p">)</span>
+</span><span class='line'>        <span class="c"># print(output)</span>
 </span><span class='line'>
-</span><span class='line'>    <span class="c"># move to next digit</span>
-</span><span class='line'>    <span class="n">placement</span> <span class="o">*=</span> <span class="n">RADIX</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">output</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
