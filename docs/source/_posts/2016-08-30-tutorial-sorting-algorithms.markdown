@@ -142,7 +142,7 @@ def heap_sort(mlist):
 
 ### Insertion Sort
 
-``` python
+``` python Insertion sort
 def insertion_sort(mlist):
     if len(mlist) <= 1:
         return mlist
@@ -159,7 +159,25 @@ def insertion_sort(mlist):
     return mlist
 ```
 
+### Selection sort
+
+``` python Selection sort
+def selection_sort(mlist):
+    for i in range(0, len(mlist)-1):
+        iMin = i
+        for j in range(i+1, len(mlist)):
+            if mlist[j] < mlist[iMin]:
+                iMin = j
+
+        if iMin != i:
+            mlist[iMin], mlist[i] = mlist[i], mlist[iMin]
+
+    return mlist
+```
+
 ### Counting Sort
+
+Based on [this lecture](https://www.youtube.com/watch?v=Nz1KZXbghj8&t=1925s).
 
 ``` python Counting Sort
 def counting_sort(mlist, k=None, key=None):
@@ -189,6 +207,7 @@ def counting_sort(mlist, k=None, key=None):
 ### Radix Sort
 
 Use `counting_sort` in the last section as the subroutine.
+See [here](https://www.youtube.com/watch?v=Nz1KZXbghj8&t=1925s).
 
 ``` python Radix sort
 def radix_sort(mlist, w=None):
