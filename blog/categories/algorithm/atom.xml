@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Algorithm | Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/blog/categories/algorithm/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2018-02-21T20:55:23-08:00</updated>
+  <updated>2018-02-22T00:26:21-08:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -405,7 +405,7 @@ The standard implementation is as follows, but see <a href="/blog/2016/08/31/tut
 
 <h3>Insertion Sort</h3>
 
-<pre><code class="python">def insertion_sort(mlist):
+<pre><code class="python Insertion sort">def insertion_sort(mlist):
     if len(mlist) &lt;= 1:
         return mlist
 
@@ -421,7 +421,24 @@ The standard implementation is as follows, but see <a href="/blog/2016/08/31/tut
     return mlist
 </code></pre>
 
+<h3>Selection sort</h3>
+
+<pre><code class="python Selection sort">def selection_sort(mlist):
+    for i in range(0, len(mlist)-1):
+        iMin = i
+        for j in range(i+1, len(mlist)):
+            if mlist[j] &lt; mlist[iMin]:
+                iMin = j
+
+        if iMin != i:
+            mlist[iMin], mlist[i] = mlist[i], mlist[iMin]
+
+    return mlist
+</code></pre>
+
 <h3>Counting Sort</h3>
+
+<p>Based on <a href="https://www.youtube.com/watch?v=Nz1KZXbghj8&amp;t=1925s">this lecture</a>.</p>
 
 <pre><code class="python Counting Sort">def counting_sort(mlist, k=None, key=None):
     """Counting sort
@@ -449,7 +466,8 @@ The standard implementation is as follows, but see <a href="/blog/2016/08/31/tut
 
 <h3>Radix Sort</h3>
 
-<p>Use <code>counting_sort</code> in the last section as the subroutine.</p>
+<p>Use <code>counting_sort</code> in the last section as the subroutine.
+See <a href="https://www.youtube.com/watch?v=Nz1KZXbghj8&amp;t=1925s">here</a>.</p>
 
 <pre><code class="python Radix sort">def radix_sort(mlist, w=None):
     RADIX = 10

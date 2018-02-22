@@ -4,7 +4,7 @@
   <title><![CDATA[Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2018-02-21T20:55:23-08:00</updated>
+  <updated>2018-02-22T00:26:21-08:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -869,7 +869,7 @@ The standard implementation is as follows, but see <a href="http://tdongsi.githu
 
 <h3>Insertion Sort</h3>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span>Insertion sort</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -900,7 +900,36 @@ The standard implementation is as follows, but see <a href="http://tdongsi.githu
 </span></code></pre></td></tr></table></div></figure>
 
 
+<h3>Selection sort</h3>
+
+<figure class='code'><figcaption><span>Selection sort</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">selection_sort</span><span class="p">(</span><span class="n">mlist</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">mlist</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">iMin</span> <span class="o">=</span> <span class="n">i</span>
+</span><span class='line'>        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">mlist</span><span class="p">)):</span>
+</span><span class='line'>            <span class="k">if</span> <span class="n">mlist</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">mlist</span><span class="p">[</span><span class="n">iMin</span><span class="p">]:</span>
+</span><span class='line'>                <span class="n">iMin</span> <span class="o">=</span> <span class="n">j</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span> <span class="n">iMin</span> <span class="o">!=</span> <span class="n">i</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">mlist</span><span class="p">[</span><span class="n">iMin</span><span class="p">],</span> <span class="n">mlist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mlist</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">mlist</span><span class="p">[</span><span class="n">iMin</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">mlist</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
 <h3>Counting Sort</h3>
+
+<p>Based on <a href="https://www.youtube.com/watch?v=Nz1KZXbghj8&amp;t=1925s">this lecture</a>.</p>
 
 <figure class='code'><figcaption><span>Counting Sort</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -951,7 +980,8 @@ The standard implementation is as follows, but see <a href="http://tdongsi.githu
 
 <h3>Radix Sort</h3>
 
-<p>Use <code>counting_sort</code> in the last section as the subroutine.</p>
+<p>Use <code>counting_sort</code> in the last section as the subroutine.
+See <a href="https://www.youtube.com/watch?v=Nz1KZXbghj8&amp;t=1925s">here</a>.</p>
 
 <figure class='code'><figcaption><span>Radix sort</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
