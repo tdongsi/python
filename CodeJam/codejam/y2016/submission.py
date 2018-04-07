@@ -85,8 +85,8 @@ class GetDigits(object):
 
 
 def main():
-    PROJECT_HOME = "/Users/cdongsi/Hub/python/CodeJam"
-    solver = GetDigits(PROJECT_HOME + "/data/A-large.in")
+    PROJECT_HOME = "/Users/tdongsi/Hub/python/CodeJam"
+    solver = GetDigits(PROJECT_HOME + "/data/GetDigits.txt")
     with open("out.txt", "w") as f:
         solver.solve(output=f)
 

@@ -3,7 +3,7 @@ import sys
 
 import networkx as nx
 
-import prime as pr
+import codejam.prime as pr
 
 
 class Problem(object):
