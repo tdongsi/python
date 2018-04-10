@@ -4,7 +4,7 @@
   <title><![CDATA[Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2018-02-22T00:26:21-08:00</updated>
+  <updated>2018-04-09T16:56:49-07:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -457,35 +457,49 @@ This Quick-sort partition is usually the one used in most libraries and typicall
 <span class='line-number'>42</span>
 <span class='line-number'>43</span>
 <span class='line-number'>44</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">quicksort3</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">lo</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">partition3</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot; In-place three-way partition of the list will return [&lt; pivot] [== pivot] [&gt; pivot].</span>
+</span><span class='line'>
+</span><span class='line'><span class="sd">    The two-way partition ([&lt; pivot] [&gt;= pivot]) seen in previous quicksort has the following degenerate cases:</span>
+</span><span class='line'><span class="sd">     1. Almost sorted lists. -&gt; Defense: Use random swaps to scramble the lists before sorting.</span>
+</span><span class='line'><span class="sd">     2. Almost equal items. -&gt; Defense: Use this three-way partition strategy.</span>
+</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">swap</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">mlist</span><span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="n">mlist</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="n">mlist</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="n">mlist</span><span class="p">[</span><span class="n">a</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">pidx</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">swap</span><span class="p">(</span><span class="n">pidx</span><span class="p">,</span> <span class="n">hi</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">pivot</span> <span class="o">=</span> <span class="n">mlist</span><span class="p">[</span><span class="n">hi</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">idx1</span> <span class="o">=</span> <span class="n">lo</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">mlist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">pivot</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">swap</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">idx1</span><span class="p">)</span>
+</span><span class='line'>            <span class="n">idx1</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">idx2</span> <span class="o">=</span> <span class="n">idx1</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">idx1</span><span class="p">,</span> <span class="n">hi</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">mlist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">pivot</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">swap</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">idx2</span><span class="p">)</span>
+</span><span class='line'>            <span class="n">idx2</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">swap</span><span class="p">(</span><span class="n">idx2</span><span class="p">,</span> <span class="n">hi</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">idx1</span><span class="p">,</span> <span class="n">idx2</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">quicksort3</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">lo</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">hi</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
 </span><span class='line'>    <span class="sd">&quot;&quot;&quot; Quick-sort using three-way partition strategy.</span>
 </span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">def</span> <span class="nf">partition3</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">):</span>
-</span><span class='line'>        <span class="sd">&quot;&quot;&quot; In-place three-way partition of the list will return [&lt; pivot] [== pivot] [&gt; pivot]</span>
-</span><span class='line'>
-</span><span class='line'><span class="sd">        The two-way partition ([&lt; pivot] [&gt;= pivot]) seen in previous quicksort has the following degenerate cases:</span>
-</span><span class='line'><span class="sd">         1. Almost sorted lists. -&gt; Defense: Use random swaps to scramble the lists before sorting.</span>
-</span><span class='line'><span class="sd">         2. Almost equal items. -&gt; Defense: Use this three-way partition strategy.</span>
-</span><span class='line'><span class="sd">        &quot;&quot;&quot;</span>
-</span><span class='line'>        <span class="n">pivot</span> <span class="o">=</span> <span class="n">mlist</span><span class="p">[</span><span class="n">hi</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="n">idx1</span> <span class="o">=</span> <span class="n">lo</span>
-</span><span class='line'>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-</span><span class='line'>            <span class="k">if</span> <span class="n">mlist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">pivot</span><span class="p">:</span>
-</span><span class='line'>                <span class="n">mlist</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">mlist</span><span class="p">[</span><span class="n">idx1</span><span class="p">]</span> <span class="o">=</span> <span class="n">mlist</span><span class="p">[</span><span class="n">idx1</span><span class="p">],</span> <span class="n">mlist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-</span><span class='line'>                <span class="n">idx1</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="n">idx2</span> <span class="o">=</span> <span class="n">idx1</span>
-</span><span class='line'>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">idx1</span><span class="p">,</span> <span class="n">hi</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-</span><span class='line'>            <span class="k">if</span> <span class="n">mlist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">pivot</span><span class="p">:</span>
-</span><span class='line'>                <span class="n">mlist</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">mlist</span><span class="p">[</span><span class="n">idx2</span><span class="p">]</span> <span class="o">=</span> <span class="n">mlist</span><span class="p">[</span><span class="n">idx2</span><span class="p">],</span> <span class="n">mlist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-</span><span class='line'>                <span class="n">idx2</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="c"># move the pivot to the right partition</span>
-</span><span class='line'>        <span class="n">mlist</span><span class="p">[</span><span class="n">idx2</span><span class="p">],</span> <span class="n">mlist</span><span class="p">[</span><span class="n">hi</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">mlist</span><span class="p">[</span><span class="n">hi</span> <span class="o">-</span> <span class="mi">1</span><span class="p">],</span> <span class="n">mlist</span><span class="p">[</span><span class="n">idx2</span><span class="p">]</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="k">return</span> <span class="n">idx1</span><span class="p">,</span> <span class="n">idx2</span>
+</span><span class='line'>    <span class="k">if</span> <span class="ow">not</span> <span class="n">mlist</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">mlist</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="k">if</span> <span class="n">hi</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
 </span><span class='line'>        <span class="n">hi</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mlist</span><span class="p">)</span>
@@ -498,8 +512,8 @@ This Quick-sort partition is usually the one used in most libraries and typicall
 </span><span class='line'>        <span class="k">return</span> <span class="n">mlist</span>
 </span><span class='line'>    <span class="k">else</span><span class="p">:</span>
 </span><span class='line'>        <span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">partition3</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">)</span>
-</span><span class='line'>        <span class="n">quicksort</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
-</span><span class='line'>        <span class="n">quicksort</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">q</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">hi</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">quicksort3</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">lo</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">quicksort3</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="n">q</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">hi</span><span class="p">)</span>
 </span><span class='line'>        <span class="k">return</span> <span class="n">mlist</span>
 </span></code></pre></td></tr></table></div></figure>
 
