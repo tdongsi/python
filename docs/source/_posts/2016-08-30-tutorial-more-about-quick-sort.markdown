@@ -86,6 +86,17 @@ def quicksort3(mlist, lo=0, hi=None):
         return mlist
 ```
 
+A few lessons for learning/interview before arriving at this final version:
+
+* Separate to two same-level functions `quicksort3` and helper `partition3` for easy reading. 
+  Do NOT put `partition3` as a function inside `quicksort3`.
+  It is hard to read on the whiteboard with inconsistent spacing.
+* Define one-liner `swap` inside `parition3` and use it.
+  It will make to code much easier to read.
+* Find random pivot: do not settle for `mlist[hi-1]` pivot.
+  The interviewers WILL ask anyway.
+* Use `idx1, idx2` as variables instead of `p, q` since it's so easy to mix up `p` and `q` in interview context.
+
 ### Quick Select
 
 Sometimes, interview questions will involve "order statistics", such as finding k-th smallest element in an array.
