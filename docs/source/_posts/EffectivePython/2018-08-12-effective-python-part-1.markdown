@@ -114,6 +114,13 @@ To iterate until the end of the longest iterator, use `itertools.zip_longest` in
 
 ### Item 5: Avoid `else` blocks after `for` and `while` loops
 
+If you don't know that you can add an `else` block after `for` or `while` loops, you're better off that way.
+The `else` block after loops are really confusing to all programmers who write or read the code.
+
+The `else` block is originally intended for searching something in a loop, break if the search fails.
+However, the name `else` is probably extremely poor choice, given the semantics of `else` in other constructs such as `if` or `try`. 
+Because of that, it is clearer to simply write a helper function before checking in a loop.
+
 ### Item 6: Take advantage of each block in `try`/`except`/`else`/`finally`
 
 ### Item 7: Consider context manager (contextlib) and `with` statements for `finally` behavior
