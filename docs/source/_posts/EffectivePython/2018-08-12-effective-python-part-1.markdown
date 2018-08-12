@@ -123,5 +123,35 @@ Because of that, it is clearer to simply write a helper function before checking
 
 ### Item 6: Take advantage of each block in `try`/`except`/`else`/`finally`
 
+``` python
+try:
+    print "Main action"
+except:
+    print "Handle exception"
+else:
+    print "When there is no exception"
+finally:
+    print "Always"
+```
+
+1) In Python 3, reading and writing Unicode to file is simple.
+In Python2, you have to use io module.
+In addition, the string is not Unicode by default. 
+You have to mark Unicode literals with prefix u (e.g., u’Hello’).
+
+``` python Unicode read/write in Python2
+import io
+
+handle = io.open('/tmp/random_data.txt', mode='w', encoding='utf-8')
+handle.write(u'success\nand\nnew\nlines')
+handle.close()
+
+handle = io.open('/tmp/random_data.txt', encoding='utf-8')  # Raise IOError
+try:
+    data = handle.read()   # Raise UnicodeDecodeError
+finally:
+    handle.close()
+```
+
 ### Item 7: Consider context manager (contextlib) and `with` statements for `finally` behavior
 
