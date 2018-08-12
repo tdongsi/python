@@ -14,15 +14,15 @@ This post corresponds to Lesson 1 "Using Expressions and Statements" of ["Effect
 
 Use `mlist[start:end]`.
 
-Note that `a[:20]` or `a[-20:]` will quietly return the full list even when the list is smaller in size.
+1) Note that `a[:20]` or `a[-20:]` will quietly return the full list even when the list is smaller in size.
 Meanwhile, `a[20]` or `a[-20]` will throw IndexError exception.
 It could be pro or con, depending on the situation and if the programmer is aware of it.
 
-Slice assignment can be used to truncate the list in the middle. Example: `a[2:7] = []`.
+2) Slice assignment can be used to truncate the list in the middle. Example: `a[2:7] = []`.
 
 `b=a[:]` is the idiom to create a copy of a list.
 
-Be careful with the following idiom to get the last `n` items of the list.
+3) Be careful with the following idiom to get the last `n` items of the list.
 
 ``` python WRONG: For input n, return the last n items from list
 n = 3
@@ -33,7 +33,34 @@ The above code works in most cases. However, if `n` takes the value of 0, then i
 
 ### Item 2: Avoid using start, end, and stride in a single slice
 
+Sequences can be sliced with the following syntax `a[start:end:stride]`.
+
+1) `a[::-1]` is the common idiom to reverse a sequence. However, be careful when using the idiom with string, esepcially UTF-8 string.
+
+``` python WRONG: Reverse UTF-8 string
+w = 'hello'
+x = w.encode('utf-8')
+y = x[::-1]
+z = y.decode('utf-8')
+```
+
+In this case, if the input `w='谢谢'` with non-ASCII characters, `UnicodeDecodeError` might be thrown.
+
+2) The author cautions against using all `start:end:stride` in a slice since it will be very confusing, especially with negative numbers.
+For example, `a[-2:2:-2]` is very unintuitive to figure out which items will be selected.
+The best practices are:
+
+1. If you must use stride, use positive number only.
+1. Split `start:end:stride` into two operations: stride first `b=a[::-2]`, followed by truncation `c=b[-2:2]`. The order can be changed to get smallest intermediate subsequence.
+
 ### Item 3: Prefer `enumerate` over `range`
+
+Instead of `for` loop over `range(len(mlist))` to get the index, use this:
+
+```python enumerate example
+for idx, item in enumerate(mlist, 1):
+    print idx, item
+```
 
 ### Item 4: Use `zip` to process iterators in parallel
 
