@@ -123,7 +123,7 @@ Because of that, it is clearer to simply write a helper function before checking
 
 ### Item 6: Take advantage of each block in `try`/`except`/`else`/`finally`
 
-``` python
+``` python Function of each block
 try:
     print "Main action"
 except:
@@ -135,9 +135,21 @@ finally:
 ```
 
 1) In Python 3, reading and writing Unicode to file is simple.
-In Python2, you have to use io module.
+In Python2, you have to use `io` module.
 In addition, the string is not Unicode by default. 
 You have to mark Unicode literals with prefix u (e.g., u’Hello’).
+
+``` python Unicode read/write in Python3
+handle = open('/tmp/random_data.txt', 'w', encoding='utf-8')
+handle.write('success\nand\nnew\nlines')
+handle.close()
+
+handle = open('/tmp/random_data.txt')  # Raise IOError
+try:
+    data = handle.read()   # Raise UnicodeDecodeError
+finally:
+    handle.close()
+```
 
 ``` python Unicode read/write in Python2
 import io
@@ -152,6 +164,23 @@ try:
 finally:
     handle.close()
 ```
+
+2) The above code is the correct way to handle file opening/closing.
+One common mistake is as follows:
+
+``` python WRONG: Common mistake in file handling
+try:
+    handle = io.open('/tmp/bad_path.txt', encoding='utf-8')  # Raise IOError
+    data = handle.read()   # Raise UnicodeDecodeError
+finally:
+    handle.close()   # Raise IOError
+```
+
+In this code, in the event of file can't be opened, an IOError exception will be thrown. 
+However, after the exception is handled, in the `finally` block, another exception will be thrown since file is not open and `handle` is `None`.
+This exception is now unexpected and can't be handled properly.
+Instead of committing the above mistake, we should open the file outside the `try` block and if file opening fails, finish code execution since we can't really do anything without file open.
+If you want to explicitly handle IOError exception, enclose it with another `try` block.
 
 ### Item 7: Consider context manager (contextlib) and `with` statements for `finally` behavior
 
