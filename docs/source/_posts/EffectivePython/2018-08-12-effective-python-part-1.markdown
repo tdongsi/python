@@ -64,6 +64,54 @@ for idx, item in enumerate(mlist, 1):
 
 ### Item 4: Use `zip` to process iterators in parallel
 
+``` python Example of zip
+def main():
+    names = ['Kelly', 'Lise', 'Marie', 'Alexander']
+    letters = [len(e) for e in names]
+
+    # Better way: use zip
+    print better_way(letters, names)
+
+    # In Python2, zip returns a list instead of a generator.
+    print zip(letters, names)
+    # In Python3, the above will print some "<zip object at 0x12345>".
+
+    # To get something similar to Python3,
+    # Use izip in itertools
+    print python3_way(letters, names)
+
+    pass
+
+
+def python3_way(letters, names):
+    """Find the longest name"""
+    from itertools import izip
+    longest_name = None
+    current_max = 0
+    for length, name in izip(letters, names):
+        if length > current_max:
+            current_max = length
+            longest_name = name
+    return longest_name
+
+
+def better_way(letters, names):
+    """Find the longest name"""
+    longest_name = None
+    current_max = 0
+    for length, name in zip(letters, names):
+        if length > current_max:
+            current_max = length
+            longest_name = name
+    return longest_name
+```
+
+1) Note that, in Python2, `zip` returns a list instead of a generator object like in Python3.
+To simulate that behavior in Python3, use `izip` from `itertools` module.
+
+2) The default behavior of `zip` is to stop after reaching the end of the shortest iterator.
+To iterate until the end of the longest iterator, use `itertools.zip_longest` in Python3 and `itertools.izip_longest` in Python2.
+
 ### Item 5: Avoid `else` blocks after `for` and `while` loops
 
 ### Item 6: Take advantage of each block in `try`/`except`/`else`/`finally`
