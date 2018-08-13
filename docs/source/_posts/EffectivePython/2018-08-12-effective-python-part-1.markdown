@@ -184,3 +184,37 @@ If you want to explicitly handle IOError exception, enclose it with another `try
 
 ### Item 7: Consider context manager (contextlib) and `with` statements for `finally` behavior
 
+``` python Context manager example
+import logging
+from contextlib import contextmanager
+
+@contextmanager
+def swallow_exception(cls):
+    """Ignore exception of the given class"""
+    try:
+        yield
+    except cls:
+        logging.exception('Swallow exception')
+
+def main():
+    with swallow_exception(ZeroDivisionError):
+        value = 20 / 0
+```
+
+``` python Context manager example with handle return
+@contextmanager
+def log_level(level, name):
+    """Get logger of the specified name and level"""
+    logger = logging.getLogger(name)
+    old_level = logger.getEffectiveLevel()
+    logger.setLevel(level)
+    try:
+        yield logger
+    finally:
+        logger.setLevel(old_level)
+
+def main():
+    with log_level(logging.DEBUG, 'mylogger') as logger:
+        logger.debug('test')
+        logging.debug('Global logger: test')
+```
