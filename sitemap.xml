@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-4/</loc>
+<lastmod>2018-08-12T00:19:36-07:00</lastmod>
+</url>
+<url>
+<loc>http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-3/</loc>
+<lastmod>2018-08-12T00:19:32-07:00</lastmod>
+</url>
+<url>
+<loc>http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-2/</loc>
+<lastmod>2018-08-12T00:19:30-07:00</lastmod>
+</url>
+<url>
+<loc>http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-1/</loc>
+<lastmod>2018-08-12T00:19:06-07:00</lastmod>
+</url>
+<url>
 <loc>http://tdongsi.github.io/python/blog/2017/08/13/python-3-quick-recap/</loc>
 <lastmod>2017-08-13T23:49:57-07:00</lastmod>
 </url>

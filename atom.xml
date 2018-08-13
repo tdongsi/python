@@ -4,7 +4,7 @@
   <title><![CDATA[Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2018-04-13T22:54:42-07:00</updated>
+  <updated>2018-08-12T17:37:19-07:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -12,6 +12,381 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Effective Python: Part 4]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-4/"/>
+    <updated>2018-08-12T00:19:36-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-4</id>
+    <content type="html"><![CDATA[<p>This post corresponds to Lesson 1 &ldquo;Using Expressions and Statements&rdquo; of <a href="https://www.safaribooksonline.com/videos/effective-python/9780134175249">&ldquo;Effective Python&rdquo; course</a>.</p>
+
+<!--more-->
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Effective Python: Part 3]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-3/"/>
+    <updated>2018-08-12T00:19:32-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-3</id>
+    <content type="html"><![CDATA[<p>This post corresponds to Lesson 1 &ldquo;Using Expressions and Statements&rdquo; of <a href="https://www.safaribooksonline.com/videos/effective-python/9780134175249">&ldquo;Effective Python&rdquo; course</a>.</p>
+
+<!--more-->
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Effective Python: Part 2]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-2/"/>
+    <updated>2018-08-12T00:19:30-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-2</id>
+    <content type="html"><![CDATA[<p>This post corresponds to Lesson 1 &ldquo;Using Expressions and Statements&rdquo; of <a href="https://www.safaribooksonline.com/videos/effective-python/9780134175249">&ldquo;Effective Python&rdquo; course</a>.</p>
+
+<!--more-->
+
+
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Effective Python: Part 1]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-1/"/>
+    <updated>2018-08-12T00:19:06-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-1</id>
+    <content type="html"><![CDATA[<p>This post corresponds to Lesson 1 &ldquo;Using Expressions and Statements&rdquo; of <a href="https://www.safaribooksonline.com/videos/effective-python/9780134175249">&ldquo;Effective Python&rdquo; course</a>.</p>
+
+<!--more-->
+
+
+<h3>Item 1: Slice sequences</h3>
+
+<p>Use <code>mlist[start:end]</code>.</p>
+
+<p>1) Note that <code>a[:20]</code> or <code>a[-20:]</code> will quietly return the full list even when the list is smaller in size.
+Meanwhile, <code>a[20]</code> or <code>a[-20]</code> will throw IndexError exception.
+It could be pro or con, depending on the situation and if the programmer is aware of it.</p>
+
+<p>2) Slice assignment can be used to truncate the list in the middle. Example: <code>a[2:7] = []</code>.</p>
+
+<p><code>b=a[:]</code> is the idiom to create a copy of a list.</p>
+
+<p>3) Be careful with the following idiom to get the last <code>n</code> items of the list.</p>
+
+<figure class='code'><figcaption><span>WRONG: For input n, return the last n items from list</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">n</span> <span class="o">=</span> <span class="mi">3</span>
+</span><span class='line'><span class="k">print</span> <span class="n">mlist</span><span class="p">[</span><span class="o">-</span><span class="n">n</span><span class="p">:]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The above code works in most cases. However, if <code>n</code> takes the value of 0, then it will return the whole list.</p>
+
+<h3>Item 2: Avoid using start, end, and stride in a single slice</h3>
+
+<p>Sequences can be sliced with the following syntax <code>a[start:end:stride]</code>.</p>
+
+<p>1) <code>a[::-1]</code> is the common idiom to reverse a sequence. However, be careful when using the idiom with string, esepcially UTF-8 string.</p>
+
+<figure class='code'><figcaption><span>WRONG: Reverse UTF-8 string</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">w</span> <span class="o">=</span> <span class="s">&#39;hello&#39;</span>
+</span><span class='line'><span class="n">x</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</span><span class='line'><span class="n">z</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In this case, if the input <code>w='谢谢'</code> with non-ASCII characters, <code>UnicodeDecodeError</code> might be thrown.</p>
+
+<p>2) The author cautions against using all <code>start:end:stride</code> in a slice since it will be very confusing, especially with negative numbers.
+For example, <code>a[-2:2:-2]</code> is very unintuitive to figure out which items will be selected.
+The best practices are:</p>
+
+<ol>
+<li>If you must use stride, use positive number only.</li>
+<li>Split <code>start:end:stride</code> into two operations: stride first <code>b=a[::-2]</code>, followed by truncation <code>c=b[-2:2]</code>. The order can be changed to get smallest intermediate subsequence.</li>
+</ol>
+
+
+<h3>Item 3: Prefer <code>enumerate</code> over <code>range</code></h3>
+
+<p>Instead of <code>for</code> loop over <code>range(len(mlist))</code> to get the index, use this:</p>
+
+<figure class='code'><figcaption><span>enumerate example</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mlist</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">idx</span><span class="p">,</span> <span class="n">item</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Item 4: Use <code>zip</code> to process iterators in parallel</h3>
+
+<figure class='code'><figcaption><span>Example of zip</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+</span><span class='line'>    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Kelly&#39;</span><span class="p">,</span> <span class="s">&#39;Lise&#39;</span><span class="p">,</span> <span class="s">&#39;Marie&#39;</span><span class="p">,</span> <span class="s">&#39;Alexander&#39;</span><span class="p">]</span>
+</span><span class='line'>    <span class="n">letters</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">names</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># Better way: use zip</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">better_way</span><span class="p">(</span><span class="n">letters</span><span class="p">,</span> <span class="n">names</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># In Python2, zip returns a list instead of a generator.</span>
+</span><span class='line'>    <span class="k">print</span> <span class="nb">zip</span><span class="p">(</span><span class="n">letters</span><span class="p">,</span> <span class="n">names</span><span class="p">)</span>
+</span><span class='line'>    <span class="c"># In Python3, the above will print some &quot;&lt;zip object at 0x12345&gt;&quot;.</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># To get something similar to Python3,</span>
+</span><span class='line'>    <span class="c"># Use izip in itertools</span>
+</span><span class='line'>    <span class="k">print</span> <span class="n">python3_way</span><span class="p">(</span><span class="n">letters</span><span class="p">,</span> <span class="n">names</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">pass</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">python3_way</span><span class="p">(</span><span class="n">letters</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot;Find the longest name&quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">izip</span>
+</span><span class='line'>    <span class="n">longest_name</span> <span class="o">=</span> <span class="bp">None</span>
+</span><span class='line'>    <span class="n">current_max</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">length</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">izip</span><span class="p">(</span><span class="n">letters</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">length</span> <span class="o">&gt;</span> <span class="n">current_max</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">current_max</span> <span class="o">=</span> <span class="n">length</span>
+</span><span class='line'>            <span class="n">longest_name</span> <span class="o">=</span> <span class="n">name</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">longest_name</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">better_way</span><span class="p">(</span><span class="n">letters</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot;Find the longest name&quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="n">longest_name</span> <span class="o">=</span> <span class="bp">None</span>
+</span><span class='line'>    <span class="n">current_max</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">length</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">letters</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">length</span> <span class="o">&gt;</span> <span class="n">current_max</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">current_max</span> <span class="o">=</span> <span class="n">length</span>
+</span><span class='line'>            <span class="n">longest_name</span> <span class="o">=</span> <span class="n">name</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">longest_name</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>1) Note that, in Python2, <code>zip</code> returns a list instead of a generator object like in Python3.
+To simulate that behavior in Python3, use <code>izip</code> from <code>itertools</code> module.</p>
+
+<p>2) The default behavior of <code>zip</code> is to stop after reaching the end of the shortest iterator.
+To iterate until the end of the longest iterator, use <code>itertools.zip_longest</code> in Python3 and <code>itertools.izip_longest</code> in Python2.</p>
+
+<h3>Item 5: Avoid <code>else</code> blocks after <code>for</code> and <code>while</code> loops</h3>
+
+<p>If you don&rsquo;t know that you can add an <code>else</code> block after <code>for</code> or <code>while</code> loops, you&rsquo;re better off that way.
+The <code>else</code> block after loops are really confusing to all programmers who write or read the code.</p>
+
+<p>The <code>else</code> block is originally intended for searching something in a loop, break if the search fails.
+However, the name <code>else</code> is probably extremely poor choice, given the semantics of <code>else</code> in other constructs such as <code>if</code> or <code>try</code>.
+Because of that, it is clearer to simply write a helper function before checking in a loop.</p>
+
+<h3>Item 6: Take advantage of each block in <code>try</code>/<code>except</code>/<code>else</code>/<code>finally</code></h3>
+
+<figure class='code'><figcaption><span>Function of each block</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">try</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">print</span> <span class="s">&quot;Main action&quot;</span>
+</span><span class='line'><span class="k">except</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">print</span> <span class="s">&quot;Handle exception&quot;</span>
+</span><span class='line'><span class="k">else</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">print</span> <span class="s">&quot;When there is no exception&quot;</span>
+</span><span class='line'><span class="k">finally</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">print</span> <span class="s">&quot;Always&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>1) In Python 3, reading and writing Unicode to file is simple.
+In Python2, you have to use <code>io</code> module.
+In addition, the string is not Unicode by default.
+You have to mark Unicode literals with prefix u (e.g., u’Hello’).</p>
+
+<figure class='code'><figcaption><span>Unicode read/write in Python3</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">handle</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;/tmp/random_data.txt&#39;</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;success</span><span class="se">\n</span><span class="s">and</span><span class="se">\n</span><span class="s">new</span><span class="se">\n</span><span class="s">lines&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">handle</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">handle</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;/tmp/random_data.txt&#39;</span><span class="p">)</span>  <span class="c"># Raise IOError</span>
+</span><span class='line'><span class="k">try</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">data</span> <span class="o">=</span> <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>   <span class="c"># Raise UnicodeDecodeError</span>
+</span><span class='line'><span class="k">finally</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">handle</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>Unicode read/write in Python2</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">io</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">handle</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s">&#39;/tmp/random_data.txt&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">u&#39;success</span><span class="se">\n</span><span class="s">and</span><span class="se">\n</span><span class="s">new</span><span class="se">\n</span><span class="s">lines&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">handle</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">handle</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s">&#39;/tmp/random_data.txt&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>  <span class="c"># Raise IOError</span>
+</span><span class='line'><span class="k">try</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">data</span> <span class="o">=</span> <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>   <span class="c"># Raise UnicodeDecodeError</span>
+</span><span class='line'><span class="k">finally</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">handle</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>2) The above code is the correct way to handle file opening/closing.
+One common mistake is as follows:</p>
+
+<figure class='code'><figcaption><span>WRONG: Common mistake in file handling</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">try</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">handle</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s">&#39;/tmp/bad_path.txt&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>  <span class="c"># Raise IOError</span>
+</span><span class='line'>    <span class="n">data</span> <span class="o">=</span> <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>   <span class="c"># Raise UnicodeDecodeError</span>
+</span><span class='line'><span class="k">finally</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">handle</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>   <span class="c"># Raise IOError</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In this code, in the event of file can&rsquo;t be opened, an IOError exception will be thrown.
+However, after the exception is handled, in the <code>finally</code> block, another exception will be thrown since file is not open and <code>handle</code> is <code>None</code>.
+This exception is now unexpected and can&rsquo;t be handled properly.
+Instead of committing the above mistake, we should open the file outside the <code>try</code> block and if file opening fails, finish code execution since we can&rsquo;t really do anything without file open.
+If you want to explicitly handle IOError exception, enclose it with another <code>try</code> block.</p>
+
+<h3>Item 7: Consider context manager (contextlib) and <code>with</code> statements for <code>finally</code> behavior</h3>
+
+<figure class='code'><figcaption><span>Context manager example</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">logging</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
+</span><span class='line'>
+</span><span class='line'><span class="nd">@contextmanager</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">swallow_exception</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot;Ignore exception of the given class&quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="k">try</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">yield</span>
+</span><span class='line'>    <span class="k">except</span> <span class="n">cls</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">logging</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s">&#39;Swallow exception&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+</span><span class='line'>    <span class="k">with</span> <span class="n">swallow_exception</span><span class="p">(</span><span class="ne">ZeroDivisionError</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">value</span> <span class="o">=</span> <span class="mi">20</span> <span class="o">/</span> <span class="mi">0</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>Context manager example with handle return</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="nd">@contextmanager</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">log_level</span><span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot;Get logger of the specified name and level&quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">old_level</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">getEffectiveLevel</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">try</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">yield</span> <span class="n">logger</span>
+</span><span class='line'>    <span class="k">finally</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">old_level</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+</span><span class='line'>    <span class="k">with</span> <span class="n">log_level</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span> <span class="s">&#39;mylogger&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">logger</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;test&#39;</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Global logger: test&#39;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Python 3 Quick Recap]]></title>
