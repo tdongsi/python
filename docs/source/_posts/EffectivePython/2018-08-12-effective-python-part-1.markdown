@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Effective Python: Part 1"
+title: "Effective Python Pt. 1: Expressions and Statements"
 date: 2018-08-12 00:19:06 -0700
 comments: true
 categories: 
