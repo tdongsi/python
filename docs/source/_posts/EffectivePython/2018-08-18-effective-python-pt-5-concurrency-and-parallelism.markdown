@@ -56,3 +56,40 @@ except subprocess.TimeoutExpired:
 
 print('Exit status', proc.poll())
 ```
+
+It's not available in Python 2, and if you want to reproduce its functionality in Python 2, you actually have to use the `select` module and poll the input and output file descriptors of the subprocess. 
+It is a little bit more complicated and it's hard to get right.
+
+``` python Stop-gap alternative in Python 2
+class Command(object):
+    """ Stop-gap alternative for subprocess's timeout in Python 3.
+    Based on https://stackoverflow.com/questions/1191374/using-module-subprocess-with-timeout
+    """
+
+    def __init__(self, process):
+        self.process = process
+
+    def run(self, timeout):
+        def target():
+            self.process.communicate()
+
+        thread = threading.Thread(target=target)
+        thread.start()
+
+        thread.join(timeout)
+        if thread.is_alive():
+            print 'Terminating process'
+            self.process.terminate()
+            thread.join()
+
+        print(self.process.returncode)
+
+proc = subprocess.Popen(['sleep', '2'])
+command = Command(proc)
+command.run(timeout=3)
+
+# NOTE: the following will not work since the subprocess already ran.
+# command = Command(proc)
+command = Command(subprocess.Popen(['sleep', '2']))
+command.run(timeout=1)
+```
