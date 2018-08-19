@@ -93,3 +93,60 @@ command.run(timeout=3)
 command = Command(subprocess.Popen(['sleep', '2']))
 command.run(timeout=1)
 ```
+
+### Item 24: Use threads for blocking I/O, NOT for parallelism
+
+Python has the GIL, or Global Interpreter Lock. 
+It means that only one Python thread will ever actually run at a time. 
+A common mistake is to use threads to speed up a computation-intensive program in Python.
+You will be usually disappointed and end up with similar, if not worse, performance.
+
+In Python, threads are good for two main use cases. 
+The first use case is, if you want something looks running simultaneously (concurrency).
+A common example is to respond to user inputs while doing network I/O.
+In this case, the threads will cooperate with each other to obtain GIL fairly.
+The second use case for threads in Python is for (blocking) I/O.
+A common example is to use threads to query multiple REST endpoints concurrently.
+The following example illustrate such use case:
+
+``` python Use Python threads for network I/O
+import threading
+import requests
+import time
+
+def get_response(url):
+    r = requests.get(url)
+    return r.status_code, r.text
+
+class RequestThread(threading.Thread):
+
+    def __init__(self, url):
+        super(RequestThread, self).__init__()
+        self._url = url
+
+    def run(self):
+        self.output = get_response(self._url)
+
+urls = ['https://www.google.com',
+        'https://www.facebook.com',
+        'https://www.apple.com',
+        'https://www.netflix.com',
+        'https://www.salesforce.com',
+        'https://www.intuit.com',
+        'https://www.amazon.com',
+        'https://www.uber.com',
+        'https://www.lyft.com']
+
+threads = []
+for url in urls:
+    thread = RequestThread(url)
+    thread.start()
+    threads.append(thread)
+
+for thread in threads:
+    thread.join()
+```
+
+TODO: mistake
+
+TODO: Note about how to call constructor.
