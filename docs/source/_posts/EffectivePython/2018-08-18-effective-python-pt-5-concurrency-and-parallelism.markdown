@@ -100,12 +100,13 @@ Python has the GIL, or Global Interpreter Lock.
 It means that only one Python thread will ever actually run at a time. 
 A common mistake is to use threads to speed up a computation-intensive program in Python.
 You will be usually disappointed and end up with similar, if not worse, performance.
+In other words, you might find that your complicated parallel version will have similar performance as the serial one.
 
 In Python, threads are good for two main use cases. 
 The first use case is, if you want something looks running simultaneously (concurrency).
 A common example is to respond to user inputs while doing network I/O.
 In this case, the threads will cooperate with each other to obtain GIL fairly.
-The second use case for threads in Python is for (blocking) I/O.
+The second use case for threads in Python is for (blocking) I/O such as network, system calls.
 A common example is to use threads to query multiple REST endpoints concurrently.
 The following example illustrate such use case:
 
@@ -146,6 +147,8 @@ for url in urls:
 for thread in threads:
     thread.join()
 ```
+
+TODO: Explain GIL and under the cover, `request` release the control of GIL.
 
 TODO: mistake
 
