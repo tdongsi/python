@@ -118,6 +118,12 @@ roots = ((x, x**0.5) for x in better)
 print(next(roots))
 print(next(better))
 print(next(roots))
+
+### Example Output
+[37, 20, 60, 38, 85, 65, 96, 4, 45, 44]
+(37, 1369)
+20
+(60, 3600)
 ```
 
 As you can see, another powerful outcome of using generator expressions is that they can be composed together.
@@ -126,3 +132,52 @@ It has to read the line, then compute its length.
 That length value is then passed back to `roots` as `x` and for computing the tuple.
 What's surprising is that chaining generators like this actually executes very quickly in Python.
 When you're looking for a way to compose functionallity that's operating on a large stream of input, generator expressions are one of the best tools for the job.
+
+### Item 11: Consider generator functions instead of returning lists
+
+Let's say you want to find the index of every single words in a string.
+The typical approach will be something as follows:
+
+``` python Typical way
+def index_words_typical(text):
+    result = []
+    if text:
+        result.append(0)
+    for index, letter in enumerate(text):
+        if letter == ' ':
+            result.append(index+1)
+    return result
+```
+
+The typical approach that returns a list of indices has a problem.
+It is dense and noisy with all logistics related to `result` list: initializing the list, appending to the list whenever a result is found.
+A better way to write this function is to use a generator function, with `yield` statements, as follows:
+
+``` python Better way
+def index_words(text):
+    if text:
+        yield 0
+    for index, letter in enumerate(text):
+        if letter == ' ':
+            yield index+1
+```
+
+``` python Equivalent outputs
+address = 'The quick brown fox jumps over the lazy dog'
+print(list(index_words(address)))
+print(index_words_typical(address))
+
+# Output
+[0, 4, 10, 16, 20, 26, 31, 35, 40]
+[0, 4, 10, 16, 20, 26, 31, 35, 40]
+```
+
+As you can see, the generator version of this function is much easier to read than the typical version that returns lists.
+Most significantly, all of the interactions with the `result` list have been taken away.
+Instead, you just have those `yield` statements, making it very obvious what is being returned.
+That helps make it clear to new readers of the code.
+
+The second problem of the typical approach is that it requires all results to be sotred in the lists before being returned.
+For huge inputs, this can cause your program to run out of memory and crash.
+In contrast, the generator version of the function can handle any amount of output because it doesn't actually keep all of the results in memory that it found.
+In the example above, if the input `address` is a huge text and you only need to display the first hundred indices, the typical approach `index_words_typical` might fail while the generator version works perfectly fine.
