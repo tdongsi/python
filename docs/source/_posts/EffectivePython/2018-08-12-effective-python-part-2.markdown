@@ -95,4 +95,34 @@ It is recommended to explicitly use `for` loops for such cases.
 
 ### Item 10: Consider generator expressions for large comprehensions
 
+The problems with list comprehensions are that they may create a whole new list containing all the data.
+For large inputs, it can consume a significant amount of memory and can even crash your program.
 
+For a (very contrived) example, let's say you want to return the length of each line in a file and its squares.
+You can easily achieve that with the following list comprehensions.
+
+``` python List comprehension on a file
+value = [len(x) for x in open('/tmp/my_file.txt')]
+squares = [(x, x**2) for x in better]
+```
+
+However, list comprehension on a file like this is very risky.
+The file can be really large or even never ending (such as a network socket).
+To solve this problem, Python has generator expressions, which are a generalization of comprehensions and generators.
+A generator expression gives you an iterator that you can go through that will yield one item at a time from the input and you can determine how many output items you want to return.
+The above code can be rewritten as follows:
+
+``` python Generator expression
+better = (len(x) for x in open('/tmp/my_file.txt'))
+roots = ((x, x**0.5) for x in better)
+print(next(roots))
+print(next(better))
+print(next(roots))
+```
+
+As you can see, another powerful outcome of using generator expressions is that they can be composed together.
+When you call `next(roots)`, Python goes back up to the generator expression `better`, then realizes that it has to read another line out of the file. 
+It has to read the line, then compute its length. 
+That length value is then passed back to `roots` as `x` and for computing the tuple.
+What's surprising is that chaining generators like this actually executes very quickly in Python.
+When you're looking for a way to compose functionallity that's operating on a large stream of input, generator expressions are one of the best tools for the job.
