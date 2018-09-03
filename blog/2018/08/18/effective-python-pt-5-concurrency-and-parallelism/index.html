@@ -1,0 +1,490 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Effective Python Pt. 5: Concurrency and Parallelism - Personal Interview Notes</title>
+  <meta name="author" content="Cuong Dong-Si">
+
+  
+  <meta name="description" content="This post corresponds to Lesson 4 &ldquo;Using Classes&rdquo; of &ldquo;Effective Python&rdquo; course. Item 23: Use subprocess to manage child &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://tdongsi.github.io/python/blog/2018/08/18/effective-python-pt-5-concurrency-and-parallelism/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Personal Interview Notes" type="application/atom+xml">
+  <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body    class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Personal Interview Notes</a></h1>
+  
+    <h2>Neither success nor failure is ever final.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="tdongsi.github.io/python">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog Home</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="http://tdongsi.github.io/SqlTests/syllabus/">Syllabus</a></li>
+  <li><a href="http://tdongsi.github.io">Personal Home</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Effective Python Pt. 5: Concurrency and Parallelism</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2018-08-18T16:24:30-07:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>18</span><span class='date-suffix'>th</span>, <span class='date-year'>2018</span></span> <span class='time'>4:24 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>This post corresponds to Lesson 4 &ldquo;Using Classes&rdquo; of <a href="https://www.safaribooksonline.com/videos/effective-python/9780134175249">&ldquo;Effective Python&rdquo; course</a>.</p>
+
+<!--more-->
+
+
+<h3>Item 23: Use subprocess to manage child processes</h3>
+
+<figure class='code'><figcaption><span>Piping data from Python data to subprocess</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c"># You can pipe data from Python program to subprocess</span>
+</span><span class='line'><span class="c"># In this way, you can call other programs to run in parallel with Python process.</span>
+</span><span class='line'><span class="c"># Run sub-processes on multiple CPUs.</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">run_openssl</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot;A computing-intensive method, best for running separately on separate CPUs.&quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="n">env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">env</span><span class="p">[</span><span class="s">&#39;password&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="s">&#39;asdf&#39;</span>
+</span><span class='line'>    <span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+</span><span class='line'>        <span class="p">[</span><span class="s">&#39;openssl&#39;</span><span class="p">,</span> <span class="s">&#39;enc&#39;</span><span class="p">,</span> <span class="s">&#39;-des3&#39;</span><span class="p">,</span> <span class="s">&#39;-pass&#39;</span><span class="p">,</span> <span class="s">&#39;env:password&#39;</span><span class="p">],</span>
+</span><span class='line'>        <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+</span><span class='line'>        <span class="n">stdin</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+</span><span class='line'>        <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span>
+</span><span class='line'>    <span class="p">)</span>
+</span><span class='line'>    <span class="n">proc</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">proc</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">proc</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">procs</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class='line'><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">data</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">urandom</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">proc</span> <span class="o">=</span> <span class="n">run_openssl</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">procs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">proc</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">for</span> <span class="n">proc</span> <span class="ow">in</span> <span class="n">procs</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">out</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+</span><span class='line'>    <span class="k">print</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>Piping data from one subprocess to another</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">os</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>Subprocess timeout in Python 3</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c"># Python 3 way</span>
+</span><span class='line'><span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s">&#39;sleep&#39;</span><span class="p">,</span> <span class="s">&#39;10&#39;</span><span class="p">])</span>
+</span><span class='line'><span class="k">try</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</span><span class='line'><span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">TimeoutExpired</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">proc</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">proc</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">print</span><span class="p">(</span><span class="s">&#39;Exit status&#39;</span><span class="p">,</span> <span class="n">proc</span><span class="o">.</span><span class="n">poll</span><span class="p">())</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It&rsquo;s not available in Python 2, and if you want to reproduce its functionality in Python 2, you actually have to use the <code>select</code> module and poll the input and output file descriptors of the subprocess.
+It is a little bit more complicated and it&rsquo;s hard to get right.</p>
+
+<figure class='code'><figcaption><span>Stop-gap alternative in Python 2</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">class</span> <span class="nc">Command</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot; Stop-gap alternative for subprocess&#39;s timeout in Python 3.</span>
+</span><span class='line'><span class="sd">    Based on https://stackoverflow.com/questions/1191374/using-module-subprocess-with-timeout</span>
+</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">process</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">process</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">def</span> <span class="nf">target</span><span class="p">():</span>
+</span><span class='line'>            <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">thread</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">thread</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
+</span><span class='line'>            <span class="k">print</span> <span class="s">&#39;Terminating process&#39;</span>
+</span><span class='line'>            <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+</span><span class='line'>            <span class="n">thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">returncode</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s">&#39;sleep&#39;</span><span class="p">,</span> <span class="s">&#39;2&#39;</span><span class="p">])</span>
+</span><span class='line'><span class="n">command</span> <span class="o">=</span> <span class="n">Command</span><span class="p">(</span><span class="n">proc</span><span class="p">)</span>
+</span><span class='line'><span class="n">command</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># NOTE: the following will not work since the subprocess already ran.</span>
+</span><span class='line'><span class="c"># command = Command(proc)</span>
+</span><span class='line'><span class="n">command</span> <span class="o">=</span> <span class="n">Command</span><span class="p">(</span><span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s">&#39;sleep&#39;</span><span class="p">,</span> <span class="s">&#39;2&#39;</span><span class="p">]))</span>
+</span><span class='line'><span class="n">command</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Item 24: Use threads for blocking I/O, NOT for parallelism</h3>
+
+<p>Python has the GIL, or Global Interpreter Lock.
+It means that only one Python thread will ever actually run at a time.
+A common mistake is to use threads to speed up a computation-intensive program in Python.
+You will be usually disappointed and end up with similar, if not worse, performance.
+In other words, you might find that your complicated parallel version will have similar performance as the serial one.</p>
+
+<p>In Python, threads are good for two main use cases.
+The first use case is, if you want something looks running simultaneously (concurrency).
+A common example is to respond to user inputs while doing network I/O.
+In this case, the threads will cooperate with each other to obtain GIL fairly.
+The second use case for threads in Python is for (blocking) I/O such as network, system calls.
+A common example is to use threads to query multiple REST endpoints concurrently.
+The following example illustrate such use case:</p>
+
+<figure class='code'><figcaption><span>Use Python threads for network I/O</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">threading</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">requests</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">time</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">get_response</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">RequestThread</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+</span><span class='line'>        <span class="nb">super</span><span class="p">(</span><span class="n">RequestThread</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">get_response</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;https://www.google.com&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s">&#39;https://www.facebook.com&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s">&#39;https://www.apple.com&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s">&#39;https://www.netflix.com&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s">&#39;https://www.salesforce.com&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s">&#39;https://www.intuit.com&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s">&#39;https://www.amazon.com&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s">&#39;https://www.uber.com&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s">&#39;https://www.lyft.com&#39;</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">threads</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class='line'><span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">thread</span> <span class="o">=</span> <span class="n">RequestThread</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">threads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thread</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">for</span> <span class="n">thread</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>TODO: Explain GIL and under the cover, <code>request</code> release the control of GIL.</p>
+
+<p>TODO: mistake</p>
+
+<p>TODO: Note about how to call constructor.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Cuong Dong-Si</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2018-08-18T16:24:30-07:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>18</span><span class='date-suffix'>th</span>, <span class='date-year'>2018</span></span> <span class='time'>4:24 pm</span></time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://tdongsi.github.io/python/blog/2018/08/18/effective-python-pt-5-concurrency-and-parallelism/" data-via="" data-counturl="http://tdongsi.github.io/python/blog/2018/08/18/effective-python-pt-5-concurrency-and-parallelism/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2018/08/12/effective-python-part-4/" title="Previous Post: Effective Python Pt. 4: Using Classes">&laquo; Effective Python Pt. 4: Using Classes</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+    <h1>About This Blog</h1>
+    <p>Random interview experience and lessons.</p>
+</section><section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2018/08/18/effective-python-pt-5-concurrency-and-parallelism/">Effective Python Pt. 5: Concurrency and Parallelism</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2018/08/12/effective-python-part-4/">Effective Python Pt. 4: Using Classes</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2018/08/12/effective-python-part-3/">Effective Python Pt. 3: Functions</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2018/08/12/effective-python-part-2/">Effective Python Pt. 2: Comprehensions & Generators</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2018/08/12/effective-python-part-1/">Effective Python Pt. 1: Expressions and Statements</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/08/13/python-3-quick-recap/">Python 3 Quick Recap</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2017/08/06/requests-cookbook/">Requests Cookbook</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/09/17/tutorial-bfs-and-dfs/">Tutorial: BFS and DFS</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/09/05/tutorial-protocols/">Tutorial: Protocols</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/09/02/tutorial-basic-algorithms/">Tutorial: Basic Algorithms</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/addepar/'>addepar (1)</a></li><li><a href='/blog/categories/algorithm/'>algorithm (4)</a></li><li><a href='/blog/categories/datastructure/'>datastructure (1)</a></li><li><a href='/blog/categories/python/'>python (4)</a></li><li><a href='/blog/categories/todo/'>todo (5)</a></li><li><a href='/blog/categories/tutorial/'>tutorial (6)</a></li></ul>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2018 - Cuong Dong-Si -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -4,7 +4,7 @@
   <title><![CDATA[Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2018-08-12T17:37:19-07:00</updated>
+  <updated>2018-09-03T02:07:50-07:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -14,11 +14,273 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Effective Python: Part 4]]></title>
+    <title type="html"><![CDATA[Effective Python Pt. 5: Concurrency and Parallelism]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2018/08/18/effective-python-pt-5-concurrency-and-parallelism/"/>
+    <updated>2018-08-18T16:24:30-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2018/08/18/effective-python-pt-5-concurrency-and-parallelism</id>
+    <content type="html"><![CDATA[<p>This post corresponds to Lesson 4 &ldquo;Using Classes&rdquo; of <a href="https://www.safaribooksonline.com/videos/effective-python/9780134175249">&ldquo;Effective Python&rdquo; course</a>.</p>
+
+<!--more-->
+
+
+<h3>Item 23: Use subprocess to manage child processes</h3>
+
+<figure class='code'><figcaption><span>Piping data from Python data to subprocess</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c"># You can pipe data from Python program to subprocess</span>
+</span><span class='line'><span class="c"># In this way, you can call other programs to run in parallel with Python process.</span>
+</span><span class='line'><span class="c"># Run sub-processes on multiple CPUs.</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">run_openssl</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot;A computing-intensive method, best for running separately on separate CPUs.&quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="n">env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">env</span><span class="p">[</span><span class="s">&#39;password&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="s">&#39;asdf&#39;</span>
+</span><span class='line'>    <span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+</span><span class='line'>        <span class="p">[</span><span class="s">&#39;openssl&#39;</span><span class="p">,</span> <span class="s">&#39;enc&#39;</span><span class="p">,</span> <span class="s">&#39;-des3&#39;</span><span class="p">,</span> <span class="s">&#39;-pass&#39;</span><span class="p">,</span> <span class="s">&#39;env:password&#39;</span><span class="p">],</span>
+</span><span class='line'>        <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+</span><span class='line'>        <span class="n">stdin</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+</span><span class='line'>        <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span>
+</span><span class='line'>    <span class="p">)</span>
+</span><span class='line'>    <span class="n">proc</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">proc</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">proc</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">procs</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class='line'><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">data</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">urandom</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">proc</span> <span class="o">=</span> <span class="n">run_openssl</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">procs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">proc</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">for</span> <span class="n">proc</span> <span class="ow">in</span> <span class="n">procs</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">out</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+</span><span class='line'>    <span class="k">print</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>Piping data from one subprocess to another</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">os</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>Subprocess timeout in Python 3</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c"># Python 3 way</span>
+</span><span class='line'><span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s">&#39;sleep&#39;</span><span class="p">,</span> <span class="s">&#39;10&#39;</span><span class="p">])</span>
+</span><span class='line'><span class="k">try</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</span><span class='line'><span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">TimeoutExpired</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">proc</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">proc</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">print</span><span class="p">(</span><span class="s">&#39;Exit status&#39;</span><span class="p">,</span> <span class="n">proc</span><span class="o">.</span><span class="n">poll</span><span class="p">())</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It&rsquo;s not available in Python 2, and if you want to reproduce its functionality in Python 2, you actually have to use the <code>select</code> module and poll the input and output file descriptors of the subprocess.
+It is a little bit more complicated and it&rsquo;s hard to get right.</p>
+
+<figure class='code'><figcaption><span>Stop-gap alternative in Python 2</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">class</span> <span class="nc">Command</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot; Stop-gap alternative for subprocess&#39;s timeout in Python 3.</span>
+</span><span class='line'><span class="sd">    Based on https://stackoverflow.com/questions/1191374/using-module-subprocess-with-timeout</span>
+</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">process</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">process</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">def</span> <span class="nf">target</span><span class="p">():</span>
+</span><span class='line'>            <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">thread</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">thread</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
+</span><span class='line'>            <span class="k">print</span> <span class="s">&#39;Terminating process&#39;</span>
+</span><span class='line'>            <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+</span><span class='line'>            <span class="n">thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">returncode</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s">&#39;sleep&#39;</span><span class="p">,</span> <span class="s">&#39;2&#39;</span><span class="p">])</span>
+</span><span class='line'><span class="n">command</span> <span class="o">=</span> <span class="n">Command</span><span class="p">(</span><span class="n">proc</span><span class="p">)</span>
+</span><span class='line'><span class="n">command</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># NOTE: the following will not work since the subprocess already ran.</span>
+</span><span class='line'><span class="c"># command = Command(proc)</span>
+</span><span class='line'><span class="n">command</span> <span class="o">=</span> <span class="n">Command</span><span class="p">(</span><span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s">&#39;sleep&#39;</span><span class="p">,</span> <span class="s">&#39;2&#39;</span><span class="p">]))</span>
+</span><span class='line'><span class="n">command</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Item 24: Use threads for blocking I/O, NOT for parallelism</h3>
+
+<p>Python has the GIL, or Global Interpreter Lock.
+It means that only one Python thread will ever actually run at a time.
+A common mistake is to use threads to speed up a computation-intensive program in Python.
+You will be usually disappointed and end up with similar, if not worse, performance.
+In other words, you might find that your complicated parallel version will have similar performance as the serial one.</p>
+
+<p>In Python, threads are good for two main use cases.
+The first use case is, if you want something looks running simultaneously (concurrency).
+A common example is to respond to user inputs while doing network I/O.
+In this case, the threads will cooperate with each other to obtain GIL fairly.
+The second use case for threads in Python is for (blocking) I/O such as network, system calls.
+A common example is to use threads to query multiple REST endpoints concurrently.
+The following example illustrate such use case:</p>
+
+<figure class='code'><figcaption><span>Use Python threads for network I/O</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">threading</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">requests</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">time</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">get_response</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">RequestThread</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+</span><span class='line'>        <span class="nb">super</span><span class="p">(</span><span class="n">RequestThread</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">_url</span> <span class="o">=</span> <span class="n">url</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">get_response</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_url</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;https://www.google.com&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s">&#39;https://www.facebook.com&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s">&#39;https://www.apple.com&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s">&#39;https://www.netflix.com&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s">&#39;https://www.salesforce.com&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s">&#39;https://www.intuit.com&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s">&#39;https://www.amazon.com&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s">&#39;https://www.uber.com&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="s">&#39;https://www.lyft.com&#39;</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">threads</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class='line'><span class="k">for</span> <span class="n">url</span> <span class="ow">in</span> <span class="n">urls</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">thread</span> <span class="o">=</span> <span class="n">RequestThread</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">threads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thread</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">for</span> <span class="n">thread</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>TODO: Explain GIL and under the cover, <code>request</code> release the control of GIL.</p>
+
+<p>TODO: mistake</p>
+
+<p>TODO: Note about how to call constructor.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Effective Python Pt. 4: Using Classes]]></title>
     <link href="http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-4/"/>
     <updated>2018-08-12T00:19:36-07:00</updated>
     <id>http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-4</id>
-    <content type="html"><![CDATA[<p>This post corresponds to Lesson 1 &ldquo;Using Expressions and Statements&rdquo; of <a href="https://www.safaribooksonline.com/videos/effective-python/9780134175249">&ldquo;Effective Python&rdquo; course</a>.</p>
+    <content type="html"><![CDATA[<p>This post corresponds to Lesson 4 &ldquo;Using Classes&rdquo; of <a href="https://www.safaribooksonline.com/videos/effective-python/9780134175249">&ldquo;Effective Python&rdquo; course</a>.</p>
 
 <!--more-->
 
@@ -26,11 +288,11 @@
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Effective Python: Part 3]]></title>
+    <title type="html"><![CDATA[Effective Python Pt. 3: Functions]]></title>
     <link href="http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-3/"/>
     <updated>2018-08-12T00:19:32-07:00</updated>
     <id>http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-3</id>
-    <content type="html"><![CDATA[<p>This post corresponds to Lesson 1 &ldquo;Using Expressions and Statements&rdquo; of <a href="https://www.safaribooksonline.com/videos/effective-python/9780134175249">&ldquo;Effective Python&rdquo; course</a>.</p>
+    <content type="html"><![CDATA[<p>This post corresponds to Lesson 3 &ldquo;Using Functions&rdquo; of <a href="https://www.safaribooksonline.com/videos/effective-python/9780134175249">&ldquo;Effective Python&rdquo; course</a>.</p>
 
 <!--more-->
 
@@ -38,21 +300,265 @@
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Effective Python: Part 2]]></title>
+    <title type="html"><![CDATA[Effective Python Pt. 2: Comprehensions & Generators]]></title>
     <link href="http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-2/"/>
     <updated>2018-08-12T00:19:30-07:00</updated>
     <id>http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-2</id>
-    <content type="html"><![CDATA[<p>This post corresponds to Lesson 1 &ldquo;Using Expressions and Statements&rdquo; of <a href="https://www.safaribooksonline.com/videos/effective-python/9780134175249">&ldquo;Effective Python&rdquo; course</a>.</p>
+    <content type="html"><![CDATA[<p>This post corresponds to Lesson 2 &ldquo;Comprehensions &amp; Generators&rdquo; of <a href="https://www.safaribooksonline.com/videos/effective-python/9780134175249">&ldquo;Effective Python&rdquo; course</a>.</p>
 
 <!--more-->
 
 
+<h3>Item 8: Use list comprehension instead of MAP and FILTER</h3>
 
+<p>List comprehension offers the more intuitive way to transform a list to another list.
+Note that in Python 3, the <code>map</code> function now returns an iterator instead of a list like Python 2.
+Therefore, you have to add an extra step to convert to a list.</p>
+
+<figure class='code'><figcaption><span>List comprehension</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">a</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</span><span class='line'><span class="c"># Recommended</span>
+</span><span class='line'><span class="n">squares</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">a</span><span class="p">]</span>
+</span><span class='line'><span class="c"># Old way: map in Python 2</span>
+</span><span class='line'><span class="n">squares</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+</span><span class='line'><span class="c"># Old way: map in Python 3</span>
+</span><span class='line'><span class="n">squares</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">a</span><span class="p">))</span>
+</span><span class='line'><span class="k">print</span><span class="p">(</span><span class="n">squares</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In addition, list comprehension makes it easy to add a condition for filtering.
+Using <code>filter</code> and <code>map</code>, it becomes very &ldquo;noisy&rdquo; with multiple enclosing functions and lambdas, as shown below.</p>
+
+<figure class='code'><figcaption><span>List comprehension with filtering</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">b</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</span><span class='line'><span class="c"># Recommended</span>
+</span><span class='line'><span class="n">squares</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">b</span> <span class="k">if</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+</span><span class='line'><span class="c"># Old way in Python 2</span>
+</span><span class='line'><span class="n">squares</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Dictionary and set also have similar comprehension expressions for similar purposes.
+The final note is that for very complex transformations and filtering that is not easy to pack into comprehension expressions, it is recommended to explicitly use the <code>for</code> loop instead.</p>
+
+<h3>Item 9: Avoid more than two expressions in list comprehensions</h3>
+
+<p>As examples, the transformations of two-dimensional matrices can be done easily with list comprehensions, as follows.</p>
+
+<figure class='code'><figcaption><span>Transforming matrices</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">matrix</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]]</span>
+</span><span class='line'><span class="n">flatten</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">matrix</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]</span>
+</span><span class='line'><span class="k">print</span><span class="p">(</span><span class="n">flatten</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">squared</span> <span class="o">=</span> <span class="p">[[</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">matrix</span><span class="p">]</span>
+</span><span class='line'><span class="k">print</span><span class="p">(</span><span class="n">squared</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>However, for 3D (or more) matrices, such approach with list comprehensions can be really hard to read.</p>
+
+<figure class='code'><figcaption><span>3D matrix</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c"># 3D matrix</span>
+</span><span class='line'><span class="n">matrix</span> <span class="o">=</span> <span class="p">[</span>
+</span><span class='line'>    <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]],</span>
+</span><span class='line'>    <span class="p">[[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">],</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">]]</span>
+</span><span class='line'><span class="p">]</span>
+</span><span class='line'><span class="n">flatten</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">sublist1</span> <span class="ow">in</span> <span class="n">matrix</span>
+</span><span class='line'>           <span class="k">for</span> <span class="n">sublist2</span> <span class="ow">in</span> <span class="n">sublist1</span>
+</span><span class='line'>           <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sublist2</span><span class="p">]</span>
+</span><span class='line'><span class="k">print</span><span class="p">(</span><span class="n">flatten</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As shown above, even a simple transformation of matrix flattening can make the code hard to read due to multiple levels of <code>for</code> loops.
+Instead of using list comprehensions in those cases, it is recommended to explicitly use <code>for</code> loops when there are more than two expressions in such list comprehensions.</p>
+
+<figure class='code'><figcaption><span>3D matrix</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c"># Recommended way</span>
+</span><span class='line'><span class="n">flatten</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class='line'><span class="k">for</span> <span class="n">sublist1</span> <span class="ow">in</span> <span class="n">matrix</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">sublist2</span> <span class="ow">in</span> <span class="n">sublist1</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">flatten</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">sublist2</span><span class="p">)</span>
+</span><span class='line'><span class="k">print</span><span class="p">(</span><span class="n">flatten</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Another example of abusing list comprehension is to perform multiple filtering operations, such as:</p>
+
+<figure class='code'><figcaption><span>Multiple filtering operations</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">matrix</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]]</span>
+</span><span class='line'><span class="n">filtered</span> <span class="o">=</span> <span class="p">[[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">row</span> <span class="k">if</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+</span><span class='line'>            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">matrix</span> <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">]</span>
+</span><span class='line'><span class="k">print</span><span class="p">(</span><span class="n">filtered</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In this example, the expression performs filtering not only on rows in the matrix but also on elements in rows.
+Such expressions are really hard to understand since the code is not read in the natural order of logic and flow of thoughts (see <a href="https://en.wikipedia.org/wiki/Literate_programming">literate programming</a>).
+It is recommended to explicitly use <code>for</code> loops for such cases.</p>
+
+<h3>Item 10: Consider generator expressions for large comprehensions</h3>
+
+<p>The problems with list comprehensions are that they may create a whole new list containing all the data.
+For large inputs, it can consume a significant amount of memory and can even crash your program.</p>
+
+<p>For a (very contrived) example, let&rsquo;s say you want to return the length of each line in a file and its squares.
+You can easily achieve that with the following list comprehensions.</p>
+
+<figure class='code'><figcaption><span>List comprehension on a file</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">value</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;/tmp/my_file.txt&#39;</span><span class="p">)]</span>
+</span><span class='line'><span class="n">squares</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">better</span><span class="p">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>However, list comprehension on a file like this is very risky.
+The file can be really large or even never ending (such as a network socket).
+To solve this problem, Python has generator expressions, which are a generalization of comprehensions and generators.
+A generator expression gives you an iterator that you can go through that will yield one item at a time from the input and you can determine how many output items you want to return.
+The above code can be rewritten as follows:</p>
+
+<figure class='code'><figcaption><span>Generator expression</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">better</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;/tmp/my_file.txt&#39;</span><span class="p">))</span>
+</span><span class='line'><span class="n">roots</span> <span class="o">=</span> <span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">better</span><span class="p">)</span>
+</span><span class='line'><span class="k">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">roots</span><span class="p">))</span>
+</span><span class='line'><span class="k">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">better</span><span class="p">))</span>
+</span><span class='line'><span class="k">print</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">roots</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">### Example Output</span>
+</span><span class='line'><span class="p">[</span><span class="mi">37</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">38</span><span class="p">,</span> <span class="mi">85</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">96</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">44</span><span class="p">]</span>
+</span><span class='line'><span class="p">(</span><span class="mi">37</span><span class="p">,</span> <span class="mi">1369</span><span class="p">)</span>
+</span><span class='line'><span class="mi">20</span>
+</span><span class='line'><span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="mi">3600</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As you can see, another powerful outcome of using generator expressions is that they can be composed together.
+When you call <code>next(roots)</code>, Python goes back up to the generator expression <code>better</code>, then realizes that it has to read another line out of the file.
+It has to read the line, then compute its length.
+That length value is then passed back to <code>roots</code> as <code>x</code> and for computing the tuple.
+What&rsquo;s surprising is that chaining generators like this actually executes very quickly in Python.
+When you&rsquo;re looking for a way to compose functionallity that&rsquo;s operating on a large stream of input, generator expressions are one of the best tools for the job.</p>
+
+<h3>Item 11: Consider generator functions instead of returning lists</h3>
+
+<p>Let&rsquo;s say you want to find the index of every single words in a string.
+The typical approach will be something as follows:</p>
+
+<figure class='code'><figcaption><span>Typical way</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">index_words_typical</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">text</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">letter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">letter</span> <span class="o">==</span> <span class="s">&#39; &#39;</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">result</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The typical approach that returns a list of indices has a problem.
+It is dense and noisy with all logistics related to <code>result</code> list: initializing the list, appending to the list whenever a result is found.
+A better way to write this function is to use a generator function, with <code>yield</code> statements, as follows:</p>
+
+<figure class='code'><figcaption><span>Better way</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">index_words</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">text</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">yield</span> <span class="mi">0</span>
+</span><span class='line'>    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">letter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">letter</span> <span class="o">==</span> <span class="s">&#39; &#39;</span><span class="p">:</span>
+</span><span class='line'>            <span class="k">yield</span> <span class="n">index</span><span class="o">+</span><span class="mi">1</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>Equivalent outputs</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">address</span> <span class="o">=</span> <span class="s">&#39;The quick brown fox jumps over the lazy dog&#39;</span>
+</span><span class='line'><span class="k">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">index_words</span><span class="p">(</span><span class="n">address</span><span class="p">)))</span>
+</span><span class='line'><span class="k">print</span><span class="p">(</span><span class="n">index_words_typical</span><span class="p">(</span><span class="n">address</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Output</span>
+</span><span class='line'><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">40</span><span class="p">]</span>
+</span><span class='line'><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">40</span><span class="p">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As you can see, the generator version of this function is much easier to read than the typical version that returns lists.
+Most significantly, all of the interactions with the <code>result</code> list have been taken away.
+Instead, you just have those <code>yield</code> statements, making it very obvious what is being returned.
+That helps make it clear to new readers of the code.</p>
+
+<p>The second problem of the typical approach is that it requires all results to be sotred in the lists before being returned.
+For huge inputs, this can cause your program to run out of memory and crash.
+In contrast, the generator version of the function can handle any amount of output because it doesn&rsquo;t actually keep all of the results in memory that it found.
+In the example above, if the input <code>address</code> is a huge text and you only need to display the first hundred indices, the typical approach <code>index_words_typical</code> might fail while the generator version works perfectly fine.</p>
 ]]></content>
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Effective Python: Part 1]]></title>
+    <title type="html"><![CDATA[Effective Python Pt. 1: Expressions and Statements]]></title>
     <link href="http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-1/"/>
     <updated>2018-08-12T00:19:06-07:00</updated>
     <id>http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-1</id>
