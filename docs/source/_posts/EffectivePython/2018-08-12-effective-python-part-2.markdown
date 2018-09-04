@@ -177,7 +177,92 @@ Most significantly, all of the interactions with the `result` list have been tak
 Instead, you just have those `yield` statements, making it very obvious what is being returned.
 That helps make it clear to new readers of the code.
 
-The second problem of the typical approach is that it requires all results to be sotred in the lists before being returned.
+The second problem of the typical approach is that it requires all results to be stored in the lists before being returned.
 For huge inputs, this can cause your program to run out of memory and crash.
 In contrast, the generator version of the function can handle any amount of output because it doesn't actually keep all of the results in memory that it found.
 In the example above, if the input `address` is a huge text and you only need to display the first hundred indices, the typical approach `index_words_typical` might fail while the generator version works perfectly fine.
+
+### Item 12: Be defensive when iterating over arguments
+
+``` python Iterator as argument
+def normalize_data(numbers):
+    total = sum(numbers)
+    result = []
+    for value in numbers:
+        percent = 100.0 * value / total
+        result.append(percent)
+    return result
+
+def read_visits(data_path):
+    with open(data_path) as f:
+        for line in f:
+            yield int(line)
+```
+
+``` python Testing
+path = '/tmp/my_numbers.txt'
+with open(path, 'w') as f:
+    for i in [15, 80, 35]:
+        f.write('%d\n' % i)
+
+print(normalize_data([15, 80, 35]))
+print(normalize_data(read_visits(path)))
+```
+
+``` plain Output
+[11.538461538461538, 61.53846153846154, 26.923076923076923]
+[]
+```
+
+As you can see from the output, `normalize_data` works fine with a list of numbers but it does not work when we are supplying an iterator as input.
+The main reason is that we iterate multiple times with the input iterator.
+After the first traversal for `sum`, the iterator is already exhausted and that explains an empty list for the output `result`.
+
+The most straight-forward fix for the function `normalize_data` is probably to add a line `numbers = list(numbers)` at the beginning to materialize the iterator.
+However, such fix will defeat the purpose of using iterators and the function `read_visits`: they allow handling a arbitrarily large number of inputs without committing a large working memory.
+
+Another possible fix for the function `normalize_data` is as folllows:
+
+``` python Another fix
+def normalize_data_2(get_iter):
+    total = sum(get_iter())
+    result = []
+    for value in get_iter():
+        percent = 100.0 * value / total
+        result.append(percent)
+    return result
+
+get_iter = lambda: read_visits(path)
+print(normalize_data_2(get_iter))
+```
+
+In this approach, we recreate the iterator whenever we need to iterate the data.
+So, if we need to traverse twice to normalize the data, we have to call `read_visits` twice, open the file, and read the data that many times.
+The upside is that we have the correct behavior while still retaining the benefits of using iterators.
+The problem of this approach is that it is very noisy and hard to read with `get_iter` and `lambda`.
+A more Pythonic way to do the same thing is to use a container class for the behavior of `read_visits`, as follows:
+
+``` python Converting read_visits to a class
+class ReadVisits(object):
+    def __init__(self, data_path):
+        self.data_path = data_path
+
+    def __iter__(self):
+        with open(self.data_path) as f:
+            for line in f:
+                yield int(line)
+
+visits = ReadVisits(path)
+print(normalize_data(visits))
+```
+
+Here, `normalize_data` can be the same as before.
+The idea is still the same, we recreate the iterator whenever we need to iterate the data.
+In the example, when we iterate the `numbers` for computing `sum` or in `for` loop in `normalize_data` method, we effectively call `iter(numbers)` to retrieve the iterators.
+It is defined in `__iter__` method, which will open the file and read the data whenver it is called.
+However, it is much clearer and more readable than before since we encapsulate the behavior of `read_visits` method into the class `ReadVisits`.
+
+Finally, one minor improvement that we can add is to validate if the input argument of `normalize_data` is a container, as opposed to plain old iterator.
+If the argument is a plain old iterator, its data can be exhausted after first traversal and the `normalize_data` method will not behave correctly.
+To check that, a simple check "iter(numbers) is iter(numbers)" will suffice.
+For container-type arguments such as a list or `ReadVisits` object, each `iter` call returns a different iterator.
