@@ -86,9 +86,10 @@ for proc in procs:
     print(out)
 ```
 
-``` python Piping data from one subprocess to another
-import os
-```
+Note that in this piping example above, you can use `os.environ.copy` to shield current process's environment from modifications of its variables.
+You can use the new copy of environment by specifying `env=my_env` in `Popen` constructor. 
+In addition, you can use the environment variable as parameters in the `Popen` command by using `env:password`.
+To pipe data from Python into the subprocess, you need to set `stdin=subprocess.PIPE` and transfer data by using `proc.stdin.write(data)`.
 
 ``` python Subprocess timeout in Python 3
 # Python 3 way
