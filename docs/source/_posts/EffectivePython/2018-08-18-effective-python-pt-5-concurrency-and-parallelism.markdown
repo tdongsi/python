@@ -4,13 +4,58 @@ title: "Effective Python Pt. 5: Concurrency and Parallelism"
 date: 2018-08-18 16:24:30 -0700
 comments: true
 categories: 
+- Python
 ---
 
-This post corresponds to Lesson 4 "Using Classes" of ["Effective Python" course](https://www.safaribooksonline.com/videos/effective-python/9780134175249).
+This post corresponds to Lesson 5 "Concurrency and Parallelism" of ["Effective Python" course](https://www.safaribooksonline.com/videos/effective-python/9780134175249).
 
 <!--more-->
 
 ### Item 23: Use subprocess to manage child processes
+
+``` python Typical usage of subprocess module
+import subprocess
+
+proc = subprocess.Popen(
+    ['echo', 'Hello World'],
+    stdout=subprocess.PIPE
+)
+out, err = proc.communicate()
+print(out.decode('utf-8'))
+```
+
+``` python Simple forking example
+proc = subprocess.Popen(['sleep', '0.3'])
+while proc.poll() is None:
+    print('Working...')
+    # Time consuming process
+    time.sleep(0.2)
+
+print('Exit status: %d' % proc.poll())
+```
+
+In the forking example above, note that `proce.poll()` is used to check for and obtain the status of the child process.
+
+``` python Parallelism wtih subprocess
+def run_sleep(period):
+    proc = subprocess.Popen(['sleep', str(period)])
+    return proc
+
+
+start = time.time()
+procs = []
+for _ in range(10):
+    proc = run_sleep(0.3)
+    procs.append(proc)
+
+for proc in procs:
+    proc.communicate()
+
+end = time.time()
+print('Takes %f seconds' % (end - start))
+```
+
+In the parallisim example above, the time it takes is approximately 0.3 seconds, no matter how many processes you create.
 
 ``` python Piping data from Python data to subprocess
 # You can pipe data from Python program to subprocess
