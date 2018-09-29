@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Python | Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/blog/categories/python/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2018-09-29T15:20:08-07:00</updated>
+  <updated>2018-09-29T15:26:56-07:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -158,7 +158,7 @@ In other words, you might find that your complicated parallel version will have 
 The first use case is, if you want something looks running simultaneously (concurrency).
 A common example is to respond to user inputs while doing network I/O.
 In this case, the threads will cooperate with each other to obtain GIL fairly.
-The second use case for threads in Python is for (blocking) I/O such as network, system calls.
+The second use case for threads in Python is for IO-intensive applications such as those with lots of (blocking) network, system calls.
 A common example is to use threads to query multiple REST endpoints concurrently.
 The following example illustrate such use case:</p>
 
