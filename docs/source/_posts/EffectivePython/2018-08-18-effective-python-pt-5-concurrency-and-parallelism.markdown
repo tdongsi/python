@@ -152,7 +152,7 @@ In Python, threads are good for two main use cases.
 The first use case is, if you want something looks running simultaneously (concurrency).
 A common example is to respond to user inputs while doing network I/O.
 In this case, the threads will cooperate with each other to obtain GIL fairly.
-The second use case for threads in Python is for (blocking) I/O such as network, system calls.
+The second use case for threads in Python is for IO-intensive applications such as those with lots of (blocking) network, system calls.
 A common example is to use threads to query multiple REST endpoints concurrently.
 The following example illustrate such use case:
 
