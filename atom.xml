@@ -4,7 +4,7 @@
   <title><![CDATA[Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2018-09-04T00:02:39-07:00</updated>
+  <updated>2018-09-29T15:20:08-07:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -18,12 +18,89 @@
     <link href="http://tdongsi.github.io/python/blog/2018/08/18/effective-python-pt-5-concurrency-and-parallelism/"/>
     <updated>2018-08-18T16:24:30-07:00</updated>
     <id>http://tdongsi.github.io/python/blog/2018/08/18/effective-python-pt-5-concurrency-and-parallelism</id>
-    <content type="html"><![CDATA[<p>This post corresponds to Lesson 4 &ldquo;Using Classes&rdquo; of <a href="https://www.safaribooksonline.com/videos/effective-python/9780134175249">&ldquo;Effective Python&rdquo; course</a>.</p>
+    <content type="html"><![CDATA[<p>This post corresponds to Lesson 5 &ldquo;Concurrency and Parallelism&rdquo; of <a href="https://www.safaribooksonline.com/videos/effective-python/9780134175249">&ldquo;Effective Python&rdquo; course</a>.</p>
 
 <!--more-->
 
 
 <h3>Item 23: Use subprocess to manage child processes</h3>
+
+<figure class='code'><figcaption><span>Typical usage of subprocess module</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">subprocess</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+</span><span class='line'>    <span class="p">[</span><span class="s">&#39;echo&#39;</span><span class="p">,</span> <span class="s">&#39;Hello World&#39;</span><span class="p">],</span>
+</span><span class='line'>    <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span>
+</span><span class='line'><span class="p">)</span>
+</span><span class='line'><span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+</span><span class='line'><span class="k">print</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>Simple forking example</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s">&#39;sleep&#39;</span><span class="p">,</span> <span class="s">&#39;0.3&#39;</span><span class="p">])</span>
+</span><span class='line'><span class="k">while</span> <span class="n">proc</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+</span><span class='line'>    <span class="k">print</span><span class="p">(</span><span class="s">&#39;Working...&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="c"># Time consuming process</span>
+</span><span class='line'>    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">print</span><span class="p">(</span><span class="s">&#39;Exit status: </span><span class="si">%d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">proc</span><span class="o">.</span><span class="n">poll</span><span class="p">())</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In the forking example above, note that <code>proce.poll()</code> is used to check for and obtain the status of the child process.</p>
+
+<figure class='code'><figcaption><span>Parallelism wtih subprocess</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">run_sleep</span><span class="p">(</span><span class="n">period</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s">&#39;sleep&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">period</span><span class="p">)])</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">proc</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span class='line'><span class="n">procs</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class='line'><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">proc</span> <span class="o">=</span> <span class="n">run_sleep</span><span class="p">(</span><span class="mf">0.3</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">procs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">proc</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">for</span> <span class="n">proc</span> <span class="ow">in</span> <span class="n">procs</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span class='line'><span class="k">print</span><span class="p">(</span><span class="s">&#39;Takes </span><span class="si">%f</span><span class="s"> seconds&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In the parallisim example above, the time it takes is approximately 0.3 seconds, no matter how many processes you create.</p>
 
 <figure class='code'><figcaption><span>Piping data from Python data to subprocess</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -80,14 +157,10 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
-
-
-<figure class='code'><figcaption><span>Piping data from one subprocess to another</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">os</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
+<p>Note that in this piping example above, you can use <code>os.environ.copy</code> to shield current process&rsquo;s environment from modifications of its variables.
+You can use the new copy of environment by specifying <code>env=my_env</code> in <code>Popen</code> constructor.
+In addition, you can use the environment variable as parameters in the <code>Popen</code> command by using <code>env:password</code>.
+To pipe data from Python into the subprocess, you need to set <code>stdin=subprocess.PIPE</code> and transfer data by using <code>proc.stdin.write(data)</code>.</p>
 
 <figure class='code'><figcaption><span>Subprocess timeout in Python 3</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
