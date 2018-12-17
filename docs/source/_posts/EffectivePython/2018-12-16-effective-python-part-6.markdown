@@ -91,3 +91,30 @@ $ source myproject/bin/activate
 
 $ deactivate
 ```
+
+### Item 29: Tests with unittest
+
+Tests are even more important in Python (than Java) since it is a dynamic language.
+`unittest` module can be used for both unit tests (isolated tests) and functional/integration tests (verifying interactions).
+
+``` python unittest examples
+from unittest import TestCase
+
+class ExampleTest(TestCase):
+
+    def setUp(self):
+        print('Setup')
+
+    def tearDown(self):
+        print('Teardown')
+
+    def test_a(self):
+        print('a')
+
+    def test_b(self):
+        print('b')
+
+
+if __name__ == '__main__':
+    unittest.main()
+```
