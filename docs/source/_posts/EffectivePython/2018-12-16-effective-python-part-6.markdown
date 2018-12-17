@@ -118,3 +118,26 @@ class ExampleTest(TestCase):
 if __name__ == '__main__':
     unittest.main()
 ```
+
+### Item 30: Debugging with `pdb`
+
+``` python Use debugger
+# Code before
+import pdb; pdb.set_trace()
+# Code after
+```
+
+A few debugger commands when you are already in the debugger:
+
+``` plain
+next
+step
+locals()
+bt  # back trace
+up
+down
+```
+
+The Python debugger `pdb` is very similar to C debugger in Linux.
+However, you are probably better off with debugger in proper IDEs such as PyCharm with better visualization.
+
