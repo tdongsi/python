@@ -141,3 +141,11 @@ down
 The Python debugger `pdb` is very similar to C debugger in Linux.
 However, you are probably better off with debugger in proper IDEs such as PyCharm with better visualization.
 
+### Iten 31: Profile before optimizing
+
+CPU profiling in Python.
+
+### Item 32: Use tracemalloc to undertand memory usage and leaks
+
+Memory profiling in Python.
+
