@@ -8,6 +8,8 @@ categories:
 
 This post corresponds to Lesson 1 "Using Expressions and Statements" of ["Effective Python" course](https://www.safaribooksonline.com/videos/effective-python/9780134175249).
 
+NOTE: While the book is about Python 3, my blog checks out its application in Python 2. 
+
 <!--more-->
 
 ### Item 1: Slice sequences
