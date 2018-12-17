@@ -143,9 +143,34 @@ However, you are probably better off with debugger in proper IDEs such as PyChar
 
 ### Iten 31: Profile before optimizing
 
-CPU profiling in Python.
+In summary, how to do CPU profiling in Python.
 
 ### Item 32: Use tracemalloc to undertand memory usage and leaks
 
-Memory profiling in Python.
+In summary, this item is about how to do memory profiling in Python.
 
+Python has automatic garbage collection: reference counting and cycle detection for looping references.
+Despite that, memory leaks still happen and it's hard in practice to figure out why references are held.
+
+``` python gc module
+import gc
+
+found_objects = gc.get_objects()
+print('%d objects before' % len(found_objects))
+
+import waste_memory
+x = waste_memory.run()
+
+found_objects = gc.get_objects()
+print('%d objects after' % len(found_objects))
+```
+
+`gc` module allows you to interact with garbage collectors and take a look into how many objects created, as shown above.
+However, such information is usually not enough to figure out what went wrong: objects of the same class can be created in various ways.
+You need more information to figure out where the allocation and the memory leak happens.
+
+In Python 3, we have `tracemalloc` module that allows comparing between two memory snapshots and trace back to the code lines where such memory allocations happen. 
+See [more examples](https://pytracemalloc.readthedocs.io/examples.html).
+For Python 2.7, it is not part of the Standard Library.
+Therefore, we have to patch and compile Python 2.7 to use the 3rd party `pytracemalloc` module.
+The instructions to do it can be found in [here](http://carsonip.me/posts/debugging-memory-usage-python-tracemalloc/).
