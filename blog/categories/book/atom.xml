@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Book | Personal Interview Notes]]></title>
+  <link href="http://tdongsi.github.io/python/blog/categories/book/atom.xml" rel="self"/>
+  <link href="http://tdongsi.github.io/python/"/>
+  <updated>2018-12-17T00:20:27-08:00</updated>
+  <id>http://tdongsi.github.io/python/</id>
+  <author>
+    <name><![CDATA[Cuong Dong-Si]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Effective Python Pt. 6: Robust Programs]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2018/12/16/effective-python-part-6/"/>
+    <updated>2018-12-16T17:58:58-08:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2018/12/16/effective-python-part-6</id>
+    <content type="html"><![CDATA[<p>This post corresponds to Lesson 6 &ldquo;Making Programs Robust&rdquo; of <a href="https://www.safaribooksonline.com/videos/effective-python/9780134175249">&ldquo;Effective Python&rdquo; course</a>.</p>
+
+<p>NOTE: While the book is about Python 3, my blog checks out its application in Python 2.</p>
+
+<!--more-->
+
+
+<h3>Item 28: Use virtualenv</h3>
+
+<p>Use <code>pip</code> commands for virtual environment management.</p>
+
+<pre><code class="plain">
+$ pip show flask
+Name: Flask
+Version: 1.0.2
+Summary: A simple framework for building complex web applications.
+Home-page: https://www.palletsprojects.com/p/flask/
+Author: Armin Ronacher
+Author-email: armin.ronacher@active-4.com
+License: BSD
+Location: /Users/tdongsi/Matrix/python/venv/lib/python2.7/site-packages
+Requires: Werkzeug, click, Jinja2, itsdangerous
+Required-by:
+
+$ pip install --upgrade Jinja2
+Requirement already up-to-date: Jinja2 in ./venv/lib/python2.7/site-packages (2.10)
+Requirement already satisfied, skipping upgrade: MarkupSafe&gt;=0.23 in ./venv/lib/python2.7/site-packages (from Jinja2) (1.1.0)
+
+$ pip list
+Package                  Version
+------------------------ ----------
+alabaster                0.7.12
+Babel                    2.6.0
+certifi                  2018.11.29
+chardet                  3.0.4
+Click                    7.0
+...
+
+$ pip freeze
+alabaster==0.7.12
+Babel==2.6.0
+certifi==2018.11.29
+chardet==3.0.4
+Click==7.0
+...
+
+$ pip freeze &gt; requirements.txt
+
+# In another virtualenv
+$ pip install -r requirements.txt
+</code></pre>
+
+<p>Set up and use virtual environment in Python 2.</p>
+
+<pre><code class="plain">
+# Create new virtual env
+$ virtualenv venv
+New python executable in /Users/tdongsi/Matrix/python/venv/bin/python
+Installing setuptools, pip, wheel...
+done.
+
+# Activate new virual env
+$ source venv/bin/activate
+
+$ deactivate
+</code></pre>
+
+<h4>Python 3</h4>
+
+<p>The difference in Python 3 is the dedicated command <code>pyvenv</code> and no separate installation of <code>virtualenv</code> is required.</p>
+
+<pre><code class="plain virtualenv in Python 3">$ pyvenv -h
+
+# Create new virtual env
+$ pyvenv myproject
+
+# Activate new virual env
+$ source myproject/bin/activate
+
+$ deactivate
+</code></pre>
+
+<h3>Item 29: Tests with unittest</h3>
+
+<p>Tests are even more important in Python (than Java) since it is a dynamic language.
+<code>unittest</code> module can be used for both unit tests (isolated tests) and functional/integration tests (verifying interactions).</p>
+
+<pre><code class="python unittest examples">from unittest import TestCase
+
+class ExampleTest(TestCase):
+
+    def setUp(self):
+        print('Setup')
+
+    def tearDown(self):
+        print('Teardown')
+
+    def test_a(self):
+        print('a')
+
+    def test_b(self):
+        print('b')
+
+
+if __name__ == '__main__':
+    unittest.main()
+</code></pre>
+
+<h3>Item 30: Debugging with <code>pdb</code></h3>
+
+<pre><code class="python Use debugger"># Code before
+import pdb; pdb.set_trace()
+# Code after
+</code></pre>
+
+<p>A few debugger commands when you are already in the debugger:</p>
+
+<pre><code class="plain">next
+step
+locals()
+bt  # back trace
+up
+down
+</code></pre>
+
+<p>The Python debugger <code>pdb</code> is very similar to C debugger in Linux.
+However, you are probably better off with debugger in proper IDEs such as PyCharm with better visualization.</p>
+
+<h3>Iten 31: Profile before optimizing</h3>
+
+<p>In summary, how to do CPU profiling in Python.</p>
+
+<p>Dynamic nature of Python programs can lead to surprising performance impact.
+Profiling is easy to do in Python with built-in modules, as shown below, and allows us to focus on measurable sources of performance bottlenecks.</p>
+
+<pre><code class="python Profiling in Python">from cProfile import Profile
+from pstats import Stats
+
+profiler = Profile()
+# profiler.runcall(insertion_sort, data)
+profiler.runcall(lambda: insertion_sort(data))
+
+stats = Stats(profiler)
+stats.strip_dirs()
+stats.sort_stats('cumulative')
+stats.print_stats()
+</code></pre>
+
+<pre><code class="plain Profiler output">         20003 function calls in 0.791 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.791    0.791 item31.py:27(&lt;lambda&gt;)
+        1    0.002    0.002    0.791    0.791 item31.py:7(insertion_sort)
+    10000    0.780    0.000    0.789    0.000 item31.py:14(insert_value)
+     9989    0.010    0.000    0.010    0.000 {method 'insert' of 'list' objects}
+       11    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+</code></pre>
+
+<p>Another print method <code>stats.print_callers()</code> can reorganize the same information in a different way.</p>
+
+<pre><code class="plain">   Ordered by: cumulative time
+
+Function                                          was called by...
+                                                      ncalls  tottime  cumtime
+item31.py:25(&lt;lambda&gt;)                            &lt;-
+item31.py:8(insertion_sort)                       &lt;-       1    0.002    0.023  item31.py:25(&lt;lambda&gt;)
+item31.py:15(insert_value)                        &lt;-   10000    0.004    0.021  item31.py:8(insertion_sort)
+{method 'insert' of 'list' objects}               &lt;-   10000    0.011    0.011  item31.py:15(insert_value)
+{_bisect.bisect_left}                             &lt;-   10000    0.006    0.006  item31.py:15(insert_value)
+{method 'disable' of '_lsprof.Profiler' objects}  &lt;-
+</code></pre>
+
+<p>More details can be found in <a href="https://docs.python.org/2/library/profile.html">Python documentation</a>.</p>
+
+<h3>Item 32: Use tracemalloc to undertand memory usage and leaks</h3>
+
+<p>In summary, this item is about how to do memory profiling in Python.</p>
+
+<p>Python has automatic garbage collection: reference counting and cycle detection for looping references.
+Despite that, memory leaks still happen and it&rsquo;s hard in practice to figure out why references are held.</p>
+
+<pre><code class="python gc module">import gc
+
+found_objects = gc.get_objects()
+print('%d objects before' % len(found_objects))
+
+import waste_memory
+x = waste_memory.run()
+
+found_objects = gc.get_objects()
+print('%d objects after' % len(found_objects))
+</code></pre>
+
+<p><code>gc</code> module allows you to interact with garbage collectors and take a look into how many objects created, as shown above.
+However, such information is usually not enough to figure out what went wrong: objects of the same class can be created in various ways.
+You need more information to figure out where the allocation and the memory leak happens.</p>
+
+<p>In Python 3, we have <code>tracemalloc</code> module that allows comparing between two memory snapshots and trace back to the code lines where such memory allocations happen.
+See <a href="https://pytracemalloc.readthedocs.io/examples.html">more examples</a>.
+For Python 2.7, it is not part of the Standard Library.
+Therefore, we have to patch and compile Python 2.7 to use the 3rd party <code>pytracemalloc</code> module.
+The instructions to do it can be found in <a href="http://carsonip.me/posts/debugging-memory-usage-python-tracemalloc/">here</a>.</p>
+]]></content>
+  </entry>
+  
+</feed>

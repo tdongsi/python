@@ -1,0 +1,582 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Effective Python Pt. 6: Robust Programs - Personal Interview Notes</title>
+  <meta name="author" content="Cuong Dong-Si">
+
+  
+  <meta name="description" content="This post corresponds to Lesson 6 &ldquo;Making Programs Robust&rdquo; of &ldquo;Effective Python&rdquo; course. NOTE: While the book is about Python &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://tdongsi.github.io/python/blog/2018/12/16/effective-python-part-6/">
+  <link href="/python/favicon.png" rel="icon">
+  <link href="/python/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Personal Interview Notes" type="application/atom+xml">
+  <link href="/python/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/python/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/python/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body    class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/python/">Personal Interview Notes</a></h1>
+  
+    <h2>Neither success nor failure is ever final.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="tdongsi.github.io/python">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/python/">Blog Home</a></li>
+  <li><a href="/python/blog/archives">Archives</a></li>
+  <li><a href="http://tdongsi.github.io/SqlTests/syllabus/">Syllabus</a></li>
+  <li><a href="http://tdongsi.github.io">Personal Home</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Effective Python Pt. 6: Robust Programs</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2018-12-16T17:58:58-08:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>16</span><span class='date-suffix'>th</span>, <span class='date-year'>2018</span></span> <span class='time'>5:58 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>This post corresponds to Lesson 6 &ldquo;Making Programs Robust&rdquo; of <a href="https://www.safaribooksonline.com/videos/effective-python/9780134175249">&ldquo;Effective Python&rdquo; course</a>.</p>
+
+<p>NOTE: While the book is about Python 3, my blog checks out its application in Python 2.</p>
+
+<!--more-->
+
+
+<h3>Item 28: Use virtualenv</h3>
+
+<p>Use <code>pip</code> commands for virtual environment management.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'>$ pip show flask
+</span><span class='line'>Name: Flask
+</span><span class='line'>Version: 1.0.2
+</span><span class='line'>Summary: A simple framework for building complex web applications.
+</span><span class='line'>Home-page: https://www.palletsprojects.com/p/flask/
+</span><span class='line'>Author: Armin Ronacher
+</span><span class='line'>Author-email: armin.ronacher@active-4.com
+</span><span class='line'>License: BSD
+</span><span class='line'>Location: /Users/tdongsi/Matrix/python/venv/lib/python2.7/site-packages
+</span><span class='line'>Requires: Werkzeug, click, Jinja2, itsdangerous
+</span><span class='line'>Required-by:
+</span><span class='line'>
+</span><span class='line'>$ pip install --upgrade Jinja2
+</span><span class='line'>Requirement already up-to-date: Jinja2 in ./venv/lib/python2.7/site-packages (2.10)
+</span><span class='line'>Requirement already satisfied, skipping upgrade: MarkupSafe&gt;=0.23 in ./venv/lib/python2.7/site-packages (from Jinja2) (1.1.0)
+</span><span class='line'>
+</span><span class='line'>$ pip list
+</span><span class='line'>Package                  Version
+</span><span class='line'>------------------------ ----------
+</span><span class='line'>alabaster                0.7.12
+</span><span class='line'>Babel                    2.6.0
+</span><span class='line'>certifi                  2018.11.29
+</span><span class='line'>chardet                  3.0.4
+</span><span class='line'>Click                    7.0
+</span><span class='line'>...
+</span><span class='line'>
+</span><span class='line'>$ pip freeze
+</span><span class='line'>alabaster==0.7.12
+</span><span class='line'>Babel==2.6.0
+</span><span class='line'>certifi==2018.11.29
+</span><span class='line'>chardet==3.0.4
+</span><span class='line'>Click==7.0
+</span><span class='line'>...
+</span><span class='line'>
+</span><span class='line'>$ pip freeze &gt; requirements.txt
+</span><span class='line'>
+</span><span class='line'># In another virtualenv
+</span><span class='line'>$ pip install -r requirements.txt</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Set up and use virtual environment in Python 2.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>
+</span><span class='line'># Create new virtual env
+</span><span class='line'>$ virtualenv venv
+</span><span class='line'>New python executable in /Users/tdongsi/Matrix/python/venv/bin/python
+</span><span class='line'>Installing setuptools, pip, wheel...
+</span><span class='line'>done.
+</span><span class='line'>
+</span><span class='line'># Activate new virual env
+</span><span class='line'>$ source venv/bin/activate
+</span><span class='line'>
+</span><span class='line'>$ deactivate</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>Python 3</h4>
+
+<p>The difference in Python 3 is the dedicated command <code>pyvenv</code> and no separate installation of <code>virtualenv</code> is required.</p>
+
+<figure class='code'><figcaption><span>virtualenv in Python 3</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ pyvenv -h
+</span><span class='line'>
+</span><span class='line'># Create new virtual env
+</span><span class='line'>$ pyvenv myproject
+</span><span class='line'>
+</span><span class='line'># Activate new virual env
+</span><span class='line'>$ source myproject/bin/activate
+</span><span class='line'>
+</span><span class='line'>$ deactivate</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Item 29: Tests with unittest</h3>
+
+<p>Tests are even more important in Python (than Java) since it is a dynamic language.
+<code>unittest</code> module can be used for both unit tests (isolated tests) and functional/integration tests (verifying interactions).</p>
+
+<figure class='code'><figcaption><span>unittest examples</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">TestCase</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">ExampleTest</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">print</span><span class="p">(</span><span class="s">&#39;Setup&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">print</span><span class="p">(</span><span class="s">&#39;Teardown&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">test_a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">print</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">test_b</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">print</span><span class="p">(</span><span class="s">&#39;b&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Item 30: Debugging with <code>pdb</code></h3>
+
+<figure class='code'><figcaption><span>Use debugger</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c"># Code before</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">pdb</span><span class="p">;</span> <span class="n">pdb</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>
+</span><span class='line'><span class="c"># Code after</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>A few debugger commands when you are already in the debugger:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>next
+</span><span class='line'>step
+</span><span class='line'>locals()
+</span><span class='line'>bt  # back trace
+</span><span class='line'>up
+</span><span class='line'>down</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The Python debugger <code>pdb</code> is very similar to C debugger in Linux.
+However, you are probably better off with debugger in proper IDEs such as PyCharm with better visualization.</p>
+
+<h3>Iten 31: Profile before optimizing</h3>
+
+<p>In summary, how to do CPU profiling in Python.</p>
+
+<p>Dynamic nature of Python programs can lead to surprising performance impact.
+Profiling is easy to do in Python with built-in modules, as shown below, and allows us to focus on measurable sources of performance bottlenecks.</p>
+
+<figure class='code'><figcaption><span>Profiling in Python</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">cProfile</span> <span class="kn">import</span> <span class="n">Profile</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">pstats</span> <span class="kn">import</span> <span class="n">Stats</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">profiler</span> <span class="o">=</span> <span class="n">Profile</span><span class="p">()</span>
+</span><span class='line'><span class="c"># profiler.runcall(insertion_sort, data)</span>
+</span><span class='line'><span class="n">profiler</span><span class="o">.</span><span class="n">runcall</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">insertion_sort</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">stats</span> <span class="o">=</span> <span class="n">Stats</span><span class="p">(</span><span class="n">profiler</span><span class="p">)</span>
+</span><span class='line'><span class="n">stats</span><span class="o">.</span><span class="n">strip_dirs</span><span class="p">()</span>
+</span><span class='line'><span class="n">stats</span><span class="o">.</span><span class="n">sort_stats</span><span class="p">(</span><span class="s">&#39;cumulative&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="n">stats</span><span class="o">.</span><span class="n">print_stats</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>Profiler output</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>     20003 function calls in 0.791 seconds
+</span><span class='line'>
+</span><span class='line'>   Ordered by: cumulative time
+</span><span class='line'>
+</span><span class='line'>   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+</span><span class='line'>    1    0.000    0.000    0.791    0.791 item31.py:27(&lt;lambda&gt;)
+</span><span class='line'>    1    0.002    0.002    0.791    0.791 item31.py:7(insertion_sort)
+</span><span class='line'>10000    0.780    0.000    0.789    0.000 item31.py:14(insert_value)
+</span><span class='line'> 9989    0.010    0.000    0.010    0.000 {method 'insert' of 'list' objects}
+</span><span class='line'>   11    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}
+</span><span class='line'>    1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Another print method <code>stats.print_callers()</code> can reorganize the same information in a different way.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>   Ordered by: cumulative time
+</span><span class='line'>
+</span><span class='line'>Function                                          was called by...
+</span><span class='line'>                                                      ncalls  tottime  cumtime
+</span><span class='line'>item31.py:25(&lt;lambda&gt;)                            &lt;-
+</span><span class='line'>item31.py:8(insertion_sort)                       &lt;-       1    0.002    0.023  item31.py:25(&lt;lambda&gt;)
+</span><span class='line'>item31.py:15(insert_value)                        &lt;-   10000    0.004    0.021  item31.py:8(insertion_sort)
+</span><span class='line'>{method 'insert' of 'list' objects}               &lt;-   10000    0.011    0.011  item31.py:15(insert_value)
+</span><span class='line'>{_bisect.bisect_left}                             &lt;-   10000    0.006    0.006  item31.py:15(insert_value)
+</span><span class='line'>{method 'disable' of '_lsprof.Profiler' objects}  &lt;-</span></code></pre></td></tr></table></div></figure>
+
+
+<p>More details can be found in <a href="https://docs.python.org/2/library/profile.html">Python documentation</a>.</p>
+
+<h3>Item 32: Use tracemalloc to undertand memory usage and leaks</h3>
+
+<p>In summary, this item is about how to do memory profiling in Python.</p>
+
+<p>Python has automatic garbage collection: reference counting and cycle detection for looping references.
+Despite that, memory leaks still happen and it&rsquo;s hard in practice to figure out why references are held.</p>
+
+<figure class='code'><figcaption><span>gc module</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">gc</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">found_objects</span> <span class="o">=</span> <span class="n">gc</span><span class="o">.</span><span class="n">get_objects</span><span class="p">()</span>
+</span><span class='line'><span class="k">print</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%d</span><span class="s"> objects before&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">found_objects</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">import</span> <span class="nn">waste_memory</span>
+</span><span class='line'><span class="n">x</span> <span class="o">=</span> <span class="n">waste_memory</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">found_objects</span> <span class="o">=</span> <span class="n">gc</span><span class="o">.</span><span class="n">get_objects</span><span class="p">()</span>
+</span><span class='line'><span class="k">print</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%d</span><span class="s"> objects after&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">found_objects</span><span class="p">))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>gc</code> module allows you to interact with garbage collectors and take a look into how many objects created, as shown above.
+However, such information is usually not enough to figure out what went wrong: objects of the same class can be created in various ways.
+You need more information to figure out where the allocation and the memory leak happens.</p>
+
+<p>In Python 3, we have <code>tracemalloc</code> module that allows comparing between two memory snapshots and trace back to the code lines where such memory allocations happen.
+See <a href="https://pytracemalloc.readthedocs.io/examples.html">more examples</a>.
+For Python 2.7, it is not part of the Standard Library.
+Therefore, we have to patch and compile Python 2.7 to use the 3rd party <code>pytracemalloc</code> module.
+The instructions to do it can be found in <a href="http://carsonip.me/posts/debugging-memory-usage-python-tracemalloc/">here</a>.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Cuong Dong-Si</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2018-12-16T17:58:58-08:00'><span class='date'><span class='date-month'>Dec</span> <span class='date-day'>16</span><span class='date-suffix'>th</span>, <span class='date-year'>2018</span></span> <span class='time'>5:58 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/python/blog/categories/book/'>book</a>, <a class='category' href='/python/blog/categories/python/'>python</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://tdongsi.github.io/python/blog/2018/12/16/effective-python-part-6/" data-via="" data-counturl="http://tdongsi.github.io/python/blog/2018/12/16/effective-python-part-6/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/python/blog/2018/08/18/effective-python-pt-5-concurrency-and-parallelism/" title="Previous Post: Effective Python Pt. 5: Concurrency and Parallelism">&laquo; Effective Python Pt. 5: Concurrency and Parallelism</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+    <h1>About This Blog</h1>
+    <p>Random interview experience and lessons.</p>
+</section><section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/python/blog/2018/12/16/effective-python-part-6/">Effective Python Pt. 6: Robust Programs</a>
+      </li>
+    
+      <li class="post">
+        <a href="/python/blog/2018/08/18/effective-python-pt-5-concurrency-and-parallelism/">Effective Python Pt. 5: Concurrency and Parallelism</a>
+      </li>
+    
+      <li class="post">
+        <a href="/python/blog/2018/08/12/effective-python-part-4/">Effective Python Pt. 4: Using Classes</a>
+      </li>
+    
+      <li class="post">
+        <a href="/python/blog/2018/08/12/effective-python-part-3/">Effective Python Pt. 3: Functions</a>
+      </li>
+    
+      <li class="post">
+        <a href="/python/blog/2018/08/12/effective-python-part-2/">Effective Python Pt. 2: Comprehensions & Generators</a>
+      </li>
+    
+      <li class="post">
+        <a href="/python/blog/2018/08/12/effective-python-part-1/">Effective Python Pt. 1: Expressions and Statements</a>
+      </li>
+    
+      <li class="post">
+        <a href="/python/blog/2017/08/13/python-3-quick-recap/">Python 3 Quick Recap</a>
+      </li>
+    
+      <li class="post">
+        <a href="/python/blog/2017/08/06/requests-cookbook/">Requests Cookbook</a>
+      </li>
+    
+      <li class="post">
+        <a href="/python/blog/2016/09/17/tutorial-bfs-and-dfs/">Tutorial: BFS and DFS</a>
+      </li>
+    
+      <li class="post">
+        <a href="/python/blog/2016/09/05/tutorial-protocols/">Tutorial: Protocols</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/python/blog/categories/addepar/'>addepar (1)</a></li><li><a href='/python/blog/categories/algorithm/'>algorithm (4)</a></li><li><a href='/python/blog/categories/book/'>book (1)</a></li><li><a href='/python/blog/categories/datastructure/'>datastructure (1)</a></li><li><a href='/python/blog/categories/python/'>python (6)</a></li><li><a href='/python/blog/categories/todo/'>todo (5)</a></li><li><a href='/python/blog/categories/tutorial/'>tutorial (6)</a></li></ul>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2018 - Cuong Dong-Si -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://tdongsi.github.io/python/blog/2018/12/16/effective-python-part-6/</loc>
+<lastmod>2018-12-16T17:58:58-08:00</lastmod>
+</url>
+<url>
 <loc>http://tdongsi.github.io/python/blog/2018/08/18/effective-python-pt-5-concurrency-and-parallelism/</loc>
 <lastmod>2018-08-18T16:24:30-07:00</lastmod>
 </url>
@@ -75,5 +79,8 @@
 </url>
 <url>
 <loc>http://tdongsi.github.io/python/blog/categories/datastructure/</loc>
+</url>
+<url>
+<loc>http://tdongsi.github.io/python/blog/categories/book/</loc>
 </url>
 </urlset>
