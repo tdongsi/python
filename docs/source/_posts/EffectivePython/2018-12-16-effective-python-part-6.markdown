@@ -145,6 +145,54 @@ However, you are probably better off with debugger in proper IDEs such as PyChar
 
 In summary, how to do CPU profiling in Python.
 
+Dynamic nature of Python programs can lead to surprising performance impact.
+Profiling is easy to do in Python with built-in modules, as shown below, and allows us to focus on measurable sources of performance bottlenecks.
+
+``` python Profiling in Python
+from cProfile import Profile
+from pstats import Stats
+
+profiler = Profile()
+# profiler.runcall(insertion_sort, data)
+profiler.runcall(lambda: insertion_sort(data))
+
+stats = Stats(profiler)
+stats.strip_dirs()
+stats.sort_stats('cumulative')
+stats.print_stats()
+```
+
+``` plain Profiler output
+         20003 function calls in 0.791 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.791    0.791 item31.py:27(<lambda>)
+        1    0.002    0.002    0.791    0.791 item31.py:7(insertion_sort)
+    10000    0.780    0.000    0.789    0.000 item31.py:14(insert_value)
+     9989    0.010    0.000    0.010    0.000 {method 'insert' of 'list' objects}
+       11    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+```
+
+Another print method `stats.print_callers()` can reorganize the same information in a different way.
+
+``` plain
+   Ordered by: cumulative time
+
+Function                                          was called by...
+                                                      ncalls  tottime  cumtime
+item31.py:25(<lambda>)                            <-
+item31.py:8(insertion_sort)                       <-       1    0.002    0.023  item31.py:25(<lambda>)
+item31.py:15(insert_value)                        <-   10000    0.004    0.021  item31.py:8(insertion_sort)
+{method 'insert' of 'list' objects}               <-   10000    0.011    0.011  item31.py:15(insert_value)
+{_bisect.bisect_left}                             <-   10000    0.006    0.006  item31.py:15(insert_value)
+{method 'disable' of '_lsprof.Profiler' objects}  <-
+```
+
+More details can be found in [Python documentation](https://docs.python.org/2/library/profile.html).
+
 ### Item 32: Use tracemalloc to undertand memory usage and leaks
 
 In summary, this item is about how to do memory profiling in Python.
