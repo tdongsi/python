@@ -18,3 +18,5 @@ hive_vertica_count.json
 bff.png
 .idea
 venv
+jupyter/venv3
+jupyter/.ipynb_checkpoints
