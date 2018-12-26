@@ -20,3 +20,4 @@ bff.png
 venv
 jupyter/venv3
 jupyter/.ipynb_checkpoints
+*/node_modules
