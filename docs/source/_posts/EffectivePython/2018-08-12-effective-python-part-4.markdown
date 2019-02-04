@@ -231,13 +231,17 @@ class LoudResistor(Resistor):
 
     @ohms.setter
     def ohms(self, value):
-        print('Setter')
+        print('Check value')
         self._ohms = value
 
-
 def main():
-    # This will print "Setter"
+    # This will print "Check value"
     # Setter in subclass LoudResistor is activated 
     # although "ohms" attribute is set in superclass Resistor
     res2 = LoudResistor(1e3)
 ```
+
+Tips:
+* Do not modify internal states/attributes or any side effect in getter methods. Only change object's state in setter methods.
+* Getter method should be fast. Avoid doing complex computations in getter methods.
+* You can use `setter` to create unmodifiable objects in Python. See [here](https://github.com/tdongsi/effective_python).
