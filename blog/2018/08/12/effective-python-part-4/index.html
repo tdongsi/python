@@ -9,7 +9,7 @@
   <meta name="author" content="Cuong Dong-Si">
 
   
-  <meta name="description" content="This post corresponds to Lesson 4 &ldquo;Using Classes&rdquo; of &ldquo;Effective Python&rdquo; course. ">
+  <meta name="description" content="This post corresponds to Lesson 4 &ldquo;Using Classes&rdquo; of &ldquo;Effective Python&rdquo; course. Item 19: Prefer helper classes over book- &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -91,6 +91,422 @@
 
 <!--more-->
 
+
+<h3>Item 19: Prefer helper classes over book-keeping with dict and tuples</h3>
+
+<p>In an example, the author illustrated the progressive evolution of a grade-book application.
+In each iteration, the requirements are changed and interfaces are changed to accomodate that.
+Consequently, dictionaries and tuples are added to accomodate those changes in implementation but the logic and code becomes so convoluting with all book-keeping with those built-int data structures.
+The final version is shown as follows:</p>
+
+<figure class='code'><figcaption><span>Original code with dicts and tuples</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">class</span> <span class="nc">WeightedGradebook</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="sd">    Change WeightedGradebook to make the score in each subject is weighted.</span>
+</span><span class='line'><span class="sd">    For example, final is more weighted than homework.</span>
+</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">_grade</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">add_student</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">_grade</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">report_grade</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">weight</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">by_subject</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grade</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+</span><span class='line'>        <span class="n">grade_list</span> <span class="o">=</span> <span class="n">by_subject</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">subject</span><span class="p">,</span> <span class="p">[])</span>
+</span><span class='line'>        <span class="n">grade_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">score</span><span class="p">,</span> <span class="n">weight</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">average_grade</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">by_subject</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grade</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+</span><span class='line'>        <span class="n">total</span><span class="p">,</span> <span class="n">count</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">0</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">for</span> <span class="n">grades</span> <span class="ow">in</span> <span class="n">by_subject</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+</span><span class='line'>            <span class="n">subject_total</span><span class="p">,</span> <span class="n">subject_weight</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">0</span>
+</span><span class='line'>            <span class="k">for</span> <span class="n">score</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="n">grades</span><span class="p">:</span>
+</span><span class='line'>                <span class="n">subject_total</span> <span class="o">=</span> <span class="n">score</span> <span class="o">*</span> <span class="n">weight</span>
+</span><span class='line'>                <span class="n">subject_weight</span> <span class="o">=</span> <span class="n">weight</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="n">total</span> <span class="o">+=</span> <span class="n">subject_total</span> <span class="o">/</span> <span class="n">subject_weight</span>
+</span><span class='line'>            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="n">total</span> <span class="o">/</span> <span class="n">count</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">main_weighted</span><span class="p">():</span>
+</span><span class='line'>    <span class="n">book</span> <span class="o">=</span> <span class="n">WeightedGradebook</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">book</span><span class="o">.</span><span class="n">add_student</span><span class="p">(</span><span class="s">&#39;Isaac&#39;</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">book</span><span class="o">.</span><span class="n">report_grade</span><span class="p">(</span><span class="s">&#39;Isaac&#39;</span><span class="p">,</span> <span class="s">&#39;Math&#39;</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mf">0.90</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">book</span><span class="o">.</span><span class="n">report_grade</span><span class="p">(</span><span class="s">&#39;Isaac&#39;</span><span class="p">,</span> <span class="s">&#39;Math&#39;</span><span class="p">,</span> <span class="mi">85</span><span class="p">,</span> <span class="mf">0.10</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">book</span><span class="o">.</span><span class="n">report_grade</span><span class="p">(</span><span class="s">&#39;Isaac&#39;</span><span class="p">,</span> <span class="s">&#39;Gym&#39;</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mf">0.20</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">book</span><span class="o">.</span><span class="n">report_grade</span><span class="p">(</span><span class="s">&#39;Isaac&#39;</span><span class="p">,</span> <span class="s">&#39;Gym&#39;</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mf">0.20</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">print</span><span class="p">(</span><span class="n">book</span><span class="o">.</span><span class="n">average_grade</span><span class="p">(</span><span class="s">&#39;Isaac&#39;</span><span class="p">))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As you can see, the <code>average_grade</code> internal implementation is really complicated and hard to understand because of the nested dictionaries.
+Externally, the class is not easy to use for clients with four positional arguments: it is easy to mix up the order of arguments, such as weight <code>0.90</code> with score <code>90</code>.</p>
+
+<p>In those cases, it is recommended to unpack dictionaries into separate classes.
+Tuples can be unpack into simple classes using <code>namedtuples</code> from <code>collections</code> module.
+The line count may be much larger but it is worth it because 1) internally, implementation can be much easier to understand 2) externally, interface can be easier to use.</p>
+
+<figure class='code'><figcaption><span>Use helper classes</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">class</span> <span class="nc">Score</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot;Weighted score.&quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">weight</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">score</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">weight</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">weighted_score</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">Subject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot;Keeping track of weighted scores for a subject&quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">_grades</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">add_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">weight</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">_grades</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Score</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">weight</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">average_score</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">weighted_score</span><span class="p">()</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grades</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">weight</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">weight</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_grades</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">total</span> <span class="o">/</span> <span class="n">weight</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">Student</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot;Keeping track of subjects for a student&quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">_subjects</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="n">Subject</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">subject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subjects</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">average_grade</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="sd">&quot;&quot;&quot; Average grade over all subjects&quot;&quot;&quot;</span>
+</span><span class='line'>        <span class="n">count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subjects</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">average_score</span><span class="p">()</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subjects</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">total</span> <span class="o">/</span> <span class="n">count</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">ClassGradebook</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="sd">    Change WeightedGradebook to make the score in each subject is weighted.</span>
+</span><span class='line'><span class="sd">    For example, final is more weighted than homework.</span>
+</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">_book</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="n">Student</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">student</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_book</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">report_grade</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">weight</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">student</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_book</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+</span><span class='line'>        <span class="n">student</span><span class="o">.</span><span class="n">subject</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span><span class="o">.</span><span class="n">add_score</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">average_grade</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+</span><span class='line'>        <span class="n">student</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_book</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+</span><span class='line'>        <span class="k">return</span> <span class="n">student</span><span class="o">.</span><span class="n">average_grade</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">main_class_2</span><span class="p">():</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot;Helper classes help easier-to-use interface&quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="n">book</span> <span class="o">=</span> <span class="n">ClassGradebook</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">isaac</span> <span class="o">=</span> <span class="n">book</span><span class="o">.</span><span class="n">student</span><span class="p">(</span><span class="s">&#39;Isaac&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">math</span> <span class="o">=</span> <span class="n">isaac</span><span class="o">.</span><span class="n">subject</span><span class="p">(</span><span class="s">&#39;Math&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">math</span><span class="o">.</span><span class="n">add_score</span><span class="p">(</span><span class="mi">90</span><span class="p">,</span> <span class="mf">0.90</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">math</span><span class="o">.</span><span class="n">add_score</span><span class="p">(</span><span class="mi">85</span><span class="p">,</span> <span class="mf">0.10</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">gym</span> <span class="o">=</span> <span class="n">isaac</span><span class="o">.</span><span class="n">subject</span><span class="p">(</span><span class="s">&#39;Gym&#39;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">gym</span><span class="o">.</span><span class="n">add_score</span><span class="p">(</span><span class="mi">95</span><span class="p">,</span> <span class="mf">0.20</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">gym</span><span class="o">.</span><span class="n">add_score</span><span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="mf">0.20</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">print</span><span class="p">(</span><span class="n">isaac</span><span class="o">.</span><span class="n">average_grade</span><span class="p">())</span>
+</span><span class='line'>    <span class="c"># Equivalent to the old interface</span>
+</span><span class='line'>    <span class="k">print</span><span class="p">(</span><span class="n">book</span><span class="o">.</span><span class="n">average_grade</span><span class="p">(</span><span class="s">&#39;Isaac&#39;</span><span class="p">))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Item 20: Use plain attributes instead of getter and setter methods</h3>
+
+<p>For people migrating to Python from Java, they tend to explicit create getter and setter methods for every single attribute in the class.
+In Python, it is not recommended and plain attributes should be directly used.</p>
+
+<p>The reason that most people use setters and getters in Java is that in case of changes required for getting or setting an attribute, they can do it easily in corresponding setter or getter method.
+In Python, such cases are covered in <code>@property</code> and <code>@setter</code> decorators.</p>
+
+<p>For example, we have the following simple class:</p>
+
+<figure class='code'><figcaption><span>Simple class</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">class</span> <span class="nc">Resistor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ohms</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">ohms</span> <span class="o">=</span> <span class="n">ohms</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+</span><span class='line'>    <span class="n">res</span> <span class="o">=</span> <span class="n">Resistor</span><span class="p">(</span><span class="mf">1e3</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">ohms</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">res</span><span class="o">.</span><span class="n">ohms</span> <span class="o">+=</span> <span class="mf">2e3</span>
+</span><span class='line'>    <span class="k">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">ohms</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Let&rsquo;s say at some point, we decide that we need special behaviors in getting and setting attribute <code>ohms</code> of Resistor objects.
+In that case, we can easily add special behaviors (for example, printing message) as follows:</p>
+
+<figure class='code'><figcaption><span>Getter and setter with special behaviors</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">class</span> <span class="nc">Resistor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ohms</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">_ohms</span> <span class="o">=</span> <span class="n">ohms</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@property</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">ohms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">print</span><span class="p">(</span><span class="s">&#39;Getter&#39;</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ohms</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@ohms.setter</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">ohms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">print</span><span class="p">(</span><span class="s">&#39;Setter&#39;</span><span class="p">)</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">_ohms</span> <span class="o">=</span> <span class="n">value</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The same <code>main()</code> method above will now have the following output:</p>
+
+<figure class='code'><figcaption><span>Before and after output</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'># Before
+</span><span class='line'>1000.0
+</span><span class='line'>3000.0
+</span><span class='line'>
+</span><span class='line'># After
+</span><span class='line'>Getter
+</span><span class='line'>1000.0
+</span><span class='line'>Getter
+</span><span class='line'>Setter
+</span><span class='line'>Getter
+</span><span class='line'>3000.0</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Note that such setter is also effective when the attribute is set in parent constructor, as shown in example below.
+This ensures that any validation check in <code>setter</code> method for the attribute is also active at construction of that object.</p>
+
+<figure class='code'><figcaption><span>Setter activated in parent constructor</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">class</span> <span class="nc">Resistor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ohms</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">ohms</span> <span class="o">=</span> <span class="n">ohms</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">LoudResistor</span><span class="p">(</span><span class="n">Resistor</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ohms</span><span class="p">):</span>
+</span><span class='line'>        <span class="nb">super</span><span class="p">(</span><span class="n">LoudResistor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">ohms</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@property</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">ohms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">print</span><span class="p">(</span><span class="s">&#39;Getter&#39;</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ohms</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nd">@ohms.setter</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">ohms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">print</span><span class="p">(</span><span class="s">&#39;Check value&#39;</span><span class="p">)</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">_ohms</span> <span class="o">=</span> <span class="n">value</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+</span><span class='line'>    <span class="c"># This will print &quot;Check value&quot;</span>
+</span><span class='line'>    <span class="c"># Setter in subclass LoudResistor is activated </span>
+</span><span class='line'>    <span class="c"># although &quot;ohms&quot; attribute is set in superclass Resistor</span>
+</span><span class='line'>    <span class="n">res2</span> <span class="o">=</span> <span class="n">LoudResistor</span><span class="p">(</span><span class="mf">1e3</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Tips:
+* Do not modify internal states/attributes or any side effect in getter methods. Only change object&rsquo;s state in setter methods.
+* Getter method should be fast. Avoid doing complex computations in getter methods.
+* You can use <code>setter</code> to create unmodifiable objects in Python. See <a href="https://github.com/tdongsi/effective_python">here</a>.</p>
 </div>
 
 
@@ -202,7 +618,7 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2018 - Cuong Dong-Si -
+  Copyright &copy; 2019 - Cuong Dong-Si -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
