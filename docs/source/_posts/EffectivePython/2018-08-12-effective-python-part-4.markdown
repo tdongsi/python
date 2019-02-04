@@ -10,11 +10,11 @@ This post corresponds to Lesson 4 "Using Classes" of ["Effective Python" course]
 
 <!--more-->
 
-### Item 16: Prefer helper classes over book-keeping with dict and tuples
+### Item 19: Prefer helper classes over book-keeping with dict and tuples
 
 In an example, the author illustrated the progressive evolution of a grade-book application.
 In each iteration, the requirements are changed and interfaces are changed to accomodate that.
-As a consequence in implementation, dictionaries and tuples are added to accomodate those changes but the logic and code becomes so convoluting with all book-keeping with those built-int data structures.
+Consequently, dictionaries and tuples are added to accomodate those changes in implementation but the logic and code becomes so convoluting with all book-keeping with those built-int data structures.
 The final version is shown as follows:
 
 ``` python Original code with dicts and tuples
@@ -148,4 +148,96 @@ def main_class_2():
     print(isaac.average_grade())
     # Equivalent to the old interface
     print(book.average_grade('Isaac'))
+```
+
+### Item 20: Use plain attributes instead of getter and setter methods
+
+For people migrating to Python from Java, they tend to explicit create getter and setter methods for every single attribute in the class.
+In Python, it is not recommended and plain attributes should be directly used.
+
+The reason that most people use setters and getters in Java is that in case of changes required for getting or setting an attribute, they can do it easily in corresponding setter or getter method.
+In Python, such cases are covered in `@property` and `@setter` decorators.
+
+For example, we have the following simple class:
+
+``` python Simple class
+class Resistor(object):
+
+    def __init__(self, ohms):
+        self.ohms = ohms
+
+def main():
+    res = Resistor(1e3)
+    print(res.ohms)
+    res.ohms += 2e3
+    print(res.ohms)
+```
+
+Let's say at some point, we decide that we need special behaviors in getting and setting attribute `ohms` of Resistor objects.
+In that case, we can easily add special behaviors (for example, printing message) as follows:
+
+``` python Getter and setter with special behaviors
+class Resistor(object):
+
+    def __init__(self, ohms):
+        self._ohms = ohms
+
+    @property
+    def ohms(self):
+        print('Getter')
+        return self._ohms
+
+    @ohms.setter
+    def ohms(self, value):
+        print('Setter')
+        self._ohms = value
+```
+
+The same `main()` method above will now have the following output:
+
+``` plain Before and after output
+# Before
+1000.0
+3000.0
+
+# After
+Getter
+1000.0
+Getter
+Setter
+Getter
+3000.0
+```
+
+Note that such setter is also effective when the attribute is set in parent constructor, as shown in example below.
+This ensures that any validation check in `setter` method for the attribute is also active at construction of that object.
+
+``` python Setter activated in parent constructor
+class Resistor(object):
+
+    def __init__(self, ohms):
+        self.ohms = ohms
+
+
+class LoudResistor(Resistor):
+
+    def __init__(self, ohms):
+        super(LoudResistor, self).__init__(ohms)
+
+    @property
+    def ohms(self):
+        print('Getter')
+        return self._ohms
+
+    @ohms.setter
+    def ohms(self, value):
+        print('Setter')
+        self._ohms = value
+
+
+def main():
+    # This will print "Setter"
+    # Setter in subclass LoudResistor is activated 
+    # although "ohms" attribute is set in superclass Resistor
+    res2 = LoudResistor(1e3)
 ```
