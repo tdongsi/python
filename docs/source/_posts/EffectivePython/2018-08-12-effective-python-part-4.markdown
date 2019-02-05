@@ -210,7 +210,7 @@ Getter
 ```
 
 Note that such setter is also effective when the attribute is set in parent constructor, as shown in example below.
-This ensures that any validation check in `setter` method for the attribute is also active at construction of that object.
+This ensures that any validation check in `setter` method for the attribute is also active at initialization of that object.
 
 ``` python Setter activated in parent constructor
 class Resistor(object):
@@ -242,6 +242,7 @@ def main():
 ```
 
 Tips:
+
 * Do not modify internal states/attributes or any side effect in getter methods. Only change object's state in setter methods.
 * Getter method should be fast. Avoid doing complex computations in getter methods.
 * You can use `setter` to create unmodifiable objects in Python. See [here](https://github.com/tdongsi/effective_python).
