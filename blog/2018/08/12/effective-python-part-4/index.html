@@ -446,7 +446,7 @@ In that case, we can easily add special behaviors (for example, printing message
 
 
 <p>Note that such setter is also effective when the attribute is set in parent constructor, as shown in example below.
-This ensures that any validation check in <code>setter</code> method for the attribute is also active at construction of that object.</p>
+This ensures that any validation check in <code>setter</code> method for the attribute is also active at initialization of that object.</p>
 
 <figure class='code'><figcaption><span>Setter activated in parent constructor</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -503,10 +503,14 @@ This ensures that any validation check in <code>setter</code> method for the att
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Tips:
-* Do not modify internal states/attributes or any side effect in getter methods. Only change object&rsquo;s state in setter methods.
-* Getter method should be fast. Avoid doing complex computations in getter methods.
-* You can use <code>setter</code> to create unmodifiable objects in Python. See <a href="https://github.com/tdongsi/effective_python">here</a>.</p>
+<p>Tips:</p>
+
+<ul>
+<li>Do not modify internal states/attributes or any side effect in getter methods. Only change object&rsquo;s state in setter methods.</li>
+<li>Getter method should be fast. Avoid doing complex computations in getter methods.</li>
+<li>You can use <code>setter</code> to create unmodifiable objects in Python. See <a href="https://github.com/tdongsi/effective_python">here</a>.</li>
+</ul>
+
 </div>
 
 
