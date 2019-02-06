@@ -4,7 +4,7 @@
   <title><![CDATA[Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2019-02-05T23:10:35-08:00</updated>
+  <updated>2019-02-05T23:16:26-08:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -1126,7 +1126,7 @@ This ensures that any validation check in <code>setter</code> method for the att
 </ul>
 
 
-<h3>Item 21: Prefer public attributes over private ones</h3>
+<h3>Item 21: Prefer internal attributes over private ones</h3>
 
 <p>In Python, there are only two types of attribute: public (e.g., <code>my_att</code>) and private attributes (e.g., <code>__my_att</code>).
 In reality, there is no tight access control like other languages such as Jaza.
@@ -1181,7 +1181,7 @@ In general, it is better to use protected/&ldquo;internal&rdquo; attributes <cod
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>In this case, <code>_value</code> should be a private attribute.</p>
+<p>In this case, <code>_value</code> in ApiClass should be a private attribute.</p>
 ]]></content>
   </entry>
   
