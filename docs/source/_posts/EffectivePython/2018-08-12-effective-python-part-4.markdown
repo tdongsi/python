@@ -247,7 +247,7 @@ Tips:
 * Getter method should be fast. Avoid doing complex computations in getter methods.
 * You can use `setter` to create unmodifiable objects in Python. See [here](https://github.com/tdongsi/effective_python).
 
-### Item 21: Prefer public attributes over private ones
+### Item 21: Prefer internal attributes over private ones
 
 In Python, there are only two types of attribute: public (e.g., `my_att`) and private attributes (e.g., `__my_att`).
 In reality, there is no tight access control like other languages such as Jaza.
@@ -281,4 +281,4 @@ a = Child()
 print(a.get())
 ```
 
-In this case, `_value` should be a private attribute.
+In this case, `_value` in ApiClass should be a private attribute.
