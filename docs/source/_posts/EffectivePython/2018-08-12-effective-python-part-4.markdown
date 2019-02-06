@@ -246,3 +246,39 @@ Tips:
 * Do not modify internal states/attributes or any side effect in getter methods. Only change object's state in setter methods.
 * Getter method should be fast. Avoid doing complex computations in getter methods.
 * You can use `setter` to create unmodifiable objects in Python. See [here](https://github.com/tdongsi/effective_python).
+
+### Item 21: Prefer public attributes over private ones
+
+In Python, there are only two types of attribute: public (e.g., `my_att`) and private attributes (e.g., `__my_att`).
+In reality, there is no tight access control like other languages such as Jaza.
+The private attribute names are prefixed with the class name (e.g., `_MyClass__my_att`) to create another "namespace" for private attributes.
+This will complicate accessing the private attributes in the subclasses while not effectively preventing anyone from accessing the private attributes when the need arises.
+In general, it is better to use protected/"internal" attributes `_my_att` with the assumption that someone can extend usage of those internal attributes later on.
+
+The scenario where you should use private attributes is when you want to avoid accidental name clash in the subclass.
+
+``` python Scenario for using private attribute
+class ApiClass(object):
+
+    def __init__(self):
+        self._value = 5
+
+    def get(self):
+        return self._value
+
+
+class Child(ApiClass):
+
+    def __init__(self):
+        super(Child, self).__init__()
+
+        # Here, Child class author is not aware of
+        # internal implementation of ApiClass
+        # he accidentally override an internal attribute of ApiClass
+        self._value = 'hello'
+
+a = Child()
+print(a.get())
+```
+
+In this case, `_value` should be a private attribute.
