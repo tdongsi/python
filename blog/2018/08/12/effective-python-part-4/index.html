@@ -511,6 +511,63 @@ This ensures that any validation check in <code>setter</code> method for the att
 <li>You can use <code>setter</code> to create unmodifiable objects in Python. See <a href="https://github.com/tdongsi/effective_python">here</a>.</li>
 </ul>
 
+
+<h3>Item 21: Prefer public attributes over private ones</h3>
+
+<p>In Python, there are only two types of attribute: public (e.g., <code>my_att</code>) and private attributes (e.g., <code>__my_att</code>).
+In reality, there is no tight access control like other languages such as Jaza.
+The private attribute names are prefixed with the class name (e.g., <code>_MyClass__my_att</code>) to create another &ldquo;namespace&rdquo; for private attributes.
+This will complicate accessing the private attributes in the subclasses while not effectively preventing anyone from accessing the private attributes when the need arises.
+In general, it is better to use protected/&ldquo;internal&rdquo; attributes <code>_my_att</code> with the assumption that someone can extend usage of those internal attributes later on.</p>
+
+<p>The scenario where you should use private attributes is when you want to avoid accidental name clash in the subclass.</p>
+
+<figure class='code'><figcaption><span>Scenario for using private attribute</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">class</span> <span class="nc">ApiClass</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="mi">5</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">ApiClass</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class='line'>        <span class="nb">super</span><span class="p">(</span><span class="n">Child</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c"># Here, Child class author is not aware of</span>
+</span><span class='line'>        <span class="c"># internal implementation of ApiClass</span>
+</span><span class='line'>        <span class="c"># he accidentally override an internal attribute of ApiClass</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="s">&#39;hello&#39;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">a</span> <span class="o">=</span> <span class="n">Child</span><span class="p">()</span>
+</span><span class='line'><span class="k">print</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In this case, <code>_value</code> should be a private attribute.</p>
 </div>
 
 
