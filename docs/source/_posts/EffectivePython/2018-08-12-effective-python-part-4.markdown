@@ -4,6 +4,8 @@ title: "Effective Python Pt. 4: Using Classes"
 date: 2018-08-12 00:19:36 -0700
 comments: true
 categories: 
+- Book
+- Python
 ---
 
 This post corresponds to Lesson 4 "Using Classes" of ["Effective Python" course](https://www.safaribooksonline.com/videos/effective-python/9780134175249).
@@ -413,5 +415,5 @@ with TemporaryDirectory() as temp_dir:
     config = {'data_dir': temp_dir}
     line_count = mapreduce_generic(LineCounter, PathInputData, config)
     print line_count
-    
+
 ```
