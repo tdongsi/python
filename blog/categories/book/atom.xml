@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Book | Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/blog/categories/book/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2019-02-07T01:05:09-08:00</updated>
+  <updated>2019-02-09T23:51:58-08:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -223,6 +223,631 @@ See <a href="https://pytracemalloc.readthedocs.io/examples.html">more examples</
 For Python 2.7, it is not part of the Standard Library.
 Therefore, we have to patch and compile Python 2.7 to use the 3rd party <code>pytracemalloc</code> module.
 The instructions to do it can be found in <a href="http://carsonip.me/posts/debugging-memory-usage-python-tracemalloc/">here</a>.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Effective Python Pt. 4: Using Classes]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-4/"/>
+    <updated>2018-08-12T00:19:36-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-4</id>
+    <content type="html"><![CDATA[<p>This post corresponds to Lesson 4 &ldquo;Using Classes&rdquo; of <a href="https://www.safaribooksonline.com/videos/effective-python/9780134175249">&ldquo;Effective Python&rdquo; course</a>.</p>
+
+<!--more-->
+
+
+<h3>Item 19: Prefer helper classes over book-keeping with dict and tuples</h3>
+
+<p>In an example, the author illustrated the progressive evolution of a grade-book application.
+In each iteration, the requirements are changed and interfaces are changed to accomodate that.
+Consequently, dictionaries and tuples are added to accomodate those changes in implementation but the logic and code becomes so convoluting with all book-keeping with those built-int data structures.
+The final version is shown as follows:</p>
+
+<pre><code class="python Original code with dicts and tuples">class WeightedGradebook(object):
+    """
+    Change WeightedGradebook to make the score in each subject is weighted.
+    For example, final is more weighted than homework.
+    """
+
+    def __init__(self):
+        self._grade = {}
+
+    def add_student(self, name):
+        self._grade[name] = {}
+
+    def report_grade(self, name, subject, score, weight):
+        by_subject = self._grade[name]
+        grade_list = by_subject.setdefault(subject, [])
+        grade_list.append((score, weight))
+
+    def average_grade(self, name):
+        by_subject = self._grade[name]
+        total, count = 0.0, 0
+
+        for grades in by_subject.values():
+            subject_total, subject_weight = 0.0, 0
+            for score, weight in grades:
+                subject_total = score * weight
+                subject_weight = weight
+
+            total += subject_total / subject_weight
+            count += 1
+
+        return total / count
+
+
+def main_weighted():
+    book = WeightedGradebook()
+    book.add_student('Isaac')
+
+    book.report_grade('Isaac', 'Math', 90, 0.90)
+    book.report_grade('Isaac', 'Math', 85, 0.10)
+    book.report_grade('Isaac', 'Gym', 95, 0.20)
+    book.report_grade('Isaac', 'Gym', 80, 0.20)
+
+    print(book.average_grade('Isaac'))
+</code></pre>
+
+<p>As you can see, the <code>average_grade</code> internal implementation is really complicated and hard to understand because of the nested dictionaries.
+Externally, the class is not easy to use for clients with four positional arguments: it is easy to mix up the order of arguments, such as weight <code>0.90</code> with score <code>90</code>.</p>
+
+<p>In those cases, it is recommended to unpack dictionaries into separate classes.
+Tuples can be unpack into simple classes using <code>namedtuples</code> from <code>collections</code> module.
+The line count may be much larger but it is worth it because 1) internally, implementation can be much easier to understand 2) externally, interface can be easier to use.</p>
+
+<pre><code class="python Use helper classes">class Score(object):
+    """Weighted score."""
+
+    def __init__(self, score, weight):
+        self.score = score
+        self.weight = weight
+
+    def weighted_score(self):
+        return self.score * self.weight
+
+
+class Subject(object):
+    """Keeping track of weighted scores for a subject"""
+
+    def __init__(self):
+        self._grades = []
+
+    def add_score(self, score, weight):
+        self._grades.append(Score(score, weight))
+
+    def average_score(self):
+        total = sum(e.weighted_score() for e in self._grades)
+        weight = sum(e.weight for e in self._grades)
+        return total / weight
+
+
+class Student(object):
+    """Keeping track of subjects for a student"""
+
+    def __init__(self):
+        self._subjects = defaultdict(Subject)
+
+    def subject(self, name):
+        return self._subjects[name]
+
+    def average_grade(self):
+        """ Average grade over all subjects"""
+        count = len(self._subjects)
+        total = sum(e.average_score() for e in self._subjects.values())
+        return total / count
+
+
+class ClassGradebook(object):
+    """
+    Change WeightedGradebook to make the score in each subject is weighted.
+    For example, final is more weighted than homework.
+    """
+
+    def __init__(self):
+        self._book = defaultdict(Student)
+
+    def student(self, name):
+        return self._book[name]
+
+    def report_grade(self, name, subject, score, weight):
+        student = self._book[name]
+        student.subject(subject).add_score(score, weight)
+
+    def average_grade(self, name):
+        student = self._book[name]
+        return student.average_grade()
+
+def main_class_2():
+    """Helper classes help easier-to-use interface"""
+    book = ClassGradebook()
+
+    isaac = book.student('Isaac')
+    math = isaac.subject('Math')
+    math.add_score(90, 0.90)
+    math.add_score(85, 0.10)
+    gym = isaac.subject('Gym')
+    gym.add_score(95, 0.20)
+    gym.add_score(80, 0.20)
+
+    print(isaac.average_grade())
+    # Equivalent to the old interface
+    print(book.average_grade('Isaac'))
+</code></pre>
+
+<h3>Item 20: Use plain attributes instead of getter and setter methods</h3>
+
+<p>For people migrating to Python from Java, they tend to explicit create getter and setter methods for every single attribute in the class.
+In Python, it is not recommended and plain attributes should be directly used.</p>
+
+<p>The reason that most people use setters and getters in Java is that in case of changes required for getting or setting an attribute, they can do it easily in corresponding setter or getter method.
+In Python, such cases are covered in <code>@property</code> and <code>@setter</code> decorators.</p>
+
+<p>For example, we have the following simple class:</p>
+
+<pre><code class="python Simple class">class Resistor(object):
+
+    def __init__(self, ohms):
+        self.ohms = ohms
+
+def main():
+    res = Resistor(1e3)
+    print(res.ohms)
+    res.ohms += 2e3
+    print(res.ohms)
+</code></pre>
+
+<p>Let&rsquo;s say at some point, we decide that we need special behaviors in getting and setting attribute <code>ohms</code> of Resistor objects.
+In that case, we can easily add special behaviors (for example, printing message) as follows:</p>
+
+<pre><code class="python Getter and setter with special behaviors">class Resistor(object):
+
+    def __init__(self, ohms):
+        self._ohms = ohms
+
+    @property
+    def ohms(self):
+        print('Getter')
+        return self._ohms
+
+    @ohms.setter
+    def ohms(self, value):
+        print('Setter')
+        self._ohms = value
+</code></pre>
+
+<p>The same <code>main()</code> method above will now have the following output:</p>
+
+<pre><code class="plain Before and after output"># Before
+1000.0
+3000.0
+
+# After
+Getter
+1000.0
+Getter
+Setter
+Getter
+3000.0
+</code></pre>
+
+<p>Note that such setter is also effective when the attribute is set in parent constructor, as shown in example below.
+This ensures that any validation check in <code>setter</code> method for the attribute is also active at initialization of that object.</p>
+
+<pre><code class="python Setter activated in parent constructor">class Resistor(object):
+
+    def __init__(self, ohms):
+        self.ohms = ohms
+
+
+class LoudResistor(Resistor):
+
+    def __init__(self, ohms):
+        super(LoudResistor, self).__init__(ohms)
+
+    @property
+    def ohms(self):
+        print('Getter')
+        return self._ohms
+
+    @ohms.setter
+    def ohms(self, value):
+        print('Check value')
+        self._ohms = value
+
+def main():
+    # This will print "Check value"
+    # Setter in subclass LoudResistor is activated 
+    # although "ohms" attribute is set in superclass Resistor
+    res2 = LoudResistor(1e3)
+</code></pre>
+
+<p>Tips:</p>
+
+<ul>
+<li>Do not modify internal states/attributes or any side effect in getter methods. Only change object&rsquo;s state in setter methods.</li>
+<li>Getter method should be fast. Avoid doing complex computations in getter methods.</li>
+<li>You can use <code>setter</code> to create unmodifiable objects in Python. See <a href="https://github.com/tdongsi/effective_python">here</a>.</li>
+</ul>
+
+
+<h3>Item 21: Prefer internal attributes over private ones</h3>
+
+<p>In Python, there are only two types of attribute: public (e.g., <code>my_att</code>) and private attributes (e.g., <code>__my_att</code>).
+In reality, there is no tight access control like other languages such as Jaza.
+The private attribute names are prefixed with the class name (e.g., <code>_MyClass__my_att</code>) to create another &ldquo;namespace&rdquo; for private attributes.
+This will complicate accessing the private attributes in the subclasses while not effectively preventing anyone from accessing the private attributes when the need arises.
+In general, it is better to use protected/&ldquo;internal&rdquo; attributes <code>_my_att</code> with the assumption that someone can extend usage of those internal attributes later on.</p>
+
+<p>The scenario where you should use private attributes is when you want to avoid accidental name clash in the subclass.</p>
+
+<pre><code class="python Scenario for using private attribute">class ApiClass(object):
+
+    def __init__(self):
+        self._value = 5
+
+    def get(self):
+        return self._value
+
+
+class Child(ApiClass):
+
+    def __init__(self):
+        super(Child, self).__init__()
+
+        # Here, Child class author is not aware of
+        # internal implementation of ApiClass
+        # he accidentally override an internal attribute of ApiClass
+        self._value = 'hello'
+
+a = Child()
+print(a.get())
+</code></pre>
+
+<p>In this case, <code>_value</code> in ApiClass should be a private attribute.</p>
+
+<h3>Item 22: Use <code>@classmethod</code> polymorphism to construct objects generically</h3>
+
+<p>In other languages such as Java, you can have overloaded constructors to construct objects of the same class/interface in different ways.
+However, in Python, the method <code>__init__</code> can&rsquo;t be overloaded.
+Instead, you can use <code>@classmethod</code> polymorphism to construct objects generically.</p>
+
+<pre><code class="python Example of @classmethod polymorphism">import os
+from threading import Thread
+
+
+class InputData(object):
+    def read(self):
+        raise NotImplementedError
+
+    @classmethod
+    def generate_inputs(cls, config):
+        raise NotImplementedError
+
+
+class PathInputData(InputData):
+
+    def __init__(self, path):
+        self.path = path
+
+    def read(self):
+        with open(self.path, 'rb') as handle:
+            return handle.read()
+
+    @classmethod
+    def generate_inputs(cls, config):
+        """ Generic version of generate_inputs"""
+        data_dir = config['data_dir']
+        for name in os.listdir(data_dir):
+            yield cls(os.path.join(data_dir, name))
+
+
+def generate_inputs(data_dir):
+    """ Original version of generate_inputs"""
+    for name in os.listdir(data_dir):
+        yield PathInputData(os.path.join(data_dir, name))
+
+
+class Worker(object):
+    def __init__(self, input_data):
+        self.input_data = input_data
+        self.result = None
+
+    def map(self):
+        raise NotImplementedError
+
+    def reduce(self):
+        raise NotImplementedError
+
+    @classmethod
+    def create_workers(cls, input_class, config):
+        """ Generic version of create_worker.
+
+        :param input_class: class that implements InputData interface.
+        :param config: dictionary of configs to be used by InputData.
+        :return:
+        """
+        workers = []
+        for input_data in input_class.generate_inputs(config):
+            workers.append(cls(input_data))
+        return workers
+
+
+def create_worker(input_list):
+    """ Original version of create_worker"""
+    workers = []
+    for input_data in input_list:
+        workers.append(LineCounter(input_data))
+    return workers
+
+
+class LineCounter(Worker):
+    def map(self):
+        data = self.input_data.read()
+        self.result = data.count(b'\n')
+        pass
+
+    def reduce(self, other):
+        self.result += other.result
+        pass
+
+
+def execute(workers):
+    threads = [Thread(target=w.map) for w in workers]
+
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+
+    first, rest = workers[0], workers[1:]
+    for other in rest:
+        first.reduce(other)
+    return first.result
+
+
+def mapreduce(data_dir):
+    inputs = generate_inputs(data_dir)
+    workers = create_worker(inputs)
+    return execute(workers)
+
+
+def mapreduce_generic(worker_class, input_class, config):
+    workers = worker_class.create_workers(input_class, config)
+    return execute(workers)
+
+
+import random
+from backports.tempfile import TemporaryDirectory
+
+
+def write_test_files(temp_dir):
+    for i in range(100):
+        with open(os.path.join(temp_dir, str(i)), 'w') as handle:
+            handle.write('\n' * random.randint(0, 100))
+
+
+with TemporaryDirectory() as temp_dir:
+    write_test_files(temp_dir)
+    # line_count = mapreduce(temp_dir)
+
+    config = {'data_dir': temp_dir}
+    line_count = mapreduce_generic(LineCounter, PathInputData, config)
+    print line_count
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Effective Python Pt. 3: Functions]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-3/"/>
+    <updated>2018-08-12T00:19:32-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-3</id>
+    <content type="html"><![CDATA[<p>This post corresponds to Lesson 3 &ldquo;Using Functions&rdquo; of <a href="https://www.safaribooksonline.com/videos/effective-python/9780134175249">&ldquo;Effective Python&rdquo; course</a>.</p>
+
+<!--more-->
+
+
+<h3>Item 13: Know how closures interact with variable scope</h3>
+
+<p>For this item&rsquo;s discussion, let&rsquo;s say that we have a list of integers that needs to be sorted, with the twist that some of those integers are in a special group (higher prirority) and has to be placed in front of the list (referred as <strong>Problem-1</strong>).
+For example, those integers could be IDs of different UI components, with those of higher priority belong to the foreground and the rest are in the background.
+One solution to this problem is as follows:</p>
+
+<pre><code class="python Solution to Problem-1">NUMBERS = [8, 3, 1, 2, 5, 4, 7, 6]
+GROUP = {2, 3, 5, 7}
+
+def sort_priority(numbers, group):
+    """ Sort the input numbers but put those in "group" first.
+
+    :param numbers: list of input numbers.
+    :param group: set of numbers in priority group.
+    """
+
+    def helper(x):
+        if x in group:
+            return (0, x)
+        return (1, x)
+
+    numbers.sort(key=helper)
+    pass
+
+def main_original():
+    numbers = NUMBERS[:]
+    print(sort_priority(numbers, GROUP))
+    print(numbers)
+</code></pre>
+
+<p>Now, the <strong>additional requirement</strong> is that we want to know if any item in the input list belongs to the special <code>GROUP</code> (now referred as <strong>Problem-2</strong>).
+To accommodate this new requirement, one can naively modify Problem-1&rsquo;s solution as follows:</p>
+
+<pre><code class="python Naive solution to Problem-2">def sort_priority(numbers, group):
+    """ Sort the input numbers but put those in "group" first.
+
+    :param numbers: list of input numbers.
+    :param group: set of numbers in priority group.
+    :return: True if any number in priority is found.
+    """
+    found = False
+
+    def helper(x):
+        if x in group:
+            found = True
+            return (0, x)
+        return (1, x)
+
+    numbers.sort(key=helper)
+    return found
+</code></pre>
+
+<p>In this naive (and incorrect) solution, an additional variable <code>found</code> is used to track if any element in the input list <code>numbers</code> is special and set accordingly.
+However, this solution proves not working as expected: the above <code>sort_priority</code> method always returns <code>False</code>, regardless of the input list of numbers.</p>
+
+<p>The reason for this is a common mistake of Python users when using the same variable in different scopes.
+In this example, <code>found</code> is found in two different scopes: in the enclosed <code>helper</code> method and in the enclosing <code>sort_priority</code> method.
+In most cases, when we simply refer to a variable (i.e., read operation), Python will do its best to look up for that variable in different scopes, as shown below.</p>
+
+<pre><code class="python Variable reference in different scopes.">meep = 23
+
+def enclosing():
+    """ Variable reference in different scopes.
+    """
+    foo = 15
+
+    def my_func():
+        bar = 10
+
+        print(bar)      # local scope
+        print(foo)      # enclosing scope
+        print(meep)     # global scope
+        print(str)      # built-in scope
+        # print(not_exist)  # not found in any scopes
+
+    my_func()
+
+enclosing()
+
+# Output:
+# 10
+# 15
+# 23
+# &lt;type 'str'&gt;
+</code></pre>
+
+<p>However, variable assignment has a slightly different treatment.
+When we try to assign to a variable for the first time in the inner scope, Python will create a new local variable.
+This will lead to subtle difference if we have variable assignment in the inner scope, as shown in the following example.</p>
+
+<pre><code class="python Variable assignment in different scopes.">def enclosing_assignment():
+    """ Variable assignment in different scopes.
+    """
+
+    foo = 15
+    foo = 25
+
+    def my_func():
+        foo = 15
+        bar = 5
+
+        print(foo)
+        print(bar)
+
+    my_func()
+    print(foo)
+
+enclosing_assignment()
+
+# Output:
+# 15
+# 5
+# 25
+</code></pre>
+
+<p>Going back to our Problem-2, the problem of our naive solution is that we have assignment to the variable <code>found</code> in the inner scope.
+Python will create a new variable in <code>helper</code>&rsquo;s scope and ignore the variable <code>found</code> already defined in the outer scope <code>sort_priority</code>.
+After <code>helper</code> method is done, <code>found</code> in <code>sort_priority</code> scope still has the original value <code>False</code> and it is what the method returns.</p>
+
+<p>There are many ways to work around the scope problem with variable assignment described above.
+In Python 3, <code>nonlocal</code> keyword is introduced exactly for this situation.
+The keyword <code>nonlocal</code>, similar to <code>global</code> keyword, allows you to assign to variables in outer, but non-global, scope.</p>
+
+<pre><code class="python Using nonlocal keyword for Problem-2">def sort_priority_python_3(numbers, group):
+    """ Sort the input numbers but put those in "group" first."""
+    found = False
+
+    def helper(x):
+        if x in group:
+            nonlocal found
+            found = True
+            return (0, x)
+        return (1, x)
+
+    numbers.sort(key=helper)
+    return found
+</code></pre>
+
+<p>However, using <code>nonlocal</code> keyword can be confusing and is generally not recommended, especially if the variable is declared a couple of scopes/layers away from the assignment.
+In addition, such approach would not work in Python 2.
+In another approach that would work for both Python 2 and 3, one can use the following trick:</p>
+
+<pre><code class="python Using array for Problem-2">def sort_priority_python_2(numbers, group):
+    """ Sort the input numbers but put those in "group" first."""
+    found = [False]
+
+    def helper(x):
+        if x in group:
+            found[0] = True
+            return (0, x)
+        return (1, x)
+
+    numbers.sort(key=helper)
+    return found[0]
+</code></pre>
+
+<p>In this trick, instead of using a boolean variable <code>found</code>, you use a singleton (one-element) array <code>found</code>.
+Because <code>found</code> is now an array, the variable reference rules, instead of variable assignment rules, apply and the <code>found</code> variable in the outer scope is used.
+Although it is a great trick, such code is not really clear.</p>
+
+<p>The final and recommended solution is to extract the <code>helper</code> function into a Helper class instead.
+The original <code>helper</code> method used for <strong>Problem-1</strong> can be converted to a Helper class as follows:</p>
+
+<pre><code class="python Using Helper class for Problem-1">class Helper(object):
+
+    def __init__(self, group):
+        self.group = group
+
+    def __call__(self, x):
+        if x in self.group:
+            return (0, x)
+        return (1, x)
+
+def sort_priority_solved(numbers, group):
+    helper = Helper(GROUP)
+    numbers.sort(key=helper)
+</code></pre>
+
+<p>In the solution to starting <strong>Problem-1</strong> shown above, the origial <code>helper</code> function&rsquo;s logic has been encapsulated into a Helper class, in the <code>__call__</code> method specifically.
+When the additional requirement &ldquo;check if special number encountered&rdquo; comes in, it is apparent that <code>helper</code> function has to become stateful.
+Since we already has it converted to <code>Helper</code> class, it would be easier to keep the state as a new <code>Helper</code> object&rsquo;s attribute <code>found</code> and update the object state accordingly, as follows:</p>
+
+<pre><code class="python Updating Helper class for Problem-2">class Helper(object):
+
+    def __init__(self, group):
+        self.group = group
+        self.found = False
+
+    def __call__(self, x):
+        if x in self.group:
+            self.found = True
+            return (0, x)
+        return (1, x)
+
+def sort_priority_solved(numbers, group):
+    helper = Helper(GROUP)
+    numbers.sort(key=helper)
+    return helper.found
+</code></pre>
+
+<p>IMHO, this approach is much clearer and works for both Python 2 and 3.</p>
 ]]></content>
   </entry>
   

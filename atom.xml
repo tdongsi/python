@@ -4,7 +4,7 @@
   <title><![CDATA[Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2019-02-07T01:05:09-08:00</updated>
+  <updated>2019-02-09T23:51:58-08:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -1311,7 +1311,6 @@ Instead, you can use <code>@classmethod</code> polymorphism to construct objects
 <span class='line-number'>120</span>
 <span class='line-number'>121</span>
 <span class='line-number'>122</span>
-<span class='line-number'>123</span>
 </pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">import</span> <span class="nn">os</span>
 </span><span class='line'><span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
 </span><span class='line'>
@@ -1434,7 +1433,6 @@ Instead, you can use <code>@classmethod</code> polymorphism to construct objects
 </span><span class='line'>    <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;data_dir&#39;</span><span class="p">:</span> <span class="n">temp_dir</span><span class="p">}</span>
 </span><span class='line'>    <span class="n">line_count</span> <span class="o">=</span> <span class="n">mapreduce_generic</span><span class="p">(</span><span class="n">LineCounter</span><span class="p">,</span> <span class="n">PathInputData</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
 </span><span class='line'>    <span class="k">print</span> <span class="n">line_count</span>
-</span><span class='line'>
 </span></code></pre></td></tr></table></div></figure>
 
 ]]></content>
@@ -1449,6 +1447,357 @@ Instead, you can use <code>@classmethod</code> polymorphism to construct objects
 
 <!--more-->
 
+
+<h3>Item 13: Know how closures interact with variable scope</h3>
+
+<p>For this item&rsquo;s discussion, let&rsquo;s say that we have a list of integers that needs to be sorted, with the twist that some of those integers are in a special group (higher prirority) and has to be placed in front of the list (referred as <strong>Problem-1</strong>).
+For example, those integers could be IDs of different UI components, with those of higher priority belong to the foreground and the rest are in the background.
+One solution to this problem is as follows:</p>
+
+<figure class='code'><figcaption><span>Solution to Problem-1</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">NUMBERS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+</span><span class='line'><span class="n">GROUP</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">sort_priority</span><span class="p">(</span><span class="n">numbers</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot; Sort the input numbers but put those in &quot;group&quot; first.</span>
+</span><span class='line'>
+</span><span class='line'><span class="sd">    :param numbers: list of input numbers.</span>
+</span><span class='line'><span class="sd">    :param group: set of numbers in priority group.</span>
+</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">helper</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">group</span><span class="p">:</span>
+</span><span class='line'>            <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">numbers</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">helper</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">pass</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">main_original</span><span class="p">():</span>
+</span><span class='line'>    <span class="n">numbers</span> <span class="o">=</span> <span class="n">NUMBERS</span><span class="p">[:]</span>
+</span><span class='line'>    <span class="k">print</span><span class="p">(</span><span class="n">sort_priority</span><span class="p">(</span><span class="n">numbers</span><span class="p">,</span> <span class="n">GROUP</span><span class="p">))</span>
+</span><span class='line'>    <span class="k">print</span><span class="p">(</span><span class="n">numbers</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now, the <strong>additional requirement</strong> is that we want to know if any item in the input list belongs to the special <code>GROUP</code> (now referred as <strong>Problem-2</strong>).
+To accommodate this new requirement, one can naively modify Problem-1&rsquo;s solution as follows:</p>
+
+<figure class='code'><figcaption><span>Naive solution to Problem-2</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">sort_priority</span><span class="p">(</span><span class="n">numbers</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot; Sort the input numbers but put those in &quot;group&quot; first.</span>
+</span><span class='line'>
+</span><span class='line'><span class="sd">    :param numbers: list of input numbers.</span>
+</span><span class='line'><span class="sd">    :param group: set of numbers in priority group.</span>
+</span><span class='line'><span class="sd">    :return: True if any number in priority is found.</span>
+</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="n">found</span> <span class="o">=</span> <span class="bp">False</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">helper</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">group</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">found</span> <span class="o">=</span> <span class="bp">True</span>
+</span><span class='line'>            <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">numbers</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">helper</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">found</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In this naive (and incorrect) solution, an additional variable <code>found</code> is used to track if any element in the input list <code>numbers</code> is special and set accordingly.
+However, this solution proves not working as expected: the above <code>sort_priority</code> method always returns <code>False</code>, regardless of the input list of numbers.</p>
+
+<p>The reason for this is a common mistake of Python users when using the same variable in different scopes.
+In this example, <code>found</code> is found in two different scopes: in the enclosed <code>helper</code> method and in the enclosing <code>sort_priority</code> method.
+In most cases, when we simply refer to a variable (i.e., read operation), Python will do its best to look up for that variable in different scopes, as shown below.</p>
+
+<figure class='code'><figcaption><span>Variable reference in different scopes.</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">meep</span> <span class="o">=</span> <span class="mi">23</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">enclosing</span><span class="p">():</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot; Variable reference in different scopes.</span>
+</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="n">foo</span> <span class="o">=</span> <span class="mi">15</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">my_func</span><span class="p">():</span>
+</span><span class='line'>        <span class="n">bar</span> <span class="o">=</span> <span class="mi">10</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">print</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>      <span class="c"># local scope</span>
+</span><span class='line'>        <span class="k">print</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>      <span class="c"># enclosing scope</span>
+</span><span class='line'>        <span class="k">print</span><span class="p">(</span><span class="n">meep</span><span class="p">)</span>     <span class="c"># global scope</span>
+</span><span class='line'>        <span class="k">print</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>      <span class="c"># built-in scope</span>
+</span><span class='line'>        <span class="c"># print(not_exist)  # not found in any scopes</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">my_func</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">enclosing</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Output:</span>
+</span><span class='line'><span class="c"># 10</span>
+</span><span class='line'><span class="c"># 15</span>
+</span><span class='line'><span class="c"># 23</span>
+</span><span class='line'><span class="c"># &lt;type &#39;str&#39;&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>However, variable assignment has a slightly different treatment.
+When we try to assign to a variable for the first time in the inner scope, Python will create a new local variable.
+This will lead to subtle difference if we have variable assignment in the inner scope, as shown in the following example.</p>
+
+<figure class='code'><figcaption><span>Variable assignment in different scopes.</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">enclosing_assignment</span><span class="p">():</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot; Variable assignment in different scopes.</span>
+</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">foo</span> <span class="o">=</span> <span class="mi">15</span>
+</span><span class='line'>    <span class="n">foo</span> <span class="o">=</span> <span class="mi">25</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">my_func</span><span class="p">():</span>
+</span><span class='line'>        <span class="n">foo</span> <span class="o">=</span> <span class="mi">15</span>
+</span><span class='line'>        <span class="n">bar</span> <span class="o">=</span> <span class="mi">5</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">print</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">print</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">my_func</span><span class="p">()</span>
+</span><span class='line'>    <span class="k">print</span><span class="p">(</span><span class="n">foo</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">enclosing_assignment</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Output:</span>
+</span><span class='line'><span class="c"># 15</span>
+</span><span class='line'><span class="c"># 5</span>
+</span><span class='line'><span class="c"># 25</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Going back to our Problem-2, the problem of our naive solution is that we have assignment to the variable <code>found</code> in the inner scope.
+Python will create a new variable in <code>helper</code>&rsquo;s scope and ignore the variable <code>found</code> already defined in the outer scope <code>sort_priority</code>.
+After <code>helper</code> method is done, <code>found</code> in <code>sort_priority</code> scope still has the original value <code>False</code> and it is what the method returns.</p>
+
+<p>There are many ways to work around the scope problem with variable assignment described above.
+In Python 3, <code>nonlocal</code> keyword is introduced exactly for this situation.
+The keyword <code>nonlocal</code>, similar to <code>global</code> keyword, allows you to assign to variables in outer, but non-global, scope.</p>
+
+<figure class='code'><figcaption><span>Using nonlocal keyword for Problem-2</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">sort_priority_python_3</span><span class="p">(</span><span class="n">numbers</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot; Sort the input numbers but put those in &quot;group&quot; first.&quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="n">found</span> <span class="o">=</span> <span class="bp">False</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">helper</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">group</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">nonlocal</span> <span class="n">found</span>
+</span><span class='line'>            <span class="n">found</span> <span class="o">=</span> <span class="bp">True</span>
+</span><span class='line'>            <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">numbers</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">helper</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">found</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>However, using <code>nonlocal</code> keyword can be confusing and is generally not recommended, especially if the variable is declared a couple of scopes/layers away from the assignment.
+In addition, such approach would not work in Python 2.
+In another approach that would work for both Python 2 and 3, one can use the following trick:</p>
+
+<figure class='code'><figcaption><span>Using array for Problem-2</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">sort_priority_python_2</span><span class="p">(</span><span class="n">numbers</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot; Sort the input numbers but put those in &quot;group&quot; first.&quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="n">found</span> <span class="o">=</span> <span class="p">[</span><span class="bp">False</span><span class="p">]</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">helper</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">group</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">found</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+</span><span class='line'>            <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">numbers</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">helper</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">found</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In this trick, instead of using a boolean variable <code>found</code>, you use a singleton (one-element) array <code>found</code>.
+Because <code>found</code> is now an array, the variable reference rules, instead of variable assignment rules, apply and the <code>found</code> variable in the outer scope is used.
+Although it is a great trick, such code is not really clear.</p>
+
+<p>The final and recommended solution is to extract the <code>helper</code> function into a Helper class instead.
+The original <code>helper</code> method used for <strong>Problem-1</strong> can be converted to a Helper class as follows:</p>
+
+<figure class='code'><figcaption><span>Using Helper class for Problem-1</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">class</span> <span class="nc">Helper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="n">group</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">:</span>
+</span><span class='line'>            <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">sort_priority_solved</span><span class="p">(</span><span class="n">numbers</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">helper</span> <span class="o">=</span> <span class="n">Helper</span><span class="p">(</span><span class="n">GROUP</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">numbers</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">helper</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In the solution to starting <strong>Problem-1</strong> shown above, the origial <code>helper</code> function&rsquo;s logic has been encapsulated into a Helper class, in the <code>__call__</code> method specifically.
+When the additional requirement &ldquo;check if special number encountered&rdquo; comes in, it is apparent that <code>helper</code> function has to become stateful.
+Since we already has it converted to <code>Helper</code> class, it would be easier to keep the state as a new <code>Helper</code> object&rsquo;s attribute <code>found</code> and update the object state accordingly, as follows:</p>
+
+<figure class='code'><figcaption><span>Updating Helper class for Problem-2</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">class</span> <span class="nc">Helper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="n">group</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">found</span> <span class="o">=</span> <span class="bp">False</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">:</span>
+</span><span class='line'>            <span class="bp">self</span><span class="o">.</span><span class="n">found</span> <span class="o">=</span> <span class="bp">True</span>
+</span><span class='line'>            <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">sort_priority_solved</span><span class="p">(</span><span class="n">numbers</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">helper</span> <span class="o">=</span> <span class="n">Helper</span><span class="p">(</span><span class="n">GROUP</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">numbers</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">helper</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">helper</span><span class="o">.</span><span class="n">found</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>IMHO, this approach is much clearer and works for both Python 2 and 3.</p>
 ]]></content>
   </entry>
   
