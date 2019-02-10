@@ -198,7 +198,7 @@ def sort_priority_solved(numbers, group):
 ```
 
 In the solution to starting **Problem-1** shown above, the origial `helper` function's logic has been encapsulated into a CheckSpecial class, in the `__call__` method specifically.
-When the additional requirement "check if special number encountered" comes in, it is apparent that `helper` function has to become stateful.
+When the additional requirement "check if special number encountered" comes in, it is apparent that `helper` function has to become a stateful closure.
 Since we already has it converted to `CheckSpecial` class, it would be easier to keep the state as a new `CheckSpecial` object's attribute `found` and update the object state accordingly, as follows:
 
 ``` python Updating CheckSpecial class for Problem-2
@@ -224,4 +224,34 @@ IMHO, this approach is much clearer and works for both Python 2 and 3.
 
 ### Item 14: Accept callables for stateful closures
 
-Use callable for stateful closures.
+Many of Python APIs allow you to customize behavior by passing in a function, such as `sort(key=...)` method in the last section "Item 13".
+We also see that it is possible to pass stateful closure as a function into those hooks for record-keeping purposes, for example.
+We showed different ways to do that in Python 2 and 3: `nonlocal` keyword, `list` trick, and a helper class.
+Using a class to encapsulate a stateful closure is the highly recommended approach.
+
+``` python Another version of CheckSpecial class for Problem-2
+class CheckSpecial(object):
+
+    def __init__(self, group):
+        self.group = group
+        self.found = False
+
+    def check(self, x):
+        if x in self.group:
+            self.found = True
+            return (0, x)
+        return (1, x)
+
+def sort_priority_solved(numbers, group):
+    helper = CheckSpecial(GROUP)
+    numbers.sort(key=helper.check)
+    return helper.found
+```
+
+Let us consider an alternative version of CheckSpecial class where we use standard method name `check` instead of special method `__call__`.
+And it works perfectly fine if you pass `helper.check` as a function: `sort` has no idea that we are passing a method of a stateful object and it does not care.
+
+However, for programmer new to the code, the `CheckSpecial` class is really awkward: it is not clear the purpose of the class in isolation and that its instances are never to be created and used alone.
+Instead, in the last section, we intentionally use `__call__` method to make each CheckSpecial a stateful "callable".
+In that way, the intention of the class is clearer: it is a stateful closure that is meant to be passed into the hook of another function (e.g., `sort`, `defaultdict`).
+
