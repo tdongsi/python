@@ -178,11 +178,11 @@ In this trick, instead of using a boolean variable `found`, you use a singleton 
 Because `found` is now an array, the variable reference rules, instead of variable assignment rules, apply and the `found` variable in the outer scope is used.
 Although it is a great trick, such code is not really clear.
 
-The final and recommended solution is to extract the `helper` function into a Helper class instead.
-The original `helper` method used for **Problem-1** can be converted to a Helper class as follows:
+The final and recommended solution is to extract the `helper` function into a CheckSpecial class instead.
+The original `helper` method used for **Problem-1** can be converted to a Helper/CheckSpecial class as follows:
 
-``` python Using Helper class for Problem-1
-class Helper(object):
+``` python Using CheckSpecial class for Problem-1
+class CheckSpecial(object):
 
     def __init__(self, group):
         self.group = group
@@ -193,16 +193,16 @@ class Helper(object):
         return (1, x)
 
 def sort_priority_solved(numbers, group):
-    helper = Helper(GROUP)
+    helper = CheckSpecial(GROUP)
     numbers.sort(key=helper)
 ```
 
-In the solution to starting **Problem-1** shown above, the origial `helper` function's logic has been encapsulated into a Helper class, in the `__call__` method specifically.
+In the solution to starting **Problem-1** shown above, the origial `helper` function's logic has been encapsulated into a CheckSpecial class, in the `__call__` method specifically.
 When the additional requirement "check if special number encountered" comes in, it is apparent that `helper` function has to become stateful.
-Since we already has it converted to `Helper` class, it would be easier to keep the state as a new `Helper` object's attribute `found` and update the object state accordingly, as follows:
+Since we already has it converted to `CheckSpecial` class, it would be easier to keep the state as a new `CheckSpecial` object's attribute `found` and update the object state accordingly, as follows:
 
-``` python Updating Helper class for Problem-2
-class Helper(object):
+``` python Updating CheckSpecial class for Problem-2
+class CheckSpecial(object):
 
     def __init__(self, group):
         self.group = group
@@ -215,9 +215,13 @@ class Helper(object):
         return (1, x)
 
 def sort_priority_solved(numbers, group):
-    helper = Helper(GROUP)
+    helper = CheckSpecial(GROUP)
     numbers.sort(key=helper)
     return helper.found
 ```
 
 IMHO, this approach is much clearer and works for both Python 2 and 3.
+
+### Item 14: Accept callables for stateful closures
+
+Use callable for stateful closures.
