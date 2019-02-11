@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Book | Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/blog/categories/book/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2019-02-09T23:51:58-08:00</updated>
+  <updated>2019-02-10T19:26:11-08:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -223,6 +223,200 @@ See <a href="https://pytracemalloc.readthedocs.io/examples.html">more examples</
 For Python 2.7, it is not part of the Standard Library.
 Therefore, we have to patch and compile Python 2.7 to use the 3rd party <code>pytracemalloc</code> module.
 The instructions to do it can be found in <a href="http://carsonip.me/posts/debugging-memory-usage-python-tracemalloc/">here</a>.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Effective Python Pt. 5: Concurrency and Parallelism]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2018/08/18/effective-python-pt-5-concurrency-and-parallelism/"/>
+    <updated>2018-08-18T16:24:30-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2018/08/18/effective-python-pt-5-concurrency-and-parallelism</id>
+    <content type="html"><![CDATA[<p>This post corresponds to Lesson 5 &ldquo;Concurrency and Parallelism&rdquo; of <a href="https://www.safaribooksonline.com/videos/effective-python/9780134175249">&ldquo;Effective Python&rdquo; course</a>.</p>
+
+<!--more-->
+
+
+<h3>Item 23: Use subprocess to manage child processes</h3>
+
+<pre><code class="python Typical usage of subprocess module">import subprocess
+
+proc = subprocess.Popen(
+    ['echo', 'Hello World'],
+    stdout=subprocess.PIPE
+)
+out, err = proc.communicate()
+print(out.decode('utf-8'))
+</code></pre>
+
+<pre><code class="python Simple forking example">proc = subprocess.Popen(['sleep', '0.3'])
+while proc.poll() is None:
+    print('Working...')
+    # Time consuming process
+    time.sleep(0.2)
+
+print('Exit status: %d' % proc.poll())
+</code></pre>
+
+<p>In the forking example above, note that <code>proce.poll()</code> is used to check for and obtain the status of the child process.</p>
+
+<pre><code class="python Parallelism wtih subprocess">def run_sleep(period):
+    proc = subprocess.Popen(['sleep', str(period)])
+    return proc
+
+
+start = time.time()
+procs = []
+for _ in range(10):
+    proc = run_sleep(0.3)
+    procs.append(proc)
+
+for proc in procs:
+    proc.communicate()
+
+end = time.time()
+print('Takes %f seconds' % (end - start))
+</code></pre>
+
+<p>In the parallisim example above, the time it takes is approximately 0.3 seconds, no matter how many processes you create.</p>
+
+<pre><code class="python Piping data from Python data to subprocess"># You can pipe data from Python program to subprocess
+# In this way, you can call other programs to run in parallel with Python process.
+# Run sub-processes on multiple CPUs.
+def run_openssl(data):
+    """A computing-intensive method, best for running separately on separate CPUs."""
+    env = os.environ.copy()
+    env['password'] = b'asdf'
+    proc = subprocess.Popen(
+        ['openssl', 'enc', '-des3', '-pass', 'env:password'],
+        env=env,
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE
+    )
+    proc.stdin.write(data)
+    proc.stdin.flush()
+    return proc
+
+procs = []
+for _ in range(5):
+    data = os.urandom(100)
+    proc = run_openssl(data)
+    procs.append(proc)
+
+for proc in procs:
+    out, _ = proc.communicate()
+    print(out)
+</code></pre>
+
+<p>Note that in this piping example above, you can use <code>os.environ.copy</code> to shield current process&rsquo;s environment from modifications of its variables.
+You can use the new copy of environment by specifying <code>env=my_env</code> in <code>Popen</code> constructor.
+In addition, you can use the environment variable as parameters in the <code>Popen</code> command by using <code>env:password</code>.
+To pipe data from Python into the subprocess, you need to set <code>stdin=subprocess.PIPE</code> and transfer data by using <code>proc.stdin.write(data)</code>.</p>
+
+<pre><code class="python Subprocess timeout in Python 3"># Python 3 way
+proc = subprocess.Popen(['sleep', '10'])
+try:
+    proc.communicate(timeout=0.1)
+except subprocess.TimeoutExpired:
+    proc.terminate()
+    proc.wait()
+
+print('Exit status', proc.poll())
+</code></pre>
+
+<p>It&rsquo;s not available in Python 2, and if you want to reproduce its functionality in Python 2, you actually have to use the <code>select</code> module and poll the input and output file descriptors of the subprocess.
+It is a little bit more complicated and it&rsquo;s hard to get right.</p>
+
+<pre><code class="python Stop-gap alternative in Python 2">class Command(object):
+    """ Stop-gap alternative for subprocess's timeout in Python 3.
+    Based on https://stackoverflow.com/questions/1191374/using-module-subprocess-with-timeout
+    """
+
+    def __init__(self, process):
+        self.process = process
+
+    def run(self, timeout):
+        def target():
+            self.process.communicate()
+
+        thread = threading.Thread(target=target)
+        thread.start()
+
+        thread.join(timeout)
+        if thread.is_alive():
+            print 'Terminating process'
+            self.process.terminate()
+            thread.join()
+
+        print(self.process.returncode)
+
+proc = subprocess.Popen(['sleep', '2'])
+command = Command(proc)
+command.run(timeout=3)
+
+# NOTE: the following will not work since the subprocess already ran.
+# command = Command(proc)
+command = Command(subprocess.Popen(['sleep', '2']))
+command.run(timeout=1)
+</code></pre>
+
+<h3>Item 24: Use threads for blocking I/O, NOT for parallelism</h3>
+
+<p>Python has the GIL, or Global Interpreter Lock.
+It means that only one Python thread will ever actually run at a time.
+A common mistake is to use threads to speed up a computation-intensive program in Python.
+You will be usually disappointed and end up with similar, if not worse, performance.
+In other words, you might find that your complicated parallel version will have similar performance as the serial one.</p>
+
+<p>In Python, threads are good for two main use cases.
+The first use case is, if you want something looks running simultaneously (concurrency).
+A common example is to respond to user inputs while doing network I/O.
+In this case, the threads will cooperate with each other to obtain GIL fairly.
+The second use case for threads in Python is for IO-intensive applications such as those with lots of (blocking) network, system calls.
+A common example is to use threads to query multiple REST endpoints concurrently.
+The following example illustrate such use case:</p>
+
+<pre><code class="python Use Python threads for network I/O">import threading
+import requests
+import time
+
+def get_response(url):
+    r = requests.get(url)
+    return r.status_code, r.text
+
+class RequestThread(threading.Thread):
+
+    def __init__(self, url):
+        super(RequestThread, self).__init__()
+        self._url = url
+
+    def run(self):
+        self.output = get_response(self._url)
+
+urls = ['https://www.google.com',
+        'https://www.facebook.com',
+        'https://www.apple.com',
+        'https://www.netflix.com',
+        'https://www.salesforce.com',
+        'https://www.intuit.com',
+        'https://www.amazon.com',
+        'https://www.uber.com',
+        'https://www.lyft.com']
+
+threads = []
+for url in urls:
+    thread = RequestThread(url)
+    thread.start()
+    threads.append(thread)
+
+for thread in threads:
+    thread.join()
+</code></pre>
+
+<p>TODO: Explain GIL and under the cover, <code>request</code> release the control of GIL.</p>
+
+<p>TODO: mistake</p>
+
+<p>TODO: Note about how to call constructor.</p>
 ]]></content>
   </entry>
   
@@ -807,10 +1001,10 @@ In another approach that would work for both Python 2 and 3, one can use the fol
 Because <code>found</code> is now an array, the variable reference rules, instead of variable assignment rules, apply and the <code>found</code> variable in the outer scope is used.
 Although it is a great trick, such code is not really clear.</p>
 
-<p>The final and recommended solution is to extract the <code>helper</code> function into a Helper class instead.
-The original <code>helper</code> method used for <strong>Problem-1</strong> can be converted to a Helper class as follows:</p>
+<p>The final and recommended solution is to extract the <code>helper</code> function into a CheckSpecial class instead.
+The original <code>helper</code> method used for <strong>Problem-1</strong> can be converted to a Helper/CheckSpecial class as follows:</p>
 
-<pre><code class="python Using Helper class for Problem-1">class Helper(object):
+<pre><code class="python Using CheckSpecial class for Problem-1">class CheckSpecial(object):
 
     def __init__(self, group):
         self.group = group
@@ -821,15 +1015,15 @@ The original <code>helper</code> method used for <strong>Problem-1</strong> can 
         return (1, x)
 
 def sort_priority_solved(numbers, group):
-    helper = Helper(GROUP)
+    helper = CheckSpecial(GROUP)
     numbers.sort(key=helper)
 </code></pre>
 
-<p>In the solution to starting <strong>Problem-1</strong> shown above, the origial <code>helper</code> function&rsquo;s logic has been encapsulated into a Helper class, in the <code>__call__</code> method specifically.
-When the additional requirement &ldquo;check if special number encountered&rdquo; comes in, it is apparent that <code>helper</code> function has to become stateful.
-Since we already has it converted to <code>Helper</code> class, it would be easier to keep the state as a new <code>Helper</code> object&rsquo;s attribute <code>found</code> and update the object state accordingly, as follows:</p>
+<p>In the solution to starting <strong>Problem-1</strong> shown above, the origial <code>helper</code> function&rsquo;s logic has been encapsulated into a CheckSpecial class, in the <code>__call__</code> method specifically.
+When the additional requirement &ldquo;check if special number encountered&rdquo; comes in, it is apparent that <code>helper</code> function has to become a stateful closure.
+Since we already has it converted to <code>CheckSpecial</code> class, it would be easier to keep the state as a new <code>CheckSpecial</code> object&rsquo;s attribute <code>found</code> and update the object state accordingly, as follows:</p>
 
-<pre><code class="python Updating Helper class for Problem-2">class Helper(object):
+<pre><code class="python Updating CheckSpecial class for Problem-2">class CheckSpecial(object):
 
     def __init__(self, group):
         self.group = group
@@ -842,12 +1036,376 @@ Since we already has it converted to <code>Helper</code> class, it would be easi
         return (1, x)
 
 def sort_priority_solved(numbers, group):
-    helper = Helper(GROUP)
+    helper = CheckSpecial(GROUP)
     numbers.sort(key=helper)
     return helper.found
 </code></pre>
 
 <p>IMHO, this approach is much clearer and works for both Python 2 and 3.</p>
+
+<h3>Item 14: Accept callables for stateful closures</h3>
+
+<p>Many of Python APIs allow you to customize behavior by passing in a function, such as <code>sort(key=...)</code> method in the last section &ldquo;Item 13&rdquo;.
+We also see that it is possible to pass stateful closure as a function into those hooks for record-keeping purposes, for example.
+We showed different ways to do that in Python 2 and 3: <code>nonlocal</code> keyword, <code>list</code> trick, and a helper class.
+Using a class to encapsulate a stateful closure is the highly recommended approach.</p>
+
+<pre><code class="python Another version of CheckSpecial class for Problem-2">class CheckSpecial(object):
+
+    def __init__(self, group):
+        self.group = group
+        self.found = False
+
+    def check(self, x):
+        if x in self.group:
+            self.found = True
+            return (0, x)
+        return (1, x)
+
+def sort_priority_solved(numbers, group):
+    helper = CheckSpecial(GROUP)
+    numbers.sort(key=helper.check)
+    return helper.found
+</code></pre>
+
+<p>Let us consider an alternative version of CheckSpecial class where we use standard method name <code>check</code> instead of special method <code>__call__</code>.
+And it works perfectly fine if you pass <code>helper.check</code> as a function: <code>sort</code> has no idea that we are passing a method of a stateful object and it does not care.</p>
+
+<p>However, for programmers new to the code, the <code>CheckSpecial</code> class is really awkward: it is not clear the purpose of the class in isolation and that its instances are never to be created and used alone.
+Instead, in the last section, we intentionally use <code>__call__</code> method to make each CheckSpecial instance a stateful &ldquo;callable&rdquo;.
+In that way, the intention of the class is clearer: it is a stateful closure that is meant to be passed into the hook of another function (e.g., <code>sort</code>, <code>defaultdict</code>).</p>
+
+<h3>Item 15: Reduce visual noise with variable positional arguments</h3>
+
+<pre><code class="python Example of variable position arguments">def log(message, *args):
+    pass
+
+log('Check', 1, 2, 3)
+args = [1, 2, 3]
+log('Check', *args)
+</code></pre>
+
+<p>Two things to watch for when using variable positional arguments:</p>
+
+<ul>
+<li>If a generator is passed in, the generator will be exhausted as the arguments.</li>
+<li>When you change the signature/behavior of the method such as adding new argument in front, it can misbehave quietly.</li>
+</ul>
+
+
+<h3>Item 16: Provide optional behavior with keyword arguments</h3>
+
+<p>Positional arguments come before keyword arguments.
+You can&rsquo;t pass positional arguments after keyword argyment.</p>
+
+<p>The flexibility of keyword arguments provides three significant benefits:</p>
+
+<ol>
+<li>Functional calls are more clear.</li>
+<li>Default arguments defined in function definitions.</li>
+<li>Allow extending a function&rsquo;s parameters while it is still backward compatible.</li>
+</ol>
+
+
+<h3>Item 17: Enforce clarity with keyword-only arguments</h3>
+
+<p>In Python 3, you can specify <code>*</code> in the function&rsquo;s argument list.</p>
+
+<pre><code class="plain Keyword-only parameters">&gt;&gt;&gt; def foo(pos, *, forcenamed):
+...   print(pos, forcenamed)
+... 
+&gt;&gt;&gt; foo(pos=10, forcenamed=20)
+10 20
+&gt;&gt;&gt; foo(10, forcenamed=20)
+10 20
+&gt;&gt;&gt; foo(10, 20)
+Traceback (most recent call last):
+  File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+TypeError: foo() takes exactly 1 positional argument (2 given)
+</code></pre>
+
+<p>This can also be combined with <code>**kwargs</code>:</p>
+
+<pre><code class="python">def foo(pos, *, forcenamed, **kwargs):
+</code></pre>
+
+<p>In Python 2, the alternative is to <code>pop</code> the <code>**kwargs</code> with default values.
+However, that requires docstring to explain what parameters (keys) are expected in <code>kwargs</code> and you lose signature information in your smart editor.</p>
+
+<p>Another alternative in Python 2 is to use a dummy keyword argument to limit number of positional argument.</p>
+
+<pre><code class="python ">_dummy = object()
+
+def foo(pos, _kw=_dummy, forcenamed):
+    if _kw is not _dummy:
+        raise TypeError("foo() takes 1 positional argument (at least 2 given)")
+</code></pre>
+
+<p>This will allow:</p>
+
+<pre><code class="python Examples"># Allowed
+foo(bar)        
+foo(bar, collapse=0)        
+foo(spacing=15, pos=bar)
+
+# But not allowed
+foo(bar, 12)
+</code></pre>
+
+<p>See <a href="https://stackoverflow.com/questions/2965271/forced-naming-of-parameters-in-python">here</a> for more discussions.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Effective Python Pt. 2: Comprehensions & Generators]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-2/"/>
+    <updated>2018-08-12T00:19:30-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-2</id>
+    <content type="html"><![CDATA[<p>This post corresponds to Lesson 2 &ldquo;Comprehensions &amp; Generators&rdquo; of <a href="https://www.safaribooksonline.com/videos/effective-python/9780134175249">&ldquo;Effective Python&rdquo; course</a>.</p>
+
+<!--more-->
+
+
+<h3>Item 8: Use list comprehension instead of MAP and FILTER</h3>
+
+<p>List comprehension offers the more intuitive way to transform a list to another list.
+Note that in Python 3, the <code>map</code> function now returns an iterator instead of a list like Python 2.
+Therefore, you have to add an extra step to convert to a list.</p>
+
+<pre><code class="python List comprehension">a = range(10)
+# Recommended
+squares = [x**2 for x in a]
+# Old way: map in Python 2
+squares = map(lambda x: x**2, a)
+# Old way: map in Python 3
+squares = list(map(lambda x: x**2, a))
+print(squares)
+</code></pre>
+
+<p>In addition, list comprehension makes it easy to add a condition for filtering.
+Using <code>filter</code> and <code>map</code>, it becomes very &ldquo;noisy&rdquo; with multiple enclosing functions and lambdas, as shown below.</p>
+
+<pre><code class="python List comprehension with filtering">b = range(5)
+# Recommended
+squares = [x**2 for x in b if x % 2 == 0]
+# Old way in Python 2
+squares = map(lambda x: x**2, filter(lambda x: x % 2 == 0, b))
+</code></pre>
+
+<p>Dictionary and set also have similar comprehension expressions for similar purposes.
+The final note is that for very complex transformations and filtering that is not easy to pack into comprehension expressions, it is recommended to explicitly use the <code>for</code> loop instead.</p>
+
+<h3>Item 9: Avoid more than two expressions in list comprehensions</h3>
+
+<p>As examples, the transformations of two-dimensional matrices can be done easily with list comprehensions, as follows.</p>
+
+<pre><code class="python Transforming matrices">matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+flatten = [x for row in matrix for x in row]
+print(flatten)
+
+squared = [[x**2 for x in row] for row in matrix]
+print(squared)
+</code></pre>
+
+<p>However, for 3D (or more) matrices, such approach with list comprehensions can be really hard to read.</p>
+
+<pre><code class="python 3D matrix"># 3D matrix
+matrix = [
+    [[1, 2, 3], [4, 5, 6]],
+    [[7, 8, 9], [10, 11, 12]]
+]
+flatten = [x for sublist1 in matrix
+           for sublist2 in sublist1
+           for x in sublist2]
+print(flatten)
+</code></pre>
+
+<p>As shown above, even a simple transformation of matrix flattening can make the code hard to read due to multiple levels of <code>for</code> loops.
+Instead of using list comprehensions in those cases, it is recommended to explicitly use <code>for</code> loops when there are more than two expressions in such list comprehensions.</p>
+
+<pre><code class="python 3D matrix"># Recommended way
+flatten = []
+for sublist1 in matrix:
+    for sublist2 in sublist1:
+        flatten.extend(sublist2)
+print(flatten)
+</code></pre>
+
+<p>Another example of abusing list comprehension is to perform multiple filtering operations, such as:</p>
+
+<pre><code class="python Multiple filtering operations">matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+filtered = [[x for x in row if x % 3 == 0]
+            for row in matrix if sum(row) &gt;= 10]
+print(filtered)
+</code></pre>
+
+<p>In this example, the expression performs filtering not only on rows in the matrix but also on elements in rows.
+Such expressions are really hard to understand since the code is not read in the natural order of logic and flow of thoughts (see <a href="https://en.wikipedia.org/wiki/Literate_programming">literate programming</a>).
+It is recommended to explicitly use <code>for</code> loops for such cases.</p>
+
+<h3>Item 10: Consider generator expressions for large comprehensions</h3>
+
+<p>The problems with list comprehensions are that they may create a whole new list containing all the data.
+For large inputs, it can consume a significant amount of memory and can even crash your program.</p>
+
+<p>For a (very contrived) example, let&rsquo;s say you want to return the length of each line in a file and its squares.
+You can easily achieve that with the following list comprehensions.</p>
+
+<pre><code class="python List comprehension on a file">value = [len(x) for x in open('/tmp/my_file.txt')]
+squares = [(x, x**2) for x in better]
+</code></pre>
+
+<p>However, list comprehension on a file like this is very risky.
+The file can be really large or even never ending (such as a network socket).
+To solve this problem, Python has generator expressions, which are a generalization of comprehensions and generators.
+A generator expression gives you an iterator that you can go through that will yield one item at a time from the input and you can determine how many output items you want to return.
+The above code can be rewritten as follows:</p>
+
+<pre><code class="python Generator expression">better = (len(x) for x in open('/tmp/my_file.txt'))
+roots = ((x, x**0.5) for x in better)
+print(next(roots))
+print(next(better))
+print(next(roots))
+
+### Example Output
+[37, 20, 60, 38, 85, 65, 96, 4, 45, 44]
+(37, 1369)
+20
+(60, 3600)
+</code></pre>
+
+<p>As you can see, another powerful outcome of using generator expressions is that they can be composed together.
+When you call <code>next(roots)</code>, Python goes back up to the generator expression <code>better</code>, then realizes that it has to read another line out of the file.
+It has to read the line, then compute its length.
+That length value is then passed back to <code>roots</code> as <code>x</code> and for computing the tuple.
+What&rsquo;s surprising is that chaining generators like this actually executes very quickly in Python.
+When you&rsquo;re looking for a way to compose functionallity that&rsquo;s operating on a large stream of input, generator expressions are one of the best tools for the job.</p>
+
+<h3>Item 11: Consider generator functions instead of returning lists</h3>
+
+<p>Let&rsquo;s say you want to find the index of every single words in a string.
+The typical approach will be something as follows:</p>
+
+<pre><code class="python Typical way">def index_words_typical(text):
+    result = []
+    if text:
+        result.append(0)
+    for index, letter in enumerate(text):
+        if letter == ' ':
+            result.append(index+1)
+    return result
+</code></pre>
+
+<p>The typical approach that returns a list of indices has a problem.
+It is dense and noisy with all logistics related to <code>result</code> list: initializing the list, appending to the list whenever a result is found.
+A better way to write this function is to use a generator function, with <code>yield</code> statements, as follows:</p>
+
+<pre><code class="python Better way">def index_words(text):
+    if text:
+        yield 0
+    for index, letter in enumerate(text):
+        if letter == ' ':
+            yield index+1
+</code></pre>
+
+<pre><code class="python Equivalent outputs">address = 'The quick brown fox jumps over the lazy dog'
+print(list(index_words(address)))
+print(index_words_typical(address))
+
+# Output
+[0, 4, 10, 16, 20, 26, 31, 35, 40]
+[0, 4, 10, 16, 20, 26, 31, 35, 40]
+</code></pre>
+
+<p>As you can see, the generator version of this function is much easier to read than the typical version that returns lists.
+Most significantly, all of the interactions with the <code>result</code> list have been taken away.
+Instead, you just have those <code>yield</code> statements, making it very obvious what is being returned.
+That helps make it clear to new readers of the code.</p>
+
+<p>The second problem of the typical approach is that it requires all results to be stored in the lists before being returned.
+For huge inputs, this can cause your program to run out of memory and crash.
+In contrast, the generator version of the function can handle any amount of output because it doesn&rsquo;t actually keep all of the results in memory that it found.
+In the example above, if the input <code>address</code> is a huge text and you only need to display the first hundred indices, the typical approach <code>index_words_typical</code> might fail while the generator version works perfectly fine.</p>
+
+<h3>Item 12: Be defensive when iterating over arguments</h3>
+
+<pre><code class="python Iterator as argument">def normalize_data(numbers):
+    total = sum(numbers)
+    result = []
+    for value in numbers:
+        percent = 100.0 * value / total
+        result.append(percent)
+    return result
+
+def read_visits(data_path):
+    with open(data_path) as f:
+        for line in f:
+            yield int(line)
+</code></pre>
+
+<pre><code class="python Testing">path = '/tmp/my_numbers.txt'
+with open(path, 'w') as f:
+    for i in [15, 80, 35]:
+        f.write('%d\n' % i)
+
+print(normalize_data([15, 80, 35]))
+print(normalize_data(read_visits(path)))
+</code></pre>
+
+<pre><code class="plain Output">[11.538461538461538, 61.53846153846154, 26.923076923076923]
+[]
+</code></pre>
+
+<p>As you can see from the output, <code>normalize_data</code> works fine with a list of numbers but it does not work when we are supplying an iterator as input.
+The main reason is that we iterate multiple times with the input iterator.
+After the first traversal for <code>sum</code>, the iterator is already exhausted and that explains an empty list for the output <code>result</code>.</p>
+
+<p>The most straight-forward fix for the function <code>normalize_data</code> is probably to add a line <code>numbers = list(numbers)</code> at the beginning to materialize the iterator.
+However, such fix will defeat the purpose of using iterators and the function <code>read_visits</code>: they allow handling a arbitrarily large number of inputs without committing a large working memory.</p>
+
+<p>Another possible fix for the function <code>normalize_data</code> is as folllows:</p>
+
+<pre><code class="python Another fix">def normalize_data_2(get_iter):
+    total = sum(get_iter())
+    result = []
+    for value in get_iter():
+        percent = 100.0 * value / total
+        result.append(percent)
+    return result
+
+get_iter = lambda: read_visits(path)
+print(normalize_data_2(get_iter))
+</code></pre>
+
+<p>In this approach, we recreate the iterator whenever we need to iterate the data.
+So, if we need to traverse twice to normalize the data, we have to call <code>read_visits</code> twice, open the file, and read the data that many times.
+The upside is that we have the correct behavior while still retaining the benefits of using iterators.
+The problem of this approach is that it is very noisy and hard to read with <code>get_iter</code> and <code>lambda</code>.
+A more Pythonic way to do the same thing is to use a container class for the behavior of <code>read_visits</code>, as follows:</p>
+
+<pre><code class="python Converting read_visits to a class">class ReadVisits(object):
+    def __init__(self, data_path):
+        self.data_path = data_path
+
+    def __iter__(self):
+        with open(self.data_path) as f:
+            for line in f:
+                yield int(line)
+
+visits = ReadVisits(path)
+print(normalize_data(visits))
+</code></pre>
+
+<p>Here, <code>normalize_data</code> can be the same as before.
+The idea is still the same, we recreate the iterator whenever we need to iterate the data.
+In the example, when we iterate the <code>numbers</code> for computing <code>sum</code> or in <code>for</code> loop in <code>normalize_data</code> method, we effectively call <code>iter(numbers)</code> to retrieve the iterators.
+It is defined in <code>__iter__</code> method, which will open the file and read the data whenver it is called.
+However, it is much clearer and more readable than before since we encapsulate the behavior of <code>read_visits</code> method into the class <code>ReadVisits</code>.</p>
+
+<p>Finally, one minor improvement that we can add is to validate if the input argument of <code>normalize_data</code> is a container, as opposed to plain old iterator.
+If the argument is a plain old iterator, its data can be exhausted after first traversal and the <code>normalize_data</code> method will not behave correctly.
+To check that, a simple check &ldquo;iter(numbers) is iter(numbers)&rdquo; will suffice.
+For container-type arguments such as a list or <code>ReadVisits</code> object, each <code>iter</code> call returns a different iterator.</p>
 ]]></content>
   </entry>
   

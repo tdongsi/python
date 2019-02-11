@@ -370,10 +370,10 @@ In another approach that would work for both Python 2 and 3, one can use the fol
 Because <code>found</code> is now an array, the variable reference rules, instead of variable assignment rules, apply and the <code>found</code> variable in the outer scope is used.
 Although it is a great trick, such code is not really clear.</p>
 
-<p>The final and recommended solution is to extract the <code>helper</code> function into a Helper class instead.
-The original <code>helper</code> method used for <strong>Problem-1</strong> can be converted to a Helper class as follows:</p>
+<p>The final and recommended solution is to extract the <code>helper</code> function into a CheckSpecial class instead.
+The original <code>helper</code> method used for <strong>Problem-1</strong> can be converted to a Helper/CheckSpecial class as follows:</p>
 
-<figure class='code'><figcaption><span>Using Helper class for Problem-1</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span>Using CheckSpecial class for Problem-1</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -386,7 +386,7 @@ The original <code>helper</code> method used for <strong>Problem-1</strong> can 
 <span class='line-number'>11</span>
 <span class='line-number'>12</span>
 <span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">class</span> <span class="nc">Helper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">class</span> <span class="nc">CheckSpecial</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
 </span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="n">group</span>
@@ -397,16 +397,16 @@ The original <code>helper</code> method used for <strong>Problem-1</strong> can 
 </span><span class='line'>        <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 </span><span class='line'>
 </span><span class='line'><span class="k">def</span> <span class="nf">sort_priority_solved</span><span class="p">(</span><span class="n">numbers</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
-</span><span class='line'>    <span class="n">helper</span> <span class="o">=</span> <span class="n">Helper</span><span class="p">(</span><span class="n">GROUP</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">helper</span> <span class="o">=</span> <span class="n">CheckSpecial</span><span class="p">(</span><span class="n">GROUP</span><span class="p">)</span>
 </span><span class='line'>    <span class="n">numbers</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">helper</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>In the solution to starting <strong>Problem-1</strong> shown above, the origial <code>helper</code> function&rsquo;s logic has been encapsulated into a Helper class, in the <code>__call__</code> method specifically.
-When the additional requirement &ldquo;check if special number encountered&rdquo; comes in, it is apparent that <code>helper</code> function has to become stateful.
-Since we already has it converted to <code>Helper</code> class, it would be easier to keep the state as a new <code>Helper</code> object&rsquo;s attribute <code>found</code> and update the object state accordingly, as follows:</p>
+<p>In the solution to starting <strong>Problem-1</strong> shown above, the origial <code>helper</code> function&rsquo;s logic has been encapsulated into a CheckSpecial class, in the <code>__call__</code> method specifically.
+When the additional requirement &ldquo;check if special number encountered&rdquo; comes in, it is apparent that <code>helper</code> function has to become a stateful closure.
+Since we already has it converted to <code>CheckSpecial</code> class, it would be easier to keep the state as a new <code>CheckSpecial</code> object&rsquo;s attribute <code>found</code> and update the object state accordingly, as follows:</p>
 
-<figure class='code'><figcaption><span>Updating Helper class for Problem-2</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span>Updating CheckSpecial class for Problem-2</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -422,7 +422,7 @@ Since we already has it converted to <code>Helper</code> class, it would be easi
 <span class='line-number'>14</span>
 <span class='line-number'>15</span>
 <span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">class</span> <span class="nc">Helper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">class</span> <span class="nc">CheckSpecial</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
 </span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="n">group</span>
@@ -435,13 +435,175 @@ Since we already has it converted to <code>Helper</code> class, it would be easi
 </span><span class='line'>        <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
 </span><span class='line'>
 </span><span class='line'><span class="k">def</span> <span class="nf">sort_priority_solved</span><span class="p">(</span><span class="n">numbers</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
-</span><span class='line'>    <span class="n">helper</span> <span class="o">=</span> <span class="n">Helper</span><span class="p">(</span><span class="n">GROUP</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">helper</span> <span class="o">=</span> <span class="n">CheckSpecial</span><span class="p">(</span><span class="n">GROUP</span><span class="p">)</span>
 </span><span class='line'>    <span class="n">numbers</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">helper</span><span class="p">)</span>
 </span><span class='line'>    <span class="k">return</span> <span class="n">helper</span><span class="o">.</span><span class="n">found</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
 <p>IMHO, this approach is much clearer and works for both Python 2 and 3.</p>
+
+<h3>Item 14: Accept callables for stateful closures</h3>
+
+<p>Many of Python APIs allow you to customize behavior by passing in a function, such as <code>sort(key=...)</code> method in the last section &ldquo;Item 13&rdquo;.
+We also see that it is possible to pass stateful closure as a function into those hooks for record-keeping purposes, for example.
+We showed different ways to do that in Python 2 and 3: <code>nonlocal</code> keyword, <code>list</code> trick, and a helper class.
+Using a class to encapsulate a stateful closure is the highly recommended approach.</p>
+
+<figure class='code'><figcaption><span>Another version of CheckSpecial class for Problem-2</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">class</span> <span class="nc">CheckSpecial</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="n">group</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">found</span> <span class="o">=</span> <span class="bp">False</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="p">:</span>
+</span><span class='line'>            <span class="bp">self</span><span class="o">.</span><span class="n">found</span> <span class="o">=</span> <span class="bp">True</span>
+</span><span class='line'>            <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">sort_priority_solved</span><span class="p">(</span><span class="n">numbers</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+</span><span class='line'>    <span class="n">helper</span> <span class="o">=</span> <span class="n">CheckSpecial</span><span class="p">(</span><span class="n">GROUP</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">numbers</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">helper</span><span class="o">.</span><span class="n">check</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">helper</span><span class="o">.</span><span class="n">found</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Let us consider an alternative version of CheckSpecial class where we use standard method name <code>check</code> instead of special method <code>__call__</code>.
+And it works perfectly fine if you pass <code>helper.check</code> as a function: <code>sort</code> has no idea that we are passing a method of a stateful object and it does not care.</p>
+
+<p>However, for programmers new to the code, the <code>CheckSpecial</code> class is really awkward: it is not clear the purpose of the class in isolation and that its instances are never to be created and used alone.
+Instead, in the last section, we intentionally use <code>__call__</code> method to make each CheckSpecial instance a stateful &ldquo;callable&rdquo;.
+In that way, the intention of the class is clearer: it is a stateful closure that is meant to be passed into the hook of another function (e.g., <code>sort</code>, <code>defaultdict</code>).</p>
+
+<h3>Item 15: Reduce visual noise with variable positional arguments</h3>
+
+<figure class='code'><figcaption><span>Example of variable position arguments</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">pass</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">log</span><span class="p">(</span><span class="s">&#39;Check&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</span><span class='line'><span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+</span><span class='line'><span class="n">log</span><span class="p">(</span><span class="s">&#39;Check&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Two things to watch for when using variable positional arguments:</p>
+
+<ul>
+<li>If a generator is passed in, the generator will be exhausted as the arguments.</li>
+<li>When you change the signature/behavior of the method such as adding new argument in front, it can misbehave quietly.</li>
+</ul>
+
+
+<h3>Item 16: Provide optional behavior with keyword arguments</h3>
+
+<p>Positional arguments come before keyword arguments.
+You can&rsquo;t pass positional arguments after keyword argyment.</p>
+
+<p>The flexibility of keyword arguments provides three significant benefits:</p>
+
+<ol>
+<li>Functional calls are more clear.</li>
+<li>Default arguments defined in function definitions.</li>
+<li>Allow extending a function&rsquo;s parameters while it is still backward compatible.</li>
+</ol>
+
+
+<h3>Item 17: Enforce clarity with keyword-only arguments</h3>
+
+<p>In Python 3, you can specify <code>*</code> in the function&rsquo;s argument list.</p>
+
+<figure class='code'><figcaption><span>Keyword-only parameters</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&gt;&gt;&gt; def foo(pos, *, forcenamed):
+</span><span class='line'>...   print(pos, forcenamed)
+</span><span class='line'>... 
+</span><span class='line'>&gt;&gt;&gt; foo(pos=10, forcenamed=20)
+</span><span class='line'>10 20
+</span><span class='line'>&gt;&gt;&gt; foo(10, forcenamed=20)
+</span><span class='line'>10 20
+</span><span class='line'>&gt;&gt;&gt; foo(10, 20)
+</span><span class='line'>Traceback (most recent call last):
+</span><span class='line'>  File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+</span><span class='line'>TypeError: foo() takes exactly 1 positional argument (2 given)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This can also be combined with <code>**kwargs</code>:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">forcenamed</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In Python 2, the alternative is to <code>pop</code> the <code>**kwargs</code> with default values.
+However, that requires docstring to explain what parameters (keys) are expected in <code>kwargs</code> and you lose signature information in your smart editor.</p>
+
+<p>Another alternative in Python 2 is to use a dummy keyword argument to limit number of positional argument.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">_dummy</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">_kw</span><span class="o">=</span><span class="n">_dummy</span><span class="p">,</span> <span class="n">forcenamed</span><span class="p">):</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">_kw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">_dummy</span><span class="p">:</span>
+</span><span class='line'>        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;foo() takes 1 positional argument (at least 2 given)&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This will allow:</p>
+
+<figure class='code'><figcaption><span>Examples</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="c"># Allowed</span>
+</span><span class='line'><span class="n">foo</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+</span><span class='line'><span class="n">foo</span><span class="p">(</span><span class="n">bar</span><span class="p">,</span> <span class="n">collapse</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span class='line'><span class="n">foo</span><span class="p">(</span><span class="n">spacing</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="n">bar</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># But not allowed</span>
+</span><span class='line'><span class="n">foo</span><span class="p">(</span><span class="n">bar</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>See <a href="https://stackoverflow.com/questions/2965271/forced-naming-of-parameters-in-python">here</a> for more discussions.</p>
 </div>
 
 
@@ -547,7 +709,7 @@ Since we already has it converted to <code>Helper</code> class, it would be easi
 
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/python/blog/categories/addepar/'>addepar (1)</a></li><li><a href='/python/blog/categories/algorithm/'>algorithm (4)</a></li><li><a href='/python/blog/categories/book/'>book (3)</a></li><li><a href='/python/blog/categories/datastructure/'>datastructure (1)</a></li><li><a href='/python/blog/categories/python/'>python (8)</a></li><li><a href='/python/blog/categories/todo/'>todo (5)</a></li><li><a href='/python/blog/categories/tutorial/'>tutorial (6)</a></li></ul>
+    <ul id="category-list"><li><a href='/python/blog/categories/addepar/'>addepar (1)</a></li><li><a href='/python/blog/categories/algorithm/'>algorithm (4)</a></li><li><a href='/python/blog/categories/book/'>book (6)</a></li><li><a href='/python/blog/categories/datastructure/'>datastructure (1)</a></li><li><a href='/python/blog/categories/python/'>python (10)</a></li><li><a href='/python/blog/categories/todo/'>todo (5)</a></li><li><a href='/python/blog/categories/tutorial/'>tutorial (6)</a></li></ul>
 </section>
 
 
