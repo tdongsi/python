@@ -251,7 +251,84 @@ def sort_priority_solved(numbers, group):
 Let us consider an alternative version of CheckSpecial class where we use standard method name `check` instead of special method `__call__`.
 And it works perfectly fine if you pass `helper.check` as a function: `sort` has no idea that we are passing a method of a stateful object and it does not care.
 
-However, for programmer new to the code, the `CheckSpecial` class is really awkward: it is not clear the purpose of the class in isolation and that its instances are never to be created and used alone.
-Instead, in the last section, we intentionally use `__call__` method to make each CheckSpecial a stateful "callable".
+However, for programmers new to the code, the `CheckSpecial` class is really awkward: it is not clear the purpose of the class in isolation and that its instances are never to be created and used alone.
+Instead, in the last section, we intentionally use `__call__` method to make each CheckSpecial instance a stateful "callable".
 In that way, the intention of the class is clearer: it is a stateful closure that is meant to be passed into the hook of another function (e.g., `sort`, `defaultdict`).
 
+### Item 15: Reduce visual noise with variable positional arguments
+
+``` python Example of variable position arguments
+def log(message, *args):
+    pass
+
+log('Check', 1, 2, 3)
+args = [1, 2, 3]
+log('Check', *args)
+```
+
+Two things to watch for when using variable positional arguments:
+
+* If a generator is passed in, the generator will be exhausted as the arguments.
+* When you change the signature/behavior of the method such as adding new argument in front, it can misbehave quietly.
+
+### Item 16: Provide optional behavior with keyword arguments
+
+Positional arguments come before keyword arguments.
+You can't pass positional arguments after keyword argyment.
+
+The flexibility of keyword arguments provides three significant benefits:
+
+1. Functional calls are more clear.
+2. Default arguments defined in function definitions.
+3. Allow extending a function's parameters while it is still backward compatible.
+
+### Item 17: Enforce clarity with keyword-only arguments
+
+In Python 3, you can specify `*` in the function's argument list.
+
+``` plain Keyword-only parameters
+>>> def foo(pos, *, forcenamed):
+...   print(pos, forcenamed)
+... 
+>>> foo(pos=10, forcenamed=20)
+10 20
+>>> foo(10, forcenamed=20)
+10 20
+>>> foo(10, 20)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: foo() takes exactly 1 positional argument (2 given)
+```
+
+This can also be combined with `**kwargs`:
+
+``` python
+def foo(pos, *, forcenamed, **kwargs):
+```
+
+In Python 2, the alternative is to `pop` the `**kwargs` with default values.
+However, that requires docstring to explain what parameters (keys) are expected in `kwargs` and you lose signature information in your smart editor.
+
+Another alternative in Python 2 is to use a dummy keyword argument to limit number of positional argument.
+
+``` python 
+_dummy = object()
+
+def foo(pos, _kw=_dummy, forcenamed):
+    if _kw is not _dummy:
+        raise TypeError("foo() takes 1 positional argument (at least 2 given)")
+```
+
+This will allow:
+
+``` python Examples
+# Allowed
+foo(bar)        
+foo(bar, collapse=0)        
+foo(spacing=15, pos=bar)
+
+# But not allowed
+foo(bar, 12)
+```
+
+See [here](https://stackoverflow.com/questions/2965271/forced-naming-of-parameters-in-python) for more discussions.

@@ -4,6 +4,7 @@ title: "Effective Python Pt. 5: Concurrency and Parallelism"
 date: 2018-08-18 16:24:30 -0700
 comments: true
 categories: 
+- Book
 - Python
 ---
 
