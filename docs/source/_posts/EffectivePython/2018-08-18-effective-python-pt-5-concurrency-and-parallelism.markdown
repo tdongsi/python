@@ -200,3 +200,20 @@ TODO: Explain GIL and under the cover, `request` release the control of GIL.
 TODO: mistake
 
 TODO: Note about how to call constructor.
+
+### Item 26: Use Queue to cordinate work between threads
+
+Queue as the blocking queue for threads.
+
+ClosableQueue and Woker classes for building pipelines of workers running in parallel and coordination.
+
+### Item 27: concurrent.futures for true parallelism
+
+`ProcessPoolExecutor` as the high level API to split work into subprocesses.
+
+Explanation of works behind the scene: lots of serialization and deserialization between main process and child processes.
+
+When to use multiprocessing:
+
+* Isolated: no data sharing.
+* High leverage: small input data, large computation.
