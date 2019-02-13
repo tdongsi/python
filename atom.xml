@@ -4,7 +4,7 @@
   <title><![CDATA[Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2019-02-10T19:26:11-08:00</updated>
+  <updated>2019-02-13T00:04:45-08:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -693,6 +693,26 @@ The following example illustrate such use case:</p>
 <p>TODO: mistake</p>
 
 <p>TODO: Note about how to call constructor.</p>
+
+<h3>Item 26: Use Queue to cordinate work between threads</h3>
+
+<p>Queue as the blocking queue for threads.</p>
+
+<p>ClosableQueue and Woker classes for building pipelines of workers running in parallel and coordination.</p>
+
+<h3>Item 27: concurrent.futures for true parallelism</h3>
+
+<p><code>ProcessPoolExecutor</code> as the high level API to split work into subprocesses.</p>
+
+<p>Explanation of works behind the scene: lots of serialization and deserialization between main process and child processes.</p>
+
+<p>When to use multiprocessing:</p>
+
+<ul>
+<li>Isolated: no data sharing.</li>
+<li>High leverage: small input data, large computation.</li>
+</ul>
+
 ]]></content>
   </entry>
   
