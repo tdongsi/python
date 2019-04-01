@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Python | Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/blog/categories/python/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2019-04-01T00:01:51-07:00</updated>
+  <updated>2019-04-01T00:05:37-07:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -109,8 +109,8 @@ Instead, <code>mock</code> module makes it easy as follows:</p>
 
 <h3>Skip waiting when testing</h3>
 
-<p>Many methods under test need to sleep and wait for a certain amount of time before proceeding to its next stage.
-If the external components (e.g., HTTP responses) are already mocked out, such waiting maybe not necessary and we&rsquo;d like to skip the waiting part.
+<p>Many methods under test need to sleep while waiting for some external factor before proceeding to its next stage.
+If the external components (e.g., HTTP responses) are already mocked out, such waiting maybe not necessary and we&rsquo;d like to skip the waiting parts.
 Using <code>mock.patch</code>, it is easy to mock out <code>time.sleep</code> to skip such waiting parts.</p>
 
 <pre><code class="python Skip waiting">        # Mock time.sleep to skip sleeping
