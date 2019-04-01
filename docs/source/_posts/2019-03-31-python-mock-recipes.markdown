@@ -7,11 +7,9 @@ categories:
 - Python
 ---
 
-Recipes for mocking when writing unit tests in Python.
+Recipes for mocking with `unittest.mock` module when writing unit tests in Python.
 
 <!--more-->
-
-### Basic mocking
 
 ### Mock simple HTTP responses
 
@@ -48,11 +46,57 @@ This is useful as we can reproduce those exceptional, failure scenarios such as 
 
         # REST client's function that sends GET request here
         # ...
+        with self.assertRaises(ResponseRateException) as bg:
+            method_under_test(**arguments)
+
+        self.assertTrue('request not accepted' in bg.exception.message)
 
         pass
 ```
 
-
 ### Mock print statements
+
+Some legacy codes tend to spam `print` statements and you probably need to check if the output is correct.
+In that case, we can redirect `print`'s output to some variable and assert the value of that string variable.
+
+There is a popular but complex way to redirect `stdout` to a string variable, thanks to being the [top and accepted answer on Stackoverflow](https://stackoverflow.com/questions/1218933/can-i-redirect-the-stdout-in-python-into-some-sort-of-string-buffer).
+
+``` python Complex way
+from StringIO import StringIO  # Python2
+from io import StringIO  # Python3
+ 
+ import sys
+ 
+# Store the reference for restoring
+ 
+old_stdout = sys.stdout
+ 
+# This variable will store everything that is sent to the standard output
+sys.stdout = StringIO()
+
+call_method_under_test()
+ 
+# Redirect again the std output to screen
+sys.stdout = old_stdout
+ 
+# Then, get the stdout like a string
+result_string = result.getvalue()
+ 
+assert(expected_output, result_string)
+```
+
+In the context of unit testing, to ensure that all unit tests are indepedenent, you have to set and reset `sys.stdout` in each unit test separately.
+As a result, it is very inconvenient when you may have hundreds of unit tests and only tens of them need that output redirection.
+Instead, `mock` module makes it easy as follows:
+
+``` python Mock print statements
+        # Mock sys.stdout to redirect "print"'s output to a variable mock_stdout
+        with mock.patch('sys.stdout', new_callable=StringIO) as mock_stdout:
+            method_under_test(**arguments)
+            # result_string is what method_under_test print out
+            result_string = mock_stdout.getvalue()
+            # Compare two objects from two JSON strings
+            self.assertEqual(expected_output, result_string)
+```
 
 ###
