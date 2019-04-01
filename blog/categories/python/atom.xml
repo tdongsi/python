@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Python | Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/blog/categories/python/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2019-03-31T23:39:24-07:00</updated>
+  <updated>2019-04-01T00:01:51-07:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -25,7 +25,7 @@
 
 <h3>Mock simple HTTP responses</h3>
 
-<p>When testing REST clients that use <code>requests</code> module, it is better to use this utility method to construct simple HTTP responses.</p>
+<p>When testing REST clients that use <code>requests</code> module, it is better to use this utility method to construct mock HTTP responses.</p>
 
 <pre><code class="python Utility method to create mock response">def create_mock_response(status=200, content="{}"):
     """ Create mock HTTTP responses for "requests" module.
@@ -43,7 +43,7 @@
 </code></pre>
 
 <p>By mocking HTTP (usually GET) responses, you can validate the REST client&rsquo;s behavior for a certain response.
-This is useful as we can reproduce those exceptional, failure scenarios such as those with 4xx error codes.</p>
+This is useful as we can reproduce exceptional, failure scenarios such as those with 4xx error codes.</p>
 
 <pre><code class="python Example test">    @mock.patch('requests.get')
     def test_get_deployments_429(self, mock_get):
@@ -64,7 +64,7 @@ This is useful as we can reproduce those exceptional, failure scenarios such as 
         pass
 </code></pre>
 
-<h3>Mock print statements</h3>
+<h3>Redirect <code>stdout</code> output to variable for validation</h3>
 
 <p>Some legacy codes tend to spam <code>print</code> statements and you probably need to check if the output is correct.
 In that case, we can redirect <code>print</code>&rsquo;s output to some variable and assert the value of that string variable.</p>
@@ -95,7 +95,7 @@ assert(expected_output, result_string)
 </code></pre>
 
 <p>In the context of unit testing, to ensure that all unit tests are indepedenent, you have to set and reset <code>sys.stdout</code> in each unit test separately.
-As a result, it is very inconvenient when you may have hundreds of unit tests and only tens of them need that output redirection.
+As a result, it is very inconvenient when you may have hundreds of unit tests and only tens of them need that output redirection for validation.
 Instead, <code>mock</code> module makes it easy as follows:</p>
 
 <pre><code class="python Mock print statements">        # Mock sys.stdout to redirect "print"'s output to a variable mock_stdout
@@ -107,7 +107,22 @@ Instead, <code>mock</code> module makes it easy as follows:</p>
             self.assertEqual(expected_output, result_string)
 </code></pre>
 
-<h2>#</h2>
+<h3>Skip waiting when testing</h3>
+
+<p>Many methods under test need to sleep and wait for a certain amount of time before proceeding to its next stage.
+If the external components (e.g., HTTP responses) are already mocked out, such waiting maybe not necessary and we&rsquo;d like to skip the waiting part.
+Using <code>mock.patch</code>, it is easy to mock out <code>time.sleep</code> to skip such waiting parts.</p>
+
+<pre><code class="python Skip waiting">        # Mock time.sleep to skip sleeping
+        with mock.patch('time.sleep', return_value=None):
+            # Mock sys.stdout to redirect "print" statement's output to a variable mock_stdout
+            with mock.patch('sys.stdout', new_callable=StringIO) as mock_stdout:
+                execute_long_running(0.25, {})
+
+            # result_string is what _execute_canary_deployment prints out
+            result_string = mock_stdout.getvalue()
+            self.assertTrue('expected string' in result_string)
+</code></pre>
 ]]></content>
   </entry>
   

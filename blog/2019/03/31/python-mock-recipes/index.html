@@ -94,7 +94,7 @@
 
 <h3>Mock simple HTTP responses</h3>
 
-<p>When testing REST clients that use <code>requests</code> module, it is better to use this utility method to construct simple HTTP responses.</p>
+<p>When testing REST clients that use <code>requests</code> module, it is better to use this utility method to construct mock HTTP responses.</p>
 
 <figure class='code'><figcaption><span>Utility method to create mock response</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -126,7 +126,7 @@
 
 
 <p>By mocking HTTP (usually GET) responses, you can validate the REST client&rsquo;s behavior for a certain response.
-This is useful as we can reproduce those exceptional, failure scenarios such as those with 4xx error codes.</p>
+This is useful as we can reproduce exceptional, failure scenarios such as those with 4xx error codes.</p>
 
 <figure class='code'><figcaption><span>Example test</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -165,7 +165,7 @@ This is useful as we can reproduce those exceptional, failure scenarios such as 
 </span></code></pre></td></tr></table></div></figure>
 
 
-<h3>Mock print statements</h3>
+<h3>Redirect <code>stdout</code> output to variable for validation</h3>
 
 <p>Some legacy codes tend to spam <code>print</code> statements and you probably need to check if the output is correct.
 In that case, we can redirect <code>print</code>&rsquo;s output to some variable and assert the value of that string variable.</p>
@@ -218,7 +218,7 @@ In that case, we can redirect <code>print</code>&rsquo;s output to some variable
 
 
 <p>In the context of unit testing, to ensure that all unit tests are indepedenent, you have to set and reset <code>sys.stdout</code> in each unit test separately.
-As a result, it is very inconvenient when you may have hundreds of unit tests and only tens of them need that output redirection.
+As a result, it is very inconvenient when you may have hundreds of unit tests and only tens of them need that output redirection for validation.
 Instead, <code>mock</code> module makes it easy as follows:</p>
 
 <figure class='code'><figcaption><span>Mock print statements</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -238,7 +238,32 @@ Instead, <code>mock</code> module makes it easy as follows:</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<h2>#</h2>
+<h3>Skip waiting when testing</h3>
+
+<p>Many methods under test need to sleep and wait for a certain amount of time before proceeding to its next stage.
+If the external components (e.g., HTTP responses) are already mocked out, such waiting maybe not necessary and we&rsquo;d like to skip the waiting part.
+Using <code>mock.patch</code>, it is easy to mock out <code>time.sleep</code> to skip such waiting parts.</p>
+
+<figure class='code'><figcaption><span>Skip waiting</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'>    <span class="c"># Mock time.sleep to skip sleeping</span>
+</span><span class='line'>    <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;time.sleep&#39;</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</span><span class='line'>        <span class="c"># Mock sys.stdout to redirect &quot;print&quot; statement&#39;s output to a variable mock_stdout</span>
+</span><span class='line'>        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;sys.stdout&#39;</span><span class="p">,</span> <span class="n">new_callable</span><span class="o">=</span><span class="n">StringIO</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_stdout</span><span class="p">:</span>
+</span><span class='line'>            <span class="n">execute_long_running</span><span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="p">{})</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c"># result_string is what _execute_canary_deployment prints out</span>
+</span><span class='line'>        <span class="n">result_string</span> <span class="o">=</span> <span class="n">mock_stdout</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s">&#39;expected string&#39;</span> <span class="ow">in</span> <span class="n">result_string</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
 </div>
 
 
