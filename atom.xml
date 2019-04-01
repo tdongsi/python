@@ -4,7 +4,7 @@
   <title><![CDATA[Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2019-02-13T00:04:45-08:00</updated>
+  <updated>2019-03-31T23:39:24-07:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -12,6 +12,166 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Python Mock Recipes]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2019/03/31/python-mock-recipes/"/>
+    <updated>2019-03-31T22:49:05-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2019/03/31/python-mock-recipes</id>
+    <content type="html"><![CDATA[<p>Recipes for mocking with <code>unittest.mock</code> module when writing unit tests in Python.</p>
+
+<!--more-->
+
+
+<h3>Mock simple HTTP responses</h3>
+
+<p>When testing REST clients that use <code>requests</code> module, it is better to use this utility method to construct simple HTTP responses.</p>
+
+<figure class='code'><figcaption><span>Utility method to create mock response</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">create_mock_response</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s">&quot;{}&quot;</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot; Create mock HTTTP responses for &quot;requests&quot; module.</span>
+</span><span class='line'>
+</span><span class='line'><span class="sd">    :param status: override Response.status_code. Example: 200</span>
+</span><span class='line'><span class="sd">    :param content: override Response.text and Response.content.</span>
+</span><span class='line'><span class="sd">    :return: mock response object</span>
+</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="n">mock_response</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">Mock</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">mock_response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">=</span> <span class="n">status</span>
+</span><span class='line'>    <span class="n">mock_response</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">content</span>
+</span><span class='line'>    <span class="n">mock_response</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">content</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">mock_response</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>By mocking HTTP (usually GET) responses, you can validate the REST client&rsquo;s behavior for a certain response.
+This is useful as we can reproduce those exceptional, failure scenarios such as those with 4xx error codes.</p>
+
+<figure class='code'><figcaption><span>Example test</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="nd">@mock.patch</span><span class="p">(</span><span class="s">&#39;requests.get&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">test_get_deployments_429</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_get</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot; Failure case. &quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="c"># Mock response</span>
+</span><span class='line'>    <span class="n">mock_text</span> <span class="o">=</span> <span class="s">u&#39;{&quot;reponse&quot;: &quot;Slow down.&quot;}&#39;</span>
+</span><span class='line'>    <span class="n">mock_response</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">create_mock_response</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="mi">429</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">mock_text</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">mock_get</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_response</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># REST client&#39;s function that sends GET request here</span>
+</span><span class='line'>    <span class="c"># ...</span>
+</span><span class='line'>    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">ResponseRateException</span><span class="p">)</span> <span class="k">as</span> <span class="n">bg</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">method_under_test</span><span class="p">(</span><span class="o">**</span><span class="n">arguments</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s">&#39;request not accepted&#39;</span> <span class="ow">in</span> <span class="n">bg</span><span class="o">.</span><span class="n">exception</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">pass</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Mock print statements</h3>
+
+<p>Some legacy codes tend to spam <code>print</code> statements and you probably need to check if the output is correct.
+In that case, we can redirect <code>print</code>&rsquo;s output to some variable and assert the value of that string variable.</p>
+
+<p>There is a popular but complex way to redirect <code>stdout</code> to a string variable, thanks to being the <a href="https://stackoverflow.com/questions/1218933/can-i-redirect-the-stdout-in-python-into-some-sort-of-string-buffer">top and accepted answer on Stackoverflow</a>.</p>
+
+<figure class='code'><figcaption><span>Complex way</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">StringIO</span> <span class="kn">import</span> <span class="n">StringIO</span>  <span class="c"># Python2</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>  <span class="c"># Python3</span>
+</span><span class='line'>
+</span><span class='line'> <span class="kn">import</span> <span class="nn">sys</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Store the reference for restoring</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">old_stdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># This variable will store everything that is sent to the standard output</span>
+</span><span class='line'><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">call_method_under_test</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Redirect again the std output to screen</span>
+</span><span class='line'><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">old_stdout</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Then, get the stdout like a string</span>
+</span><span class='line'><span class="n">result_string</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">assert</span><span class="p">(</span><span class="n">expected_output</span><span class="p">,</span> <span class="n">result_string</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In the context of unit testing, to ensure that all unit tests are indepedenent, you have to set and reset <code>sys.stdout</code> in each unit test separately.
+As a result, it is very inconvenient when you may have hundreds of unit tests and only tens of them need that output redirection.
+Instead, <code>mock</code> module makes it easy as follows:</p>
+
+<figure class='code'><figcaption><span>Mock print statements</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'>    <span class="c"># Mock sys.stdout to redirect &quot;print&quot;&#39;s output to a variable mock_stdout</span>
+</span><span class='line'>    <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;sys.stdout&#39;</span><span class="p">,</span> <span class="n">new_callable</span><span class="o">=</span><span class="n">StringIO</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_stdout</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">method_under_test</span><span class="p">(</span><span class="o">**</span><span class="n">arguments</span><span class="p">)</span>
+</span><span class='line'>        <span class="c"># result_string is what method_under_test print out</span>
+</span><span class='line'>        <span class="n">result_string</span> <span class="o">=</span> <span class="n">mock_stdout</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+</span><span class='line'>        <span class="c"># Compare two objects from two JSON strings</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">expected_output</span><span class="p">,</span> <span class="n">result_string</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>#</h2>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Effective Python Pt. 6: Robust Programs]]></title>

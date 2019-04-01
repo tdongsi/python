@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Python | Personal Interview Notes]]></title>
   <link href="http://tdongsi.github.io/python/blog/categories/python/atom.xml" rel="self"/>
   <link href="http://tdongsi.github.io/python/"/>
-  <updated>2019-02-13T00:04:45-08:00</updated>
+  <updated>2019-03-31T23:39:24-07:00</updated>
   <id>http://tdongsi.github.io/python/</id>
   <author>
     <name><![CDATA[Cuong Dong-Si]]></name>
@@ -12,6 +12,104 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Python Mock Recipes]]></title>
+    <link href="http://tdongsi.github.io/python/blog/2019/03/31/python-mock-recipes/"/>
+    <updated>2019-03-31T22:49:05-07:00</updated>
+    <id>http://tdongsi.github.io/python/blog/2019/03/31/python-mock-recipes</id>
+    <content type="html"><![CDATA[<p>Recipes for mocking with <code>unittest.mock</code> module when writing unit tests in Python.</p>
+
+<!--more-->
+
+
+<h3>Mock simple HTTP responses</h3>
+
+<p>When testing REST clients that use <code>requests</code> module, it is better to use this utility method to construct simple HTTP responses.</p>
+
+<pre><code class="python Utility method to create mock response">def create_mock_response(status=200, content="{}"):
+    """ Create mock HTTTP responses for "requests" module.
+
+    :param status: override Response.status_code. Example: 200
+    :param content: override Response.text and Response.content.
+    :return: mock response object
+    """
+    mock_response = mock.Mock()
+    mock_response.status_code = status
+    mock_response.text = content
+    mock_response.content = content
+
+    return mock_response
+</code></pre>
+
+<p>By mocking HTTP (usually GET) responses, you can validate the REST client&rsquo;s behavior for a certain response.
+This is useful as we can reproduce those exceptional, failure scenarios such as those with 4xx error codes.</p>
+
+<pre><code class="python Example test">    @mock.patch('requests.get')
+    def test_get_deployments_429(self, mock_get):
+        """ Failure case. """
+        # Mock response
+        mock_text = u'{"reponse": "Slow down."}'
+        mock_response = base.create_mock_response(status=429, content=mock_text)
+
+        mock_get.return_value = mock_response
+
+        # REST client's function that sends GET request here
+        # ...
+        with self.assertRaises(ResponseRateException) as bg:
+            method_under_test(**arguments)
+
+        self.assertTrue('request not accepted' in bg.exception.message)
+
+        pass
+</code></pre>
+
+<h3>Mock print statements</h3>
+
+<p>Some legacy codes tend to spam <code>print</code> statements and you probably need to check if the output is correct.
+In that case, we can redirect <code>print</code>&rsquo;s output to some variable and assert the value of that string variable.</p>
+
+<p>There is a popular but complex way to redirect <code>stdout</code> to a string variable, thanks to being the <a href="https://stackoverflow.com/questions/1218933/can-i-redirect-the-stdout-in-python-into-some-sort-of-string-buffer">top and accepted answer on Stackoverflow</a>.</p>
+
+<pre><code class="python Complex way">from StringIO import StringIO  # Python2
+from io import StringIO  # Python3
+
+ import sys
+
+# Store the reference for restoring
+
+old_stdout = sys.stdout
+
+# This variable will store everything that is sent to the standard output
+sys.stdout = StringIO()
+
+call_method_under_test()
+
+# Redirect again the std output to screen
+sys.stdout = old_stdout
+
+# Then, get the stdout like a string
+result_string = result.getvalue()
+
+assert(expected_output, result_string)
+</code></pre>
+
+<p>In the context of unit testing, to ensure that all unit tests are indepedenent, you have to set and reset <code>sys.stdout</code> in each unit test separately.
+As a result, it is very inconvenient when you may have hundreds of unit tests and only tens of them need that output redirection.
+Instead, <code>mock</code> module makes it easy as follows:</p>
+
+<pre><code class="python Mock print statements">        # Mock sys.stdout to redirect "print"'s output to a variable mock_stdout
+        with mock.patch('sys.stdout', new_callable=StringIO) as mock_stdout:
+            method_under_test(**arguments)
+            # result_string is what method_under_test print out
+            result_string = mock_stdout.getvalue()
+            # Compare two objects from two JSON strings
+            self.assertEqual(expected_output, result_string)
+</code></pre>
+
+<h2>#</h2>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Effective Python Pt. 6: Robust Programs]]></title>
@@ -1173,259 +1271,6 @@ foo(bar, 12)
 </code></pre>
 
 <p>See <a href="https://stackoverflow.com/questions/2965271/forced-naming-of-parameters-in-python">here</a> for more discussions.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Effective Python Pt. 2: Comprehensions & Generators]]></title>
-    <link href="http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-2/"/>
-    <updated>2018-08-12T00:19:30-07:00</updated>
-    <id>http://tdongsi.github.io/python/blog/2018/08/12/effective-python-part-2</id>
-    <content type="html"><![CDATA[<p>This post corresponds to Lesson 2 &ldquo;Comprehensions &amp; Generators&rdquo; of <a href="https://www.safaribooksonline.com/videos/effective-python/9780134175249">&ldquo;Effective Python&rdquo; course</a>.</p>
-
-<!--more-->
-
-
-<h3>Item 8: Use list comprehension instead of MAP and FILTER</h3>
-
-<p>List comprehension offers the more intuitive way to transform a list to another list.
-Note that in Python 3, the <code>map</code> function now returns an iterator instead of a list like Python 2.
-Therefore, you have to add an extra step to convert to a list.</p>
-
-<pre><code class="python List comprehension">a = range(10)
-# Recommended
-squares = [x**2 for x in a]
-# Old way: map in Python 2
-squares = map(lambda x: x**2, a)
-# Old way: map in Python 3
-squares = list(map(lambda x: x**2, a))
-print(squares)
-</code></pre>
-
-<p>In addition, list comprehension makes it easy to add a condition for filtering.
-Using <code>filter</code> and <code>map</code>, it becomes very &ldquo;noisy&rdquo; with multiple enclosing functions and lambdas, as shown below.</p>
-
-<pre><code class="python List comprehension with filtering">b = range(5)
-# Recommended
-squares = [x**2 for x in b if x % 2 == 0]
-# Old way in Python 2
-squares = map(lambda x: x**2, filter(lambda x: x % 2 == 0, b))
-</code></pre>
-
-<p>Dictionary and set also have similar comprehension expressions for similar purposes.
-The final note is that for very complex transformations and filtering that is not easy to pack into comprehension expressions, it is recommended to explicitly use the <code>for</code> loop instead.</p>
-
-<h3>Item 9: Avoid more than two expressions in list comprehensions</h3>
-
-<p>As examples, the transformations of two-dimensional matrices can be done easily with list comprehensions, as follows.</p>
-
-<pre><code class="python Transforming matrices">matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-flatten = [x for row in matrix for x in row]
-print(flatten)
-
-squared = [[x**2 for x in row] for row in matrix]
-print(squared)
-</code></pre>
-
-<p>However, for 3D (or more) matrices, such approach with list comprehensions can be really hard to read.</p>
-
-<pre><code class="python 3D matrix"># 3D matrix
-matrix = [
-    [[1, 2, 3], [4, 5, 6]],
-    [[7, 8, 9], [10, 11, 12]]
-]
-flatten = [x for sublist1 in matrix
-           for sublist2 in sublist1
-           for x in sublist2]
-print(flatten)
-</code></pre>
-
-<p>As shown above, even a simple transformation of matrix flattening can make the code hard to read due to multiple levels of <code>for</code> loops.
-Instead of using list comprehensions in those cases, it is recommended to explicitly use <code>for</code> loops when there are more than two expressions in such list comprehensions.</p>
-
-<pre><code class="python 3D matrix"># Recommended way
-flatten = []
-for sublist1 in matrix:
-    for sublist2 in sublist1:
-        flatten.extend(sublist2)
-print(flatten)
-</code></pre>
-
-<p>Another example of abusing list comprehension is to perform multiple filtering operations, such as:</p>
-
-<pre><code class="python Multiple filtering operations">matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-filtered = [[x for x in row if x % 3 == 0]
-            for row in matrix if sum(row) &gt;= 10]
-print(filtered)
-</code></pre>
-
-<p>In this example, the expression performs filtering not only on rows in the matrix but also on elements in rows.
-Such expressions are really hard to understand since the code is not read in the natural order of logic and flow of thoughts (see <a href="https://en.wikipedia.org/wiki/Literate_programming">literate programming</a>).
-It is recommended to explicitly use <code>for</code> loops for such cases.</p>
-
-<h3>Item 10: Consider generator expressions for large comprehensions</h3>
-
-<p>The problems with list comprehensions are that they may create a whole new list containing all the data.
-For large inputs, it can consume a significant amount of memory and can even crash your program.</p>
-
-<p>For a (very contrived) example, let&rsquo;s say you want to return the length of each line in a file and its squares.
-You can easily achieve that with the following list comprehensions.</p>
-
-<pre><code class="python List comprehension on a file">value = [len(x) for x in open('/tmp/my_file.txt')]
-squares = [(x, x**2) for x in better]
-</code></pre>
-
-<p>However, list comprehension on a file like this is very risky.
-The file can be really large or even never ending (such as a network socket).
-To solve this problem, Python has generator expressions, which are a generalization of comprehensions and generators.
-A generator expression gives you an iterator that you can go through that will yield one item at a time from the input and you can determine how many output items you want to return.
-The above code can be rewritten as follows:</p>
-
-<pre><code class="python Generator expression">better = (len(x) for x in open('/tmp/my_file.txt'))
-roots = ((x, x**0.5) for x in better)
-print(next(roots))
-print(next(better))
-print(next(roots))
-
-### Example Output
-[37, 20, 60, 38, 85, 65, 96, 4, 45, 44]
-(37, 1369)
-20
-(60, 3600)
-</code></pre>
-
-<p>As you can see, another powerful outcome of using generator expressions is that they can be composed together.
-When you call <code>next(roots)</code>, Python goes back up to the generator expression <code>better</code>, then realizes that it has to read another line out of the file.
-It has to read the line, then compute its length.
-That length value is then passed back to <code>roots</code> as <code>x</code> and for computing the tuple.
-What&rsquo;s surprising is that chaining generators like this actually executes very quickly in Python.
-When you&rsquo;re looking for a way to compose functionallity that&rsquo;s operating on a large stream of input, generator expressions are one of the best tools for the job.</p>
-
-<h3>Item 11: Consider generator functions instead of returning lists</h3>
-
-<p>Let&rsquo;s say you want to find the index of every single words in a string.
-The typical approach will be something as follows:</p>
-
-<pre><code class="python Typical way">def index_words_typical(text):
-    result = []
-    if text:
-        result.append(0)
-    for index, letter in enumerate(text):
-        if letter == ' ':
-            result.append(index+1)
-    return result
-</code></pre>
-
-<p>The typical approach that returns a list of indices has a problem.
-It is dense and noisy with all logistics related to <code>result</code> list: initializing the list, appending to the list whenever a result is found.
-A better way to write this function is to use a generator function, with <code>yield</code> statements, as follows:</p>
-
-<pre><code class="python Better way">def index_words(text):
-    if text:
-        yield 0
-    for index, letter in enumerate(text):
-        if letter == ' ':
-            yield index+1
-</code></pre>
-
-<pre><code class="python Equivalent outputs">address = 'The quick brown fox jumps over the lazy dog'
-print(list(index_words(address)))
-print(index_words_typical(address))
-
-# Output
-[0, 4, 10, 16, 20, 26, 31, 35, 40]
-[0, 4, 10, 16, 20, 26, 31, 35, 40]
-</code></pre>
-
-<p>As you can see, the generator version of this function is much easier to read than the typical version that returns lists.
-Most significantly, all of the interactions with the <code>result</code> list have been taken away.
-Instead, you just have those <code>yield</code> statements, making it very obvious what is being returned.
-That helps make it clear to new readers of the code.</p>
-
-<p>The second problem of the typical approach is that it requires all results to be stored in the lists before being returned.
-For huge inputs, this can cause your program to run out of memory and crash.
-In contrast, the generator version of the function can handle any amount of output because it doesn&rsquo;t actually keep all of the results in memory that it found.
-In the example above, if the input <code>address</code> is a huge text and you only need to display the first hundred indices, the typical approach <code>index_words_typical</code> might fail while the generator version works perfectly fine.</p>
-
-<h3>Item 12: Be defensive when iterating over arguments</h3>
-
-<pre><code class="python Iterator as argument">def normalize_data(numbers):
-    total = sum(numbers)
-    result = []
-    for value in numbers:
-        percent = 100.0 * value / total
-        result.append(percent)
-    return result
-
-def read_visits(data_path):
-    with open(data_path) as f:
-        for line in f:
-            yield int(line)
-</code></pre>
-
-<pre><code class="python Testing">path = '/tmp/my_numbers.txt'
-with open(path, 'w') as f:
-    for i in [15, 80, 35]:
-        f.write('%d\n' % i)
-
-print(normalize_data([15, 80, 35]))
-print(normalize_data(read_visits(path)))
-</code></pre>
-
-<pre><code class="plain Output">[11.538461538461538, 61.53846153846154, 26.923076923076923]
-[]
-</code></pre>
-
-<p>As you can see from the output, <code>normalize_data</code> works fine with a list of numbers but it does not work when we are supplying an iterator as input.
-The main reason is that we iterate multiple times with the input iterator.
-After the first traversal for <code>sum</code>, the iterator is already exhausted and that explains an empty list for the output <code>result</code>.</p>
-
-<p>The most straight-forward fix for the function <code>normalize_data</code> is probably to add a line <code>numbers = list(numbers)</code> at the beginning to materialize the iterator.
-However, such fix will defeat the purpose of using iterators and the function <code>read_visits</code>: they allow handling a arbitrarily large number of inputs without committing a large working memory.</p>
-
-<p>Another possible fix for the function <code>normalize_data</code> is as folllows:</p>
-
-<pre><code class="python Another fix">def normalize_data_2(get_iter):
-    total = sum(get_iter())
-    result = []
-    for value in get_iter():
-        percent = 100.0 * value / total
-        result.append(percent)
-    return result
-
-get_iter = lambda: read_visits(path)
-print(normalize_data_2(get_iter))
-</code></pre>
-
-<p>In this approach, we recreate the iterator whenever we need to iterate the data.
-So, if we need to traverse twice to normalize the data, we have to call <code>read_visits</code> twice, open the file, and read the data that many times.
-The upside is that we have the correct behavior while still retaining the benefits of using iterators.
-The problem of this approach is that it is very noisy and hard to read with <code>get_iter</code> and <code>lambda</code>.
-A more Pythonic way to do the same thing is to use a container class for the behavior of <code>read_visits</code>, as follows:</p>
-
-<pre><code class="python Converting read_visits to a class">class ReadVisits(object):
-    def __init__(self, data_path):
-        self.data_path = data_path
-
-    def __iter__(self):
-        with open(self.data_path) as f:
-            for line in f:
-                yield int(line)
-
-visits = ReadVisits(path)
-print(normalize_data(visits))
-</code></pre>
-
-<p>Here, <code>normalize_data</code> can be the same as before.
-The idea is still the same, we recreate the iterator whenever we need to iterate the data.
-In the example, when we iterate the <code>numbers</code> for computing <code>sum</code> or in <code>for</code> loop in <code>normalize_data</code> method, we effectively call <code>iter(numbers)</code> to retrieve the iterators.
-It is defined in <code>__iter__</code> method, which will open the file and read the data whenver it is called.
-However, it is much clearer and more readable than before since we encapsulate the behavior of <code>read_visits</code> method into the class <code>ReadVisits</code>.</p>
-
-<p>Finally, one minor improvement that we can add is to validate if the input argument of <code>normalize_data</code> is a container, as opposed to plain old iterator.
-If the argument is a plain old iterator, its data can be exhausted after first traversal and the <code>normalize_data</code> method will not behave correctly.
-To check that, a simple check &ldquo;iter(numbers) is iter(numbers)&rdquo; will suffice.
-For container-type arguments such as a list or <code>ReadVisits</code> object, each <code>iter</code> call returns a different iterator.</p>
 ]]></content>
   </entry>
   

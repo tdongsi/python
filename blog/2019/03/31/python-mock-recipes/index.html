@@ -1,0 +1,394 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Python Mock Recipes - Personal Interview Notes</title>
+  <meta name="author" content="Cuong Dong-Si">
+
+  
+  <meta name="description" content="Recipes for mocking with unittest.mock module when writing unit tests in Python. Mock simple HTTP responses When testing REST clients that use &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://tdongsi.github.io/python/blog/2019/03/31/python-mock-recipes/">
+  <link href="/python/favicon.png" rel="icon">
+  <link href="/python/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Personal Interview Notes" type="application/atom+xml">
+  <link href="/python/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/python/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/python/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body    class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/python/">Personal Interview Notes</a></h1>
+  
+    <h2>Neither success nor failure is ever final.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="tdongsi.github.io/python">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/python/">Blog Home</a></li>
+  <li><a href="/python/blog/archives">Archives</a></li>
+  <li><a href="http://tdongsi.github.io/SqlTests/syllabus/">Syllabus</a></li>
+  <li><a href="http://tdongsi.github.io">Personal Home</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Python Mock Recipes</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2019-03-31T22:49:05-07:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>31</span><span class='date-suffix'>st</span>, <span class='date-year'>2019</span></span> <span class='time'>10:49 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Recipes for mocking with <code>unittest.mock</code> module when writing unit tests in Python.</p>
+
+<!--more-->
+
+
+<h3>Mock simple HTTP responses</h3>
+
+<p>When testing REST clients that use <code>requests</code> module, it is better to use this utility method to construct simple HTTP responses.</p>
+
+<figure class='code'><figcaption><span>Utility method to create mock response</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="k">def</span> <span class="nf">create_mock_response</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="s">&quot;{}&quot;</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot; Create mock HTTTP responses for &quot;requests&quot; module.</span>
+</span><span class='line'>
+</span><span class='line'><span class="sd">    :param status: override Response.status_code. Example: 200</span>
+</span><span class='line'><span class="sd">    :param content: override Response.text and Response.content.</span>
+</span><span class='line'><span class="sd">    :return: mock response object</span>
+</span><span class='line'><span class="sd">    &quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="n">mock_response</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">Mock</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">mock_response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">=</span> <span class="n">status</span>
+</span><span class='line'>    <span class="n">mock_response</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">content</span>
+</span><span class='line'>    <span class="n">mock_response</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">content</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="n">mock_response</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>By mocking HTTP (usually GET) responses, you can validate the REST client&rsquo;s behavior for a certain response.
+This is useful as we can reproduce those exceptional, failure scenarios such as those with 4xx error codes.</p>
+
+<figure class='code'><figcaption><span>Example test</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="nd">@mock.patch</span><span class="p">(</span><span class="s">&#39;requests.get&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="k">def</span> <span class="nf">test_get_deployments_429</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_get</span><span class="p">):</span>
+</span><span class='line'>    <span class="sd">&quot;&quot;&quot; Failure case. &quot;&quot;&quot;</span>
+</span><span class='line'>    <span class="c"># Mock response</span>
+</span><span class='line'>    <span class="n">mock_text</span> <span class="o">=</span> <span class="s">u&#39;{&quot;reponse&quot;: &quot;Slow down.&quot;}&#39;</span>
+</span><span class='line'>    <span class="n">mock_response</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">create_mock_response</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="mi">429</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="n">mock_text</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">mock_get</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">mock_response</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c"># REST client&#39;s function that sends GET request here</span>
+</span><span class='line'>    <span class="c"># ...</span>
+</span><span class='line'>    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">ResponseRateException</span><span class="p">)</span> <span class="k">as</span> <span class="n">bg</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">method_under_test</span><span class="p">(</span><span class="o">**</span><span class="n">arguments</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="s">&#39;request not accepted&#39;</span> <span class="ow">in</span> <span class="n">bg</span><span class="o">.</span><span class="n">exception</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">pass</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Mock print statements</h3>
+
+<p>Some legacy codes tend to spam <code>print</code> statements and you probably need to check if the output is correct.
+In that case, we can redirect <code>print</code>&rsquo;s output to some variable and assert the value of that string variable.</p>
+
+<p>There is a popular but complex way to redirect <code>stdout</code> to a string variable, thanks to being the <a href="https://stackoverflow.com/questions/1218933/can-i-redirect-the-stdout-in-python-into-some-sort-of-string-buffer">top and accepted answer on Stackoverflow</a>.</p>
+
+<figure class='code'><figcaption><span>Complex way</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">StringIO</span> <span class="kn">import</span> <span class="n">StringIO</span>  <span class="c"># Python2</span>
+</span><span class='line'><span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>  <span class="c"># Python3</span>
+</span><span class='line'>
+</span><span class='line'> <span class="kn">import</span> <span class="nn">sys</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Store the reference for restoring</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">old_stdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># This variable will store everything that is sent to the standard output</span>
+</span><span class='line'><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">call_method_under_test</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Redirect again the std output to screen</span>
+</span><span class='line'><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">old_stdout</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Then, get the stdout like a string</span>
+</span><span class='line'><span class="n">result_string</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">assert</span><span class="p">(</span><span class="n">expected_output</span><span class="p">,</span> <span class="n">result_string</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In the context of unit testing, to ensure that all unit tests are indepedenent, you have to set and reset <code>sys.stdout</code> in each unit test separately.
+As a result, it is very inconvenient when you may have hundreds of unit tests and only tens of them need that output redirection.
+Instead, <code>mock</code> module makes it easy as follows:</p>
+
+<figure class='code'><figcaption><span>Mock print statements</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'>    <span class="c"># Mock sys.stdout to redirect &quot;print&quot;&#39;s output to a variable mock_stdout</span>
+</span><span class='line'>    <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;sys.stdout&#39;</span><span class="p">,</span> <span class="n">new_callable</span><span class="o">=</span><span class="n">StringIO</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_stdout</span><span class="p">:</span>
+</span><span class='line'>        <span class="n">method_under_test</span><span class="p">(</span><span class="o">**</span><span class="n">arguments</span><span class="p">)</span>
+</span><span class='line'>        <span class="c"># result_string is what method_under_test print out</span>
+</span><span class='line'>        <span class="n">result_string</span> <span class="o">=</span> <span class="n">mock_stdout</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+</span><span class='line'>        <span class="c"># Compare two objects from two JSON strings</span>
+</span><span class='line'>        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">expected_output</span><span class="p">,</span> <span class="n">result_string</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>#</h2>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Cuong Dong-Si</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2019-03-31T22:49:05-07:00'><span class='date'><span class='date-month'>Mar</span> <span class='date-day'>31</span><span class='date-suffix'>st</span>, <span class='date-year'>2019</span></span> <span class='time'>10:49 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/python/blog/categories/python/'>python</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://tdongsi.github.io/python/blog/2019/03/31/python-mock-recipes/" data-via="" data-counturl="http://tdongsi.github.io/python/blog/2019/03/31/python-mock-recipes/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/python/blog/2018/12/16/effective-python-part-6/" title="Previous Post: Effective Python Pt. 6: Robust Programs">&laquo; Effective Python Pt. 6: Robust Programs</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+    <h1>About This Blog</h1>
+    <p>Random interview experience and lessons.</p>
+</section><section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/python/blog/2019/03/31/python-mock-recipes/">Python Mock Recipes</a>
+      </li>
+    
+      <li class="post">
+        <a href="/python/blog/2018/12/16/effective-python-part-6/">Effective Python Pt. 6: Robust Programs</a>
+      </li>
+    
+      <li class="post">
+        <a href="/python/blog/2018/08/18/effective-python-pt-5-concurrency-and-parallelism/">Effective Python Pt. 5: Concurrency and Parallelism</a>
+      </li>
+    
+      <li class="post">
+        <a href="/python/blog/2018/08/12/effective-python-part-4/">Effective Python Pt. 4: Using Classes</a>
+      </li>
+    
+      <li class="post">
+        <a href="/python/blog/2018/08/12/effective-python-part-3/">Effective Python Pt. 3: Functions</a>
+      </li>
+    
+      <li class="post">
+        <a href="/python/blog/2018/08/12/effective-python-part-2/">Effective Python Pt. 2: Comprehensions & Generators</a>
+      </li>
+    
+      <li class="post">
+        <a href="/python/blog/2018/08/12/effective-python-part-1/">Effective Python Pt. 1: Expressions and Statements</a>
+      </li>
+    
+      <li class="post">
+        <a href="/python/blog/2017/08/13/python-3-quick-recap/">Python 3 Quick Recap</a>
+      </li>
+    
+      <li class="post">
+        <a href="/python/blog/2017/08/06/requests-cookbook/">Requests Cookbook</a>
+      </li>
+    
+      <li class="post">
+        <a href="/python/blog/2016/09/17/tutorial-bfs-and-dfs/">Tutorial: BFS and DFS</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/python/blog/categories/addepar/'>addepar (1)</a></li><li><a href='/python/blog/categories/algorithm/'>algorithm (4)</a></li><li><a href='/python/blog/categories/book/'>book (6)</a></li><li><a href='/python/blog/categories/datastructure/'>datastructure (1)</a></li><li><a href='/python/blog/categories/python/'>python (11)</a></li><li><a href='/python/blog/categories/todo/'>todo (5)</a></li><li><a href='/python/blog/categories/tutorial/'>tutorial (6)</a></li></ul>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2019 - Cuong Dong-Si -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
