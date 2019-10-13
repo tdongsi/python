@@ -1,0 +1,2 @@
+mod-wsgi==4.6.8
+mod-wsgi-httpd==2.4.39.1
