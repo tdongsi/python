@@ -10,7 +10,7 @@ ipython==5.8.0
 ipython-genutils==0.2.0
 jedi==0.13.2
 jenkins==1.0.2
-Jinja2==2.10.1
+Jinja2==2.11.3
 MarkupSafe==1.1.0
 mccabe==0.6.1
 numpy==1.15.4
