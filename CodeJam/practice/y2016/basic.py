@@ -8,7 +8,7 @@ def insertion_sort(mlist):
     if len(mlist) <= 1:
         return mlist
 
-    for i in xrange(1, len(mlist)):
+    for i in range(1, len(mlist)):
         pos = i
         cur = mlist[i]
 
@@ -37,9 +37,9 @@ def transpose(matrix):
 
 
 def print_matrix(matrix):
-    print "* Matrix *"
+    print("* Matrix *")
     for row in matrix:
-        print row
+        print(row)
 
 
 def spiral_list(matrix):

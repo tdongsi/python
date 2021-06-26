@@ -7,7 +7,7 @@ import random
 import practice.y2016.basic as basic
 from practice.y2016.basic import solve_skyline as solve_skyline
 
-from practice.y2016.basic import quicksort3 as do_sort
+from practice.y2016.basic import insertion_sort as do_sort
 from practice.y2016.basic import PriorityQueue as PriorityQueue
 
 from practice.y2016.basic import binary_search as binary_search
@@ -65,10 +65,10 @@ class TestSorting(unittest.TestCase):
 
     def test_sort(self):
         # import sorting function as do_sort
-        for i in xrange(1, 20):
+        for i in range(1, 20):
             # Do it 5 times
-            expected = range(i)
-            for i in xrange(5):
+            expected = list(range(i))
+            for i in range(5):
                 mlist = expected[:]
                 random.shuffle(mlist)
                 # print mlist
@@ -194,7 +194,7 @@ class TestPriorityQueue(unittest.TestCase):
         queue.add("Write user docs", 1)
         self.assertEqual((7, "Write spec"), queue.peek())
 
-        print queue
+        print(queue)
 
         task = queue.pop()
         self.assertEqual(task[1], "Write spec")
