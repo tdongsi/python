@@ -166,11 +166,11 @@ class TestMisc(unittest.TestCase):
 
         ids = id_string.split()
         ids_int = [str(e) for e in ids]
-        print ', '.join(ids_int)
+        print(', '.join(ids_int))
 
     def test_columns(self):
         table_name = "i"
         column_string = "poid_db,poid_id0,poid_type"
         columns = column_string.split(",")
         columns_with_table = [table_name + "." + e for e in columns]
-        print ', '.join(columns_with_table)
+        print(', '.join(columns_with_table))
