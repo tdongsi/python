@@ -17,7 +17,8 @@ out*.txt
 hive_vertica_count.json
 bff.png
 .idea
-venv
+**/venv
+**/venv3
 jupyter/venv3
 jupyter/.ipynb_checkpoints
 */node_modules
