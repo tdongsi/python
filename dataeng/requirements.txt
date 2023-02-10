@@ -6,7 +6,7 @@ decorator==4.3.0
 enum34==1.1.6
 flake8==3.6.0
 importmagic==0.1.7
-ipython==7.16.3
+ipython==8.10.0
 ipython-genutils==0.2.0
 jedi==0.13.2
 jenkins==1.0.2
